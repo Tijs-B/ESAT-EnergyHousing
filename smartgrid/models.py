@@ -6,6 +6,7 @@ from numpy import *
 
 class Neighbourhood(models.Model):
     energy_price = models.FloatField()
+    neighbourhood_name = models.CharField(max_length=200)
 
 
 class House(models.Model):
