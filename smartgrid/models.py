@@ -5,6 +5,8 @@ from numpy import *
 
 
 class Neighborhood(models.Model):
+    def __str__(self):
+        return self.neighborhood_name
     energy_price = models.FloatField()
     neighborhood_name = models.CharField(max_length=200)
 
