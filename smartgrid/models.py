@@ -4,12 +4,13 @@ from numpy import *
 # Create your models here.
 
 
-class Neighbourhood(models.Model):
+class Neighborhood(models.Model):
     energy_price = models.FloatField()
+    neighborhood_name = models.CharField(max_length=200)
 
 
 class House(models.Model):
-    neighbourhood = models.ForeignKey("Neighbourhood")
+    neighbourhood = models.ForeignKey("Neighborhood")
 
 
 class Room(models.Model):
