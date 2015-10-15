@@ -20,11 +20,9 @@ class Room(models.Model):
 
 
 class Appliance(models.Model):
-<<<<<<< HEAD
     room = models.ForeignKey(Room)
     priority = models.IntegerField()
 
-=======
     room = models.ForeignKey("Room")
     priority = models.IntegerField(default=0, choices=(
         (0, 'Low'),
@@ -33,7 +31,6 @@ class Appliance(models.Model):
         (3, 'Very High'))
     )
 
->>>>>>> origin/master
 
 ### Sensor ###
 class Sensor(models.Model):
