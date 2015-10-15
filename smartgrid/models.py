@@ -25,10 +25,8 @@ class Appliance(models.Model):
         (3, 'Very High'))
     )
 
-<<<<<<< HEAD
-=======
 
-### Sensor ###
+#   Sensor   #
 class Sensor(models.Model):
     house = models.ForeignKey("House")
     type = models.TextField
@@ -39,4 +37,3 @@ class Recording(models.Model):
     value = models.FloatField()
     timestamp = models.DateTimeField()
 
->>>>>>> origin/master
