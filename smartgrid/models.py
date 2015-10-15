@@ -20,6 +20,11 @@ class Room(models.Model):
 
 
 class Appliance(models.Model):
+<<<<<<< HEAD
+    room = models.ForeignKey(Room)
+    priority = models.IntegerField()
+
+=======
     room = models.ForeignKey("Room")
     priority = models.IntegerField(default=0, choices=(
         (0, 'Low'),
@@ -28,6 +33,7 @@ class Appliance(models.Model):
         (3, 'Very High'))
     )
 
+>>>>>>> origin/master
 
 ### Sensor ###
 class Sensor(models.Model):
@@ -39,3 +45,40 @@ class Recording(models.Model):
     sensor = models.ForeignKey("Sensor")
     value = models.FloatField()
     timestamp = models.DateTimeField()
+
+class Heatload(models.Model):
+     appliance = models.ForeignKey(Appliance)
+
+
+class Variablepower(models.Model):
+    heatload = models.ForeignKey(Heatload)
+    VeryCold = 'VC'
+    Cold = 'C'
+    Normal = 'N'
+    Hot = 'H'
+    temppossibilities = ((VeryCold,'T<-10'),(Cold, 'T<0'),( Normal, '0<T<20'),(Hot,'T>20'))
+    temprange = models.CharField(max_length=2,choices=temppossibilities,default=Cold)
+    VeryLow = 'VL'
+    Low = 'L'
+    Medium = 'M'
+    High = 'H'
+    VeryHigh = 'VH'
+    powerpossibilities = ((VeryLow,'1-50'),(Low,'50-100'),(Medium,'100-200'),(High,'200-500'),(VeryHigh,'500-1000'))
+    powerrange = models.CharField(max_length=2,choices=powerpossibilities,default=Medium)
+
+
+class Ivariablepower(models.Model):
+    heatload = models.ForeignKey(Heatload)
+    VeryCold = 'VC'
+    Cold = 'C'
+    Normal = 'N'
+    Hot = 'H'
+    temppossibilities = ((VeryCold,'T<-10'),(Cold, 'T<0'),( Normal, '0<T<20'),(Hot,'T>20'))
+    temprange = models.CharField(max_length=2,choices=temppossibilities,default=Cold)
+    VeryLow = 'VL'
+    Low = 'L'
+    Medium = 'M'
+    High = 'H'
+    VeryHigh = 'VH'
+    powerpossibilities = ((VeryLow,'50'),(Low,'100'),(Medium,'200'),(High,'500'),(VeryHigh,'1000'))
+    powerrange = models.CharField(max_length=2,choices=powerpossibilities,default=Medium)
