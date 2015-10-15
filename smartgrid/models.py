@@ -17,3 +17,16 @@ class Room(models.Model):
 class Appliance(models.Model):
     room = models.ForeignKey(Room)
     priority = models.IntegerField()
+
+
+### Sensor ###
+class Sensor(models.Model):
+    house = models.ForeignKey(House)
+    type = models.TextField
+
+
+class Recording(models.Model):
+    sensor = models.ForeignKey(Sensor)
+    value = models.FloatField()
+    timestamp = models.DateTimeField()
+
