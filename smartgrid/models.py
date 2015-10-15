@@ -13,6 +13,7 @@ class Neighborhood(models.Model):
 
 class House(models.Model):
     neighbourhood = models.ForeignKey("Neighborhood")
+    house_name = models.CharField(max_length=200)
 
 
 class Room(models.Model):
@@ -20,8 +21,6 @@ class Room(models.Model):
 
 
 class Appliance(models.Model):
-    room = models.ForeignKey(Room)
-    priority = models.IntegerField()
     room = models.ForeignKey("Room")
     priority = models.IntegerField(default=0, choices=(
         (0, 'Low'),
