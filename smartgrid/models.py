@@ -1,8 +1,6 @@
 from django.db import models
 from numpy import *
 
-# Create your models here.
-
 
 class Neighborhood(models.Model):
     def __str__(self):
@@ -12,16 +10,24 @@ class Neighborhood(models.Model):
 
 
 class House(models.Model):
+    def __str__(self):
+        return self.house_name
     neighbourhood = models.ForeignKey("Neighborhood")
     house_name = models.CharField(max_length=200)
 
 
 class Room(models.Model):
+    def __str__(self):
+        return self.room_name
     house = models.ForeignKey("House")
+    room_name = models.CharField(max_length=200)
 
 
 class Appliance(models.Model):
+    def __str__(self):
+        return self.appliance_name
     room = models.ForeignKey("Room")
+    appliance_name = models.CharField(max_length=200)
     priority = models.IntegerField(default=0, choices=(
         (0, 'Low'),
         (1, 'Normal'),
