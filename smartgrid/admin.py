@@ -10,5 +10,18 @@ class NeighborhoodAdmin(admin.ModelAdmin):
     fields = ['neighborhood_name', 'energy_price']
     inlines = [HouseInline]
 
-admin.site.register(Neighborhood, NeighborhoodAdmin)
+class VariablepowerAdmin(admin.ModelAdmin):
+    fields = ['temprange','powerrange']
 
+class RoomsAdmin(admin.ModelAdmin):
+    fields = ['room_name']
+
+class ApplianceAdmin(admin.ModelAdmin):
+    fields = ['appliance_name']
+
+admin.site.register(Neighborhood, NeighborhoodAdmin)
+admin.site.register(House)
+admin.site.register(Variablepower, VariablepowerAdmin)
+admin.site.register(Room)
+admin.site.register(Appliance)
+admin.site.register(Heatload)
