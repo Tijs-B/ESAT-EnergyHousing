@@ -17,7 +17,6 @@ class Room(models.Model):
 
 
 class Appliance(models.Model):
-    room = models.ForeignKey("Room")
     # room = models.ForeignKey("Room")
     priority = models.IntegerField(default=0, choices=(
         (0, 'Low'),
