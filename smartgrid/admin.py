@@ -1,27 +1,53 @@
 from django.contrib import admin
 from .models import *
 
-# Register your models here.
+# Neighborhood
+
 class HouseInline(admin.StackedInline):
     model = House
     extra = 0
+
 
 class NeighborhoodAdmin(admin.ModelAdmin):
     fields = ['neighborhood_name', 'energy_price']
     inlines = [HouseInline]
 
-class VariablepowerAdmin(admin.ModelAdmin):
-    fields = ['temprange','powerrange']
+
+# House
+class RoomInline(admin.StackedInline):
+    model = Room
+    extra = 0
+
+
+class HouseAdmin(admin.ModelAdmin):
+    fields = ['house_name']
+    inlines = [RoomInline]
+
+
+# Room
+class ApplianceInline(admin.StackedInline):
+    model = Appliance
+    extra = 0
+
 
 class RoomsAdmin(admin.ModelAdmin):
     fields = ['room_name']
+    inlines = [ApplianceInline]
+
+
+# Appliance
 
 class ApplianceAdmin(admin.ModelAdmin):
-    fields = ['appliance_name']
+    fields = ['appliance_name', 'priority']
+
+
+class VariablepowerAdmin(admin.ModelAdmin):
+    fields = ['temprange', 'powerrange']
+
 
 admin.site.register(Neighborhood, NeighborhoodAdmin)
-admin.site.register(House)
+admin.site.register(House, HouseAdmin)
 admin.site.register(Variablepower, VariablepowerAdmin)
-admin.site.register(Room)
-admin.site.register(Appliance)
+admin.site.register(Room, RoomsAdmin)
+admin.site.register(Appliance, ApplianceAdmin)
 admin.site.register(Heatload)
