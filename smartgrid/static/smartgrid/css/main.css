@@ -1,0 +1,36 @@
+.html .body {
+	font-family: 'Lato', sans-serif;
+}
+
+.header h1 {
+	font-family: 'Lobster';
+}
+
+.header {
+	background-color: #8DC53E;
+	color: #fff;
+	padding-top: 5px;
+	padding-bottom: 20px;
+}
+
+.header .btn {
+	margin-top: 40px;
+}
+
+.jumbotron {
+	background: url('../img/maincontent-bg.gif') repeat-x bottom center;
+	height: 500px;
+	margin-bottom: 0;
+	color: #057343;
+}
+
+.main {
+}
+
+.footer {
+	background-color: #006838;
+	height: 100px;
+	color: #fff;
+	margin-top: 0;
+	padding-top: 40px;
+}
