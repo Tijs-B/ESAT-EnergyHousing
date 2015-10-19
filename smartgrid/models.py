@@ -1,5 +1,4 @@
 from django.db import models
-from numpy import *
 
 
 class Neighborhood(models.Model):
@@ -8,11 +7,14 @@ class Neighborhood(models.Model):
 
     energy_price = models.FloatField(default=1)
     neighborhood_name = models.CharField(max_length=200)
+
+
 class AvailableEnergy(models.Model):
     neighborhood = models.ForeignKey("Neighborhood")
     solar = models.FloatField(default=0)
     wind = models.FloatField(default=0)
     other = models.FloatField(default=0)
+
 
 class House(models.Model):
     def __str__(self):
@@ -40,18 +42,29 @@ class Appliance(models.Model):
         (2, 'High'),
         (3, 'Very High'))
     )
+    currently_on = models.BooleanField(default=False)
 
     # with 'abstract = True', there is no database entry for Appliance, but there will be database entries for classes
-    #   that inherit from this class.
+    #   that inherit from this class (such as FixedDemand)
     class Meta:
         abstract = True
 
 
-class FixedDemand(models.Model):
-    pass
+class FixedDemand(Appliance):
+    consumption = models.FloatField()
 
 
-class HeatloadVariablePower(Appliance):
+class ShiftingLoadCycle(Appliance):
+    flexibility_start = models.DateTimeField()
+    flexibility_end = models.DateTimeField()
+
+
+class ConsumptionProfile(models.Model):
+    appliance = models.ForeignKey("ShiftingLoadCycle")
+    # TODO: Consumption profile table
+
+
+class HeatLoadVariablePower(Appliance):
     temperature_min = models.FloatField()
     temperature_max = models.FloatField()
     power_min = models.FloatField()
@@ -66,6 +79,9 @@ class HeatLoadInvariablePower(Appliance):
 
 ### Sensor ###
 class Sensor(models.Model):
+    def __str__(self):
+        return self.sensor_name
+    sensor_name = models.CharField(max_length=200)
     house = models.ForeignKey("House")
     type = models.TextField
 

@@ -45,4 +45,3 @@ admin.site.register(Neighborhood, NeighborhoodAdmin)
 admin.site.register(House, HouseAdmin)
 
 admin.site.register(Room, RoomsAdmin)
-admin.site.register(Appliance, ApplianceAdmin)
