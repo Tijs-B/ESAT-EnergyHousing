@@ -1,3 +1,8 @@
+{% extends "smartgrids/base_home.html %}
+
+{% block content %}
+
+
 
 {% if form.errors %}
     <p class="error">Sorry, that's not a valid username or password</p>
@@ -12,3 +17,5 @@
     <input type="submit" value="login" />
 
 </form>
+
+{% endblock %}
