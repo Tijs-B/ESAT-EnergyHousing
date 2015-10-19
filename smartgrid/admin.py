@@ -1,8 +1,8 @@
 from django.contrib import admin
 from .models import *
 
-# Neighborhood
 
+# Neighborhood
 class HouseInline(admin.StackedInline):
     model = House
     extra = 0
@@ -36,18 +36,13 @@ class RoomsAdmin(admin.ModelAdmin):
 
 
 # Appliance
-
 class ApplianceAdmin(admin.ModelAdmin):
     fields = ['appliance_name', 'priority']
 
 
-class VariablepowerAdmin(admin.ModelAdmin):
-    fields = ['temprange', 'powerrange']
-
 
 admin.site.register(Neighborhood, NeighborhoodAdmin)
 admin.site.register(House, HouseAdmin)
-admin.site.register(Variablepower, VariablepowerAdmin)
+
 admin.site.register(Room, RoomsAdmin)
 admin.site.register(Appliance, ApplianceAdmin)
-admin.site.register(Heatload)

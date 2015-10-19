@@ -5,7 +5,8 @@ from numpy import *
 class Neighborhood(models.Model):
     def __str__(self):
         return self.neighborhood_name
-    energy_price = models.FloatField()
+    available_energy = models.FloatField(default=0)
+    energy_price = models.FloatField(default=1)
     neighborhood_name = models.CharField(max_length=200)
 
 
@@ -35,6 +36,7 @@ class Appliance(models.Model):
         (2, 'High'),
         (3, 'Very High'))
     )
+
 
 class Heatload(models.Model):
      appliance = models.ForeignKey(Appliance)
