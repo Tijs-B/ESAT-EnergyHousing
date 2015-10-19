@@ -5,10 +5,14 @@ from numpy import *
 class Neighborhood(models.Model):
     def __str__(self):
         return self.neighborhood_name
-    available_energy = models.FloatField(default=0)
+
     energy_price = models.FloatField(default=1)
     neighborhood_name = models.CharField(max_length=200)
-
+class AvailableEnergy(models.Model):
+    neighborhood = models.ForeignKey("Neighborhood")
+    solar = models.FloatField(default=0)
+    wind = models.FloatField(default=0)
+    other = models.FloatField(default=0)
 
 class House(models.Model):
     def __str__(self):
