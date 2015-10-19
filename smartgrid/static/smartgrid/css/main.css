@@ -1,5 +1,6 @@
 .html .body {
 	font-family: 'Lato', sans-serif;
+	background-color: #fff;
 }
 
 .header h1 {
@@ -19,12 +20,16 @@
 
 .jumbotron {
 	background: url('../img/maincontent-bg.gif') repeat-x bottom center;
-	height: 500px;
+	min-height: 500px;
 	margin-bottom: 0;
 	color: #057343;
 }
 
 .main {
+	background: url('../img/maincontent-bg.gif') repeat-x bottom center;
+	min-height: 500px;
+	margin-bottom: 0;
+	color: #057343;
 }
 
 .footer {
