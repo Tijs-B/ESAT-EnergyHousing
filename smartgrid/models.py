@@ -37,43 +37,27 @@ class Appliance(models.Model):
         (3, 'Very High'))
     )
 
-
-class Heatload(models.Model):
-     appliance = models.ForeignKey(Appliance)
-
-
-class Variablepower(models.Model):
-    heatload = models.ForeignKey(Heatload)
-    VeryCold = 'VC'
-    Cold = 'C'
-    Normal = 'N'
-    Hot = 'H'
-    temppossibilities = ((VeryCold, 'T<-10'), (Cold, 'T<0'), (Normal, '0<T<20'), (Hot, 'T>20'))
-    temprange = models.CharField(max_length=2, choices=temppossibilities, default=Cold)
-    VeryLow = 'VL'
-    Low = 'L'
-    Medium = 'M'
-    High = 'H'
-    VeryHigh = 'VH'
-    powerpossibilities = ((VeryLow,'1-50'),(Low,'50-100'),(Medium,'100-200'),(High,'200-500'),(VeryHigh,'500-1000'))
-    powerrange = models.CharField(max_length=2, choices=powerpossibilities, default=Medium)
+    # with 'abstract = True', there is no database entry for Appliance, but there will be database entries for classes
+    #   that inherit from this class.
+    class Meta:
+        abstract = True
 
 
-class Ivariablepower(models.Model):
-    heatload = models.ForeignKey(Heatload)
-    VeryCold = 'VC'
-    Cold = 'C'
-    Normal = 'N'
-    Hot = 'H'
-    temppossibilities = ((VeryCold, 'T<-10'), (Cold, 'T<0'), (Normal, '0<T<20'), (Hot, 'T>20'))
-    temprange = models.CharField(max_length=2, choices=temppossibilities, default=Cold)
-    VeryLow = 'VL'
-    Low = 'L'
-    Medium = 'M'
-    High = 'H'
-    VeryHigh = 'VH'
-    powerpossibilities = ((VeryLow, '50'), (Low, '100'), (Medium, '200'), (High, '500'), (VeryHigh, '1000'))
-    powerrange = models.CharField(max_length=2, choices=powerpossibilities, default=Medium)
+class FixedDemand(models.Model):
+    pass
+
+
+class HeatloadVariablePower(Appliance):
+    temperature_min = models.FloatField()
+    temperature_max = models.FloatField()
+    power_min = models.FloatField()
+    power_max = models.FloatField()
+
+
+class HeatLoadInvariablePower(Appliance):
+    temperature_min = models.FloatField()
+    temperature_max = models.FloatField()
+    power = models.FloatField()
 
 
 ### Sensor ###
