@@ -83,7 +83,7 @@ class Sensor(models.Model):
         return self.sensor_name
     sensor_name = models.CharField(max_length=200)
     house = models.ForeignKey("House")
-    type = models.TextField
+    # type = models.TextField
 
 
 class Recording(models.Model):

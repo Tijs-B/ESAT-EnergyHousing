@@ -19,4 +19,11 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^testpage/', include('smartgrid.urls')),
+    # Login-urls
+    url(r'^accounts/login/$', 'smartgrid.views.login'),
+    url(r'^accounts/auth/$', 'smartgrid.views.auth_view'),
+    url(r'^accounts/logout/$', 'smartgrid.views.logout'),
+    url(r'^accounts/loggedin/$', 'smartgrid.views.loggedin'),
+    url(r'^accounts/invalid/$', 'smartgrid.views.invalid_login'),
+
 ]
