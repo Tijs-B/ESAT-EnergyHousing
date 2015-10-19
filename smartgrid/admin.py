@@ -25,14 +25,9 @@ class HouseAdmin(admin.ModelAdmin):
 
 
 # Room
-class ApplianceInline(admin.StackedInline):
-    model = Appliance
-    extra = 0
-
 
 class RoomsAdmin(admin.ModelAdmin):
     fields = ['room_name']
-    inlines = [ApplianceInline]
 
 
 # Appliance
