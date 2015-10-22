@@ -44,7 +44,7 @@ class HeatloadInvariablePowerInline(admin.StackedInline):
 
 
 class RoomAdmin(admin.ModelAdmin):
-    inlines = [FixedDemandInline, ShiftingLoadCycleInline, ShiftingLoadCycleInline, HeatloadInvariablePowerInline]
+    inlines = [FixedDemandInline, ShiftingLoadCycleInline, HeatloadVariablePowerInline, HeatloadInvariablePowerInline]
 
 
 
