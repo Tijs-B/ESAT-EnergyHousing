@@ -54,13 +54,11 @@ class FixedDemand(Appliance):
 
 
 class ShiftingLoadCycle(Appliance):
-    flexibility_start = models.DateTimeField()
-    flexibility_end = models.DateTimeField()
-
-
-class ConsumptionProfile(models.Model):
-    appliance = models.ForeignKey("ShiftingLoadCycle")
-    # TODO: Consumption profile table
+    flexibility_start = models.TimeField()
+    flexibility_end = models.TimeField()
+    time_of_cycle = models.DateTimeField()
+    car_min_charge = models.FloatField()
+    car_current_charge = models.FloatField()
 
 
 class HeatLoadVariablePower(Appliance):
@@ -68,12 +66,23 @@ class HeatLoadVariablePower(Appliance):
     temperature_max = models.FloatField()
     power_min = models.FloatField()
     power_max = models.FloatField()
+    outside_temperature = models.FloatField()
 
 
 class HeatLoadInvariablePower(Appliance):
     temperature_min = models.FloatField()
     temperature_max = models.FloatField()
     power = models.FloatField()
+
+
+class ConsumptionProfile(models.Model):
+    def __str__(self):
+        return self.order
+    appliance = models.ForeignKey("ShiftingLoadCycle")
+    order = models.IntegerField()
+    duration = models.TimeField()
+    consumption = models.FloatField()
+    # TODO: Consumption profile table
 
 
 ### Sensor ###
