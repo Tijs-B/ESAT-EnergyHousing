@@ -52,7 +52,8 @@ def logout(request):
 
 def home(request):
     template = loader.get_template('smartgrid/homepage.html')
-    return HttpResponse(template.render())
+    return render(request, 'smartgrid/homepage.html',
+                        {'full_name': request.user.username})
 
 
 
