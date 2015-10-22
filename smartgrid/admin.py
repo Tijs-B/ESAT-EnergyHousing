@@ -9,7 +9,6 @@ class HouseInline(admin.StackedInline):
 
 
 class NeighborhoodAdmin(admin.ModelAdmin):
-    fields = ['neighborhood_name', 'energy_price']
     inlines = [HouseInline]
 
 
@@ -20,23 +19,42 @@ class RoomInline(admin.StackedInline):
 
 
 class HouseAdmin(admin.ModelAdmin):
-    fields = ['house_name']
     inlines = [RoomInline]
 
 
 # Room
+class FixedDemandInline(admin.StackedInline):
+    model = FixedDemand
+    extra = 0
 
-class RoomsAdmin(admin.ModelAdmin):
-    fields = ['room_name']
+
+class ShiftingLoadCycleInline(admin.StackedInline):
+    model = ShiftingLoadCycle
+    extra = 0
+
+
+class HeatloadVariablePowerInline(admin.StackedInline):
+    model = HeatLoadVariablePower
+    extra = 0
+
+
+class HeatloadInvariablePowerInline(admin.StackedInline):
+    model = HeatLoadInvariablePower
+    extra = 0
+
+
+class RoomAdmin(admin.ModelAdmin):
+    inlines = [FixedDemandInline, ShiftingLoadCycleInline, ShiftingLoadCycleInline, HeatloadInvariablePowerInline]
+
 
 
 # Appliance
-class ApplianceAdmin(admin.ModelAdmin):
-    fields = ['appliance_name', 'priority']
-
 
 
 admin.site.register(Neighborhood, NeighborhoodAdmin)
 admin.site.register(House, HouseAdmin)
-
-admin.site.register(Room, RoomsAdmin)
+admin.site.register(FixedDemand)
+admin.site.register(ShiftingLoadCycle)
+admin.site.register(HeatLoadVariablePower)
+admin.site.register(HeatLoadInvariablePower)
+admin.site.register(Room, RoomAdmin)

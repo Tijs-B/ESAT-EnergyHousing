@@ -4,9 +4,8 @@ from django.db import models
 class Neighborhood(models.Model):
     def __str__(self):
         return self.neighborhood_name
-
-    energy_price = models.FloatField(default=1)
     neighborhood_name = models.CharField(max_length=200)
+    energy_price = models.FloatField(default=1)
 
 
 class AvailableEnergy(models.Model):
