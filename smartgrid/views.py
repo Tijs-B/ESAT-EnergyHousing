@@ -14,7 +14,7 @@ from .models import *
 
 
 def testpage(request):
-    template = loader.get_template('smartgrid/testpage.html')
+    template = loader.get_template('smartgrid/prehomepage.html')
     return HttpResponse(template.render())
 
 
@@ -31,7 +31,7 @@ def auth_view(request):
 
     if user is not None:
         auth.login(request, user)
-        return HttpResponseRedirect('/accounts/loggedin')
+        return HttpResponseRedirect('/home')
     else:
         return HttpResponseRedirect('/accounts/invalid')
 
@@ -50,6 +50,9 @@ def logout(request):
     return render_to_response('logout.html')
 
 
+def home(request):
+    template = loader.get_template('smartgrid/homepage.html')
+    return HttpResponse(template.render())
 
 
 
