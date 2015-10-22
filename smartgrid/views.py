@@ -50,6 +50,8 @@ def logout(request):
     return render_to_response('logout.html')
 
 
+# def sign_in(request):
+#     return render_to_response('login.html')
 
 
 
