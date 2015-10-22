@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
@@ -117,7 +117,7 @@ class Migration(migrations.Migration):
                 ('currently_on', models.BooleanField(default=False)),
                 ('flexibility_start', models.DateTimeField()),
                 ('flexibility_end', models.DateTimeField()),
-                ('room', models.ForeignKey(to='smartgrid.Room')),
+                ('room', models.ManyToManyField(to='smartgrid.Room')),
             ],
             options={
                 'abstract': False,
@@ -136,17 +136,17 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='heatloadvariablepower',
             name='room',
-            field=models.ForeignKey(to='smartgrid.Room'),
+            field=models.ManyToManyField(to='smartgrid.Room'),
         ),
         migrations.AddField(
             model_name='heatloadinvariablepower',
             name='room',
-            field=models.ForeignKey(to='smartgrid.Room'),
+            field=models.ManyToManyField(to='smartgrid.Room'),
         ),
         migrations.AddField(
             model_name='fixeddemand',
             name='room',
-            field=models.ForeignKey(to='smartgrid.Room'),
+            field=models.ManyToManyField(to='smartgrid.Room'),
         ),
         migrations.AddField(
             model_name='consumptionprofile',
