@@ -23,6 +23,9 @@ class Migration(migrations.Migration):
             name='ConsumptionProfile',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('order', models.IntegerField()),
+                ('duration', models.TimeField()),
+                ('consumption', models.FloatField()),
             ],
         ),
         migrations.CreateModel(
@@ -64,6 +67,7 @@ class Migration(migrations.Migration):
                 ('temperature_max', models.FloatField()),
                 ('power_min', models.FloatField()),
                 ('power_max', models.FloatField()),
+                ('outside_temperature', models.FloatField()),
             ],
             options={
                 'abstract': False,
@@ -80,8 +84,8 @@ class Migration(migrations.Migration):
             name='Neighborhood',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('energy_price', models.FloatField(default=1)),
                 ('neighborhood_name', models.CharField(max_length=200)),
+                ('energy_price', models.FloatField(default=1)),
             ],
         ),
         migrations.CreateModel(
@@ -115,9 +119,12 @@ class Migration(migrations.Migration):
                 ('appliance_name', models.CharField(max_length=200)),
                 ('priority', models.IntegerField(default=0, choices=[(0, b'Low'), (1, b'Normal'), (2, b'High'), (3, b'Very High')])),
                 ('currently_on', models.BooleanField(default=False)),
-                ('flexibility_start', models.DateTimeField()),
-                ('flexibility_end', models.DateTimeField()),
-                ('room', models.ManyToManyField(to='smartgrid.Room')),
+                ('flexibility_start', models.TimeField()),
+                ('flexibility_end', models.TimeField()),
+                ('time_of_cycle', models.DateTimeField()),
+                ('car_min_charge', models.FloatField()),
+                ('car_current_charge', models.FloatField()),
+                ('room', models.ForeignKey(to='smartgrid.Room')),
             ],
             options={
                 'abstract': False,
@@ -136,17 +143,17 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='heatloadvariablepower',
             name='room',
-            field=models.ManyToManyField(to='smartgrid.Room'),
+            field=models.ForeignKey(to='smartgrid.Room'),
         ),
         migrations.AddField(
             model_name='heatloadinvariablepower',
             name='room',
-            field=models.ManyToManyField(to='smartgrid.Room'),
+            field=models.ForeignKey(to='smartgrid.Room'),
         ),
         migrations.AddField(
             model_name='fixeddemand',
             name='room',
-            field=models.ManyToManyField(to='smartgrid.Room'),
+            field=models.ForeignKey(to='smartgrid.Room'),
         ),
         migrations.AddField(
             model_name='consumptionprofile',
