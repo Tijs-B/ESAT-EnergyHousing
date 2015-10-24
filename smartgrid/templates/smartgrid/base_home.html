@@ -30,7 +30,10 @@
     <div class="header">
         <div class="container">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-2">
+                    <img id="turbine" height="100px" src="{% static 'smartgrid/img/turbine-small.png' %}">
+                </div>
+                <div class="col-md-3">
                     <h1>Smart Grid</h1>
                     <p>Een ESAT-project.</p>
                 </div>
@@ -51,7 +54,7 @@
     <div class="footer">
         <div class="container">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-6 col-xs-6">
                     <p>© ESAT5A 2015-2016</p>
                 </div>
                 <div class="pull-right">
@@ -61,5 +64,10 @@
         </div>
     </div>
 
+    <script src="{% static 'smartgrid/js/jquery.min.js' %}"></script>
+    <script src="{% static 'smartgrid/js/propeller.min.js' %}"></script>
+    <script>
+        $('#turbine').propeller({inertia: 0.99});
+    </script>
   </body>
 </html>
