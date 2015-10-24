@@ -38,7 +38,6 @@ def auth_view(request):
         return HttpResponse(template.render())
 
 
-
 def loggedin(request):
     return render_to_response('smartgrid/loggedin.html',
                               {'full_name': request.user.username})
