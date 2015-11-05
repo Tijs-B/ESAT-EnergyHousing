@@ -1,0 +1,8 @@
+python manage.py dumpdata smartgrid --indent 2 --output test.json
+
+to get data from app
+
+
+python manage.py loaddata test.json
+
+to load data to app
