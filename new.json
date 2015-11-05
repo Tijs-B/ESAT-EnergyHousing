@@ -1,0 +1,18 @@
+[
+  {
+    "model": "smartgrid.Neighborhood",
+    "pk": 1,
+    "fields": {
+      "neighborhood_name": "De Buurt",
+      "energy_price": 1.0
+    },
+    {
+      "model": "smartgrid.House",
+      "pk": 1,
+      "neighborhood_id": 1,
+      "fields": {
+        "house_name": "Huisje"
+      }
+    }
+  }
+]
