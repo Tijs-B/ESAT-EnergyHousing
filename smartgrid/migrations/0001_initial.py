@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
@@ -23,6 +23,9 @@ class Migration(migrations.Migration):
             name='ConsumptionProfile',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('order', models.IntegerField()),
+                ('duration', models.TimeField()),
+                ('consumption', models.FloatField()),
             ],
         ),
         migrations.CreateModel(
@@ -45,9 +48,11 @@ class Migration(migrations.Migration):
                 ('appliance_name', models.CharField(max_length=200)),
                 ('priority', models.IntegerField(default=0, choices=[(0, b'Low'), (1, b'Normal'), (2, b'High'), (3, b'Very High')])),
                 ('currently_on', models.BooleanField(default=False)),
-                ('temperature_min', models.FloatField()),
-                ('temperature_max', models.FloatField()),
-                ('power', models.FloatField()),
+                ('power_required', models.FloatField()),
+                ('isolation_coefficient', models.FloatField()),
+                ('coefficient_of_performance', models.FloatField()),
+                ('mass_of_air', models.FloatField()),
+                ('power_consumed', models.FloatField()),
             ],
             options={
                 'abstract': False,
@@ -60,10 +65,11 @@ class Migration(migrations.Migration):
                 ('appliance_name', models.CharField(max_length=200)),
                 ('priority', models.IntegerField(default=0, choices=[(0, b'Low'), (1, b'Normal'), (2, b'High'), (3, b'Very High')])),
                 ('currently_on', models.BooleanField(default=False)),
-                ('temperature_min', models.FloatField()),
-                ('temperature_max', models.FloatField()),
-                ('power_min', models.FloatField()),
-                ('power_max', models.FloatField()),
+                ('power_required', models.FloatField()),
+                ('isolation_coefficient', models.FloatField()),
+                ('coefficient_of_performance', models.FloatField()),
+                ('mass_of_air', models.FloatField()),
+                ('power_consumed', models.FloatField()),
             ],
             options={
                 'abstract': False,
@@ -82,6 +88,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('neighborhood_name', models.CharField(max_length=200)),
                 ('energy_price', models.FloatField(default=1)),
+                ('ambient_temperature', models.FloatField()),
+                ('power_consumed', models.FloatField()),
             ],
         ),
         migrations.CreateModel(
