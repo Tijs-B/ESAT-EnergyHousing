@@ -6,6 +6,8 @@ class Neighborhood(models.Model):
         return self.neighborhood_name
     neighborhood_name = models.CharField(max_length=200)
     energy_price = models.FloatField(default=1)
+    ambient_temperature = models.FloatField()   # TEMP_AMB(t)
+    power_consumed = models.FloatField()        # dfr_totaal
 
 
 class AvailableEnergy(models.Model):
@@ -62,17 +64,27 @@ class ShiftingLoadCycle(Appliance):
 
 
 class HeatLoadVariablePower(Appliance):
-    temperature_min = models.FloatField()
-    temperature_max = models.FloatField()
-    power_min = models.FloatField()
-    power_max = models.FloatField()
-    outside_temperature = models.FloatField()
+#    temperature_min = models.FloatField()
+#    temperature_max = models.FloatField()
+#    power_min = models.FloatField()
+#    power_max = models.FloatField()
+    power_required = models.FloatField()                # PHEAT_HOUSE
+    isolation_coefficient = models.FloatField()         # UA_HOUSE
+    coefficient_of_performance = models.FloatField()    # COP_HOUSE
+    mass_of_air = models.FloatField()                   # MASS_HOUSE
+    power_consumed = models.FloatField()                # dfr_house
+#    temperature_inside = models.FloatField()            # temp_house
 
 
 class HeatLoadInvariablePower(Appliance):
-    temperature_min = models.FloatField()
-    temperature_max = models.FloatField()
-    power = models.FloatField()
+#    temperature_min = models.FloatField()
+#    temperature_max = models.FloatField()
+    power_required = models.FloatField()                # PCOOL_(REF/FREZ)
+    isolation_coefficient = models.FloatField()         # UA_(REF/FREZ)
+    coefficient_of_performance = models.FloatField()    # COP_(REF/FREZ)
+    mass_of_air = models.FloatField()                   # MASS_(REF/FREZ)
+    power_consumed = models.FloatField()                # dfr_(ref/frez)
+#    temperature_inside = models.FloatField()            # temp_(ref/frez)
 
 
 class ConsumptionProfile(models.Model):
