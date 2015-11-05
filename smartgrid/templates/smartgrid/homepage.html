@@ -3,7 +3,7 @@
 {% block content %}
 <h1>Welkom {{full_name}}!</h1>
     <div>
-        <li><a href = "/home/">Test</a></li>
+        <li><a href = "{% url 'smartgrid:home' %}">Test</a></li>
     </div>
 <p></p>
 {% endblock content %}

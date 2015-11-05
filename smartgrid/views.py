@@ -14,8 +14,10 @@ from .models import *
 
 
 def testpage(request):
-    template = loader.get_template('smartgrid/prehomepage.html')
-    return HttpResponse(template.render())
+    # template = loader.get_template('smartgrid/prehomepage.html')
+    print 'testpage'
+    context = {}
+    return render(request, 'smartgrid/prehomepage.html', context)
 
 
 def login(request):
@@ -54,7 +56,8 @@ def logout(request):
 
 
 def home(request):
-    template = loader.get_template('smartgrid/homepage.html')
+    # template = loader.get_template('smartgrid/homepage.html')
+    # print request.user.username
     return render(request, 'smartgrid/homepage.html',
                         {'full_name': request.user.username})
 

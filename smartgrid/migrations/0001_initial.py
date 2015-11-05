@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import migrations, models
+from django.db import models, migrations
 
 
 class Migration(migrations.Migration):
@@ -80,8 +80,8 @@ class Migration(migrations.Migration):
             name='Neighborhood',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('energy_price', models.FloatField(default=1)),
                 ('neighborhood_name', models.CharField(max_length=200)),
+                ('energy_price', models.FloatField(default=1)),
             ],
         ),
         migrations.CreateModel(
@@ -117,7 +117,7 @@ class Migration(migrations.Migration):
                 ('currently_on', models.BooleanField(default=False)),
                 ('flexibility_start', models.DateTimeField()),
                 ('flexibility_end', models.DateTimeField()),
-                ('room', models.ManyToManyField(to='smartgrid.Room')),
+                ('room', models.ForeignKey(to='smartgrid.Room')),
             ],
             options={
                 'abstract': False,
@@ -136,17 +136,17 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='heatloadvariablepower',
             name='room',
-            field=models.ManyToManyField(to='smartgrid.Room'),
+            field=models.ForeignKey(to='smartgrid.Room'),
         ),
         migrations.AddField(
             model_name='heatloadinvariablepower',
             name='room',
-            field=models.ManyToManyField(to='smartgrid.Room'),
+            field=models.ForeignKey(to='smartgrid.Room'),
         ),
         migrations.AddField(
             model_name='fixeddemand',
             name='room',
-            field=models.ManyToManyField(to='smartgrid.Room'),
+            field=models.ForeignKey(to='smartgrid.Room'),
         ),
         migrations.AddField(
             model_name='consumptionprofile',
