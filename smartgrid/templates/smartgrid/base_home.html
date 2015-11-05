@@ -38,7 +38,7 @@
                     <p>Een ESAT-project.</p>
                 </div>
                 <div class="pull-right">
-                    <a href="/accounts/login/" class="btn btn-default">Log in</a>
+                    <a href="{% url 'smartgrid:login' %}" class="btn btn-default">Log in</a>
                 </div>
             </div>
         </div>
@@ -54,8 +54,10 @@
     <div class="footer">
         <div class="container">
             <div class="row">
+
                 <div class="col-md-6 col-xs-6">
                     <p>© ESAT5A 2015-2016</p>
+
                 </div>
                 <div class="pull-right">
                     <img src="{% static 'smartgrid/img/kuleuven.png' %}" height="40px">

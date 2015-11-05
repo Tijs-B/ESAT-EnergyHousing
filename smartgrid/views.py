@@ -14,14 +14,16 @@ from .models import *
 
 
 def testpage(request):
-    template = loader.get_template('smartgrid/prehomepage.html')
-    return HttpResponse(template.render())
+    # template = loader.get_template('smartgrid/prehomepage.html')
+    print 'testpage'
+    context = {}
+    return render(request, 'smartgrid/prehomepage.html', context)
 
 
 def login(request):
     c = {}
     c.update(csrf(request))
-    return render_to_response('login.html', c)
+    return render_to_response('smartgrid/login.html', c)
 
 
 def auth_view(request):
@@ -31,28 +33,33 @@ def auth_view(request):
 
     if user is not None:
         auth.login(request, user)
-        return HttpResponseRedirect('/home')
+        template = loader.get_template('smartgrid/homepage.html')
+        return HttpResponse(template.render())
     else:
-        return HttpResponseRedirect('/accounts/invalid')
+        template = loader.get_template('smartgrid/invalid_login.html')
+        return HttpResponse(template.render())
 
 
 def loggedin(request):
-    return render_to_response('loggedin.html',
+    return render_to_response('smartgrid/loggedin.html',
                               {'full_name': request.user.username})
 
 
 def invalid_login(request):
-    return render_to_response('invalid_login.html')
+    return render_to_response('smartgrid/invalid_login.html')
 
 
 def logout(request):
     auth.logout(request)
-    return render_to_response('logout.html')
+    template = loader.get_template('smartgrid/logout.html')
+    return HttpResponse(template.render())
 
 
 def home(request):
-    template = loader.get_template('smartgrid/homepage.html')
-    return HttpResponse(template.render())
+    # template = loader.get_template('smartgrid/homepage.html')
+    # print request.user.username
+    return render(request, 'smartgrid/homepage.html',
+                        {'full_name': request.user.username})
 
 
 
