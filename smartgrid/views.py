@@ -62,7 +62,14 @@ def home(request):
                         {'full_name': request.user.username})
 
 
+def appliances(request):
+    rooms_list = Room.objects.all()
+    context = {'rooms_list': rooms_list}
+    return render(request, 'smartgrid/appliances.html', context)
 
+
+def appliance_detail(request):
+    pass
 
 
 
