@@ -1,0 +1,944 @@
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                 11/09/15 17:46:39 Page 1
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
+GDXIN   C:\Users\toond_000\Documents\A Student\P&O 3\Django\ESAT-EnergyHousing\_gams_py_gdb0.gdx
+   3  Sets
+   4           t time period
+   5           app   appliances of category three
+   6           cat4   appliances of category four  /heat_house1,heat_house2/
+--- LOAD  t = 1:t
+--- LOAD  app = 2:app
+   8  ;
+   9   
+  10  Parameters
+  11   
+  12           TEMP_AMB(t)     Temperature of the environment (in K) -> time
+  13   
+  14           UA_REF(app)     isolation constant of the refrigator
+  15           COP_REF(app)    coefficient of performance of the refrigator
+  16           PCOOL_REF(app)  power needed for the refrigator
+  17           MASS_REF(app)   mass of the cooled air inside the refrigator
+--- LOAD  TEMP_AMB = 3:TEMP_AMB
+--- LOAD  UA_REF = 4:UA_REF
+--- LOAD  COP_REF = 5:COP_REF
+--- LOAD  PCOOL_REF = 6:PCOOL_REF
+--- LOAD  MASS_REF = 7:MASS_REF
+  19  ;
+  20   
+  21  Variables
+  22           Qin_ref(t)      Heat we put in the refrigator (neg.)
+  23           Qout_ref(t)     Heat which escapes from the refrigator
+  24           temp_ref(t)     Temperature of the refrigator(in K)
+  25           dfr_ref         Power consumated by the refrigator
+  26   
+  27   
+  28           dfr_total       Total power used by the quarter
+  29  *                                                (quarter = wijk )
+  30           ;
+  31   
+  32  binary variables
+  33            zfr_ref(t)  Defines whether the refrigator is on or off
+  34  ;
+  35   
+  36   
+  37  Scalar CP thermodynamic coeficient /1.005/;
+  38   
+  39  Equations
+  40           q_temp_equ_ref(t,app)       links heat difference and temperature difference for the refrigator
+  41           q_heat_loss_ref(t,app)      loss of heat for the refrigator
+  42           q_heat_gain_ref(t,app)      gain of heat for the refrigator
+  43           q_power_ref(app)             power used by the refrigator
+  44           q_tmin_ref(t)           minimum temperature of the refrigator
+  45           q_tmax_ref(t)           maximum temperature of the refrigator
+  46   
+  47           q_temp_equ_frez(t)       links heat difference and temperature difference for the refrigator
+  48           q_heat_loss_frez(t)      loss of heat for the refrigator
+  49           q_heat_gain_frez(t)      gain of heat for the refrigator
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                 11/09/15 17:46:39 Page 2
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
+  50           q_power_frez             power used by the refrigator
+  51           q_tmin_frez(t)           minimum temperature of the refrigator
+  52           q_tmax_frez(t)           maximum temperature of the refrigator
+  53   
+  54           q_temp_equ_house(t)     links heat difference and temperature difference for the house
+  55           q_heat_loss_house(t)    loss of heat for the house
+  56           q_heat_gain_house(t)    gain of heat for the house
+  57           q_power_house           power used by the house
+  58           q_tmin_house(t)         minimum temperature of the house
+  59           q_tmax_house(t)         maximum temperature of the house
+  60           q_zfr_max_house(t)      minimum power level of the boiler
+  61           q_zfr_min_house(t)      maximum power level of the boiler
+  62   
+  63           q_total_power_use       total power used by the quarter
+  64  ;
+  65   
+  66   
+  67  ************
+  68  *refrigator*
+  69  ************
+  70   
+  71  q_power_ref(app)..
+  72           dfr_ref
+  73                   =e=
+  74                           sum(t, zfr_ref(t)*PCOOL_REF(app))
+  75                           ;
+  76   
+  77  q_temp_equ_ref(t,app)..
+  78           MASS_REF(app)*CP*(temp_ref(t++1)-temp_ref(t))
+  79                   =e=
+  80                           Qin_ref(t) - Qout_ref(t)   ;
+  81   
+  82  q_heat_loss_ref(t,app)..
+  83           Qout_ref(t)
+  84                   =e=
+  85                           UA_REF(app)*(temp_ref(t) - 290)  ;
+  86   
+  87  q_heat_gain_ref(t,app)..
+  88           Qin_ref(t)
+  89                   =e=
+  90                           COP_REF(app)*zfr_ref(t)*PCOOL_REF(app)            ;
+  91  q_tmin_ref(t)..
+  92           temp_ref(t)
+  93                   =g=
+  94                           270;
+  95  q_tmax_ref(t)..
+  96           temp_ref(t)
+  97                   =l=
+  98                           277;
+  99   
+ 100   
+ 101   
+ 102  Model fridge /q_power_ref, q_temp_equ_ref, q_heat_loss_ref,q_heat_gain_ref,
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                 11/09/15 17:46:39 Page 3
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
+ 103  q_tmin_ref,q_tmax_ref/ ;
+ 104   
+ 105  Model freezer /q_temp_equ_frez,q_power_frez,q_heat_loss_frez,q_heat_gain_frez,
+ 106  q_tmin_frez,q_tmax_frez/;
+ 107   
+ 108  Model house /q_power_house,q_temp_equ_house,q_heat_loss_house,q_heat_gain_house,
+ 109  q_tmin_house,q_tmax_house,q_zfr_max_house,q_zfr_min_house/;
+ 110   
+ 111  Model quarter /all/;
+ 112   
+ 113  option limrow = 25 ;
+ 114   
+ 115  Solve fridge using mip minimizing dfr_ref ;
+ 116   
+ 117  *Solve freezer using mip minimizing dfr_frez ;
+ 118   
+ 119  *Solve house using mip minimizing dfr_house ;
+ 120   
+ 121  *Solve quarter using mip minimizing dfr_total ;
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                 11/09/15 17:46:39 Page 4
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Include File Summary
+
+
+   SEQ   GLOBAL TYPE      PARENT   LOCAL  FILENAME
+
+     1        1 INPUT          0       0  C:\Users\toond_000\Documents\A Student\P&O 3\Django\ESAT-EnergyHousing\SEH-frigo-huis-vriezer-database-communicatie (1).gms
+     2        2 GDXIN          1       2  C:\Users\toond_000\Documents\A Student\P&O 3\Django\ESAT-EnergyHousing\_gams_py_gdb0.gdx
+
+
+COMPILATION TIME     =        0.000 SECONDS      3 MB  24.5.4 r54492 WEX-VS8
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                 11/09/15 17:46:39 Page 5
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Equation Listing    SOLVE fridge Using MIP From line 115
+
+
+---- q_power_ref  =E=  power used by the refrigator
+
+q_power_ref(1)..  dfr_ref - 1.01*zfr_ref(1) - 1.01*zfr_ref(0) - 1.01*zfr_ref(2) - 1.01*zfr_ref(3) - 1.01*zfr_ref(4) - 1.01*zfr_ref(5) - 1.01*zfr_ref(6) - 1.01*zfr_ref(7) - 1.01*zfr_ref(8) - 1.01*zfr_ref(9) - 1.01*zfr_ref(10) - 1.01*zfr_ref(11)
+     
+      - 1.01*zfr_ref(12) - 1.01*zfr_ref(13) - 1.01*zfr_ref(14) - 1.01*zfr_ref(15) - 1.01*zfr_ref(16) - 1.01*zfr_ref(17) - 1.01*zfr_ref(18) - 1.01*zfr_ref(19) - 1.01*zfr_ref(20) - 1.01*zfr_ref(21) - 1.01*zfr_ref(22) - 1.01*zfr_ref(23) =E= 0 ; (LHS = 0)
+     
+
+---- q_temp_equ_ref  =E=  links heat difference and temperature difference for the refrigator
+
+q_temp_equ_ref(1,1)..  - Qin_ref(1) + Qout_ref(1) - 1.005*temp_ref(1) + 1.005*temp_ref(0) =E= 0 ; (LHS = 0)
+     
+q_temp_equ_ref(0,1)..  - Qin_ref(0) + Qout_ref(0) - 1.005*temp_ref(0) + 1.005*temp_ref(2) =E= 0 ; (LHS = 0)
+     
+q_temp_equ_ref(2,1)..  - Qin_ref(2) + Qout_ref(2) - 1.005*temp_ref(2) + 1.005*temp_ref(3) =E= 0 ; (LHS = 0)
+     
+q_temp_equ_ref(3,1)..  - Qin_ref(3) + Qout_ref(3) - 1.005*temp_ref(3) + 1.005*temp_ref(4) =E= 0 ; (LHS = 0)
+     
+q_temp_equ_ref(4,1)..  - Qin_ref(4) + Qout_ref(4) - 1.005*temp_ref(4) + 1.005*temp_ref(5) =E= 0 ; (LHS = 0)
+     
+q_temp_equ_ref(5,1)..  - Qin_ref(5) + Qout_ref(5) - 1.005*temp_ref(5) + 1.005*temp_ref(6) =E= 0 ; (LHS = 0)
+     
+q_temp_equ_ref(6,1)..  - Qin_ref(6) + Qout_ref(6) - 1.005*temp_ref(6) + 1.005*temp_ref(7) =E= 0 ; (LHS = 0)
+     
+q_temp_equ_ref(7,1)..  - Qin_ref(7) + Qout_ref(7) - 1.005*temp_ref(7) + 1.005*temp_ref(8) =E= 0 ; (LHS = 0)
+     
+q_temp_equ_ref(8,1)..  - Qin_ref(8) + Qout_ref(8) - 1.005*temp_ref(8) + 1.005*temp_ref(9) =E= 0 ; (LHS = 0)
+     
+q_temp_equ_ref(9,1)..  - Qin_ref(9) + Qout_ref(9) - 1.005*temp_ref(9) + 1.005*temp_ref(10) =E= 0 ; (LHS = 0)
+     
+q_temp_equ_ref(10,1)..  - Qin_ref(10) + Qout_ref(10) - 1.005*temp_ref(10) + 1.005*temp_ref(11) =E= 0 ; (LHS = 0)
+     
+q_temp_equ_ref(11,1)..  - Qin_ref(11) + Qout_ref(11) - 1.005*temp_ref(11) + 1.005*temp_ref(12) =E= 0 ; (LHS = 0)
+     
+q_temp_equ_ref(12,1)..  - Qin_ref(12) + Qout_ref(12) - 1.005*temp_ref(12) + 1.005*temp_ref(13) =E= 0 ; (LHS = 0)
+     
+q_temp_equ_ref(13,1)..  - Qin_ref(13) + Qout_ref(13) - 1.005*temp_ref(13) + 1.005*temp_ref(14) =E= 0 ; (LHS = 0)
+     
+q_temp_equ_ref(14,1)..  - Qin_ref(14) + Qout_ref(14) - 1.005*temp_ref(14) + 1.005*temp_ref(15) =E= 0 ; (LHS = 0)
+     
+q_temp_equ_ref(15,1)..  - Qin_ref(15) + Qout_ref(15) - 1.005*temp_ref(15) + 1.005*temp_ref(16) =E= 0 ; (LHS = 0)
+     
+q_temp_equ_ref(16,1)..  - Qin_ref(16) + Qout_ref(16) - 1.005*temp_ref(16) + 1.005*temp_ref(17) =E= 0 ; (LHS = 0)
+     
+q_temp_equ_ref(17,1)..  - Qin_ref(17) + Qout_ref(17) - 1.005*temp_ref(17) + 1.005*temp_ref(18) =E= 0 ; (LHS = 0)
+     
+q_temp_equ_ref(18,1)..  - Qin_ref(18) + Qout_ref(18) - 1.005*temp_ref(18) + 1.005*temp_ref(19) =E= 0 ; (LHS = 0)
+     
+q_temp_equ_ref(19,1)..  - Qin_ref(19) + Qout_ref(19) - 1.005*temp_ref(19) + 1.005*temp_ref(20) =E= 0 ; (LHS = 0)
+     
+q_temp_equ_ref(20,1)..  - Qin_ref(20) + Qout_ref(20) - 1.005*temp_ref(20) + 1.005*temp_ref(21) =E= 0 ; (LHS = 0)
+     
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                 11/09/15 17:46:39 Page 6
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Equation Listing    SOLVE fridge Using MIP From line 115
+
+
+     q_temp_equ_ref  =E=  links heat difference and temperature difference for the refrigator
+
+q_temp_equ_ref(21,1)..  - Qin_ref(21) + Qout_ref(21) - 1.005*temp_ref(21) + 1.005*temp_ref(22) =E= 0 ; (LHS = 0)
+     
+q_temp_equ_ref(22,1)..  - Qin_ref(22) + Qout_ref(22) - 1.005*temp_ref(22) + 1.005*temp_ref(23) =E= 0 ; (LHS = 0)
+     
+q_temp_equ_ref(23,1)..  - Qin_ref(23) + Qout_ref(23) + 1.005*temp_ref(1) - 1.005*temp_ref(23) =E= 0 ; (LHS = 0)
+     
+
+---- q_heat_loss_ref  =E=  loss of heat for the refrigator
+
+q_heat_loss_ref(1,1)..  Qout_ref(1) - 0.23*temp_ref(1) =E= -66.7 ; (LHS = 0, INFES = 66.7 ****)
+     
+q_heat_loss_ref(0,1)..  Qout_ref(0) - 0.23*temp_ref(0) =E= -66.7 ; (LHS = 0, INFES = 66.7 ****)
+     
+q_heat_loss_ref(2,1)..  Qout_ref(2) - 0.23*temp_ref(2) =E= -66.7 ; (LHS = 0, INFES = 66.7 ****)
+     
+q_heat_loss_ref(3,1)..  Qout_ref(3) - 0.23*temp_ref(3) =E= -66.7 ; (LHS = 0, INFES = 66.7 ****)
+     
+q_heat_loss_ref(4,1)..  Qout_ref(4) - 0.23*temp_ref(4) =E= -66.7 ; (LHS = 0, INFES = 66.7 ****)
+     
+q_heat_loss_ref(5,1)..  Qout_ref(5) - 0.23*temp_ref(5) =E= -66.7 ; (LHS = 0, INFES = 66.7 ****)
+     
+q_heat_loss_ref(6,1)..  Qout_ref(6) - 0.23*temp_ref(6) =E= -66.7 ; (LHS = 0, INFES = 66.7 ****)
+     
+q_heat_loss_ref(7,1)..  Qout_ref(7) - 0.23*temp_ref(7) =E= -66.7 ; (LHS = 0, INFES = 66.7 ****)
+     
+q_heat_loss_ref(8,1)..  Qout_ref(8) - 0.23*temp_ref(8) =E= -66.7 ; (LHS = 0, INFES = 66.7 ****)
+     
+q_heat_loss_ref(9,1)..  Qout_ref(9) - 0.23*temp_ref(9) =E= -66.7 ; (LHS = 0, INFES = 66.7 ****)
+     
+q_heat_loss_ref(10,1)..  Qout_ref(10) - 0.23*temp_ref(10) =E= -66.7 ; (LHS = 0, INFES = 66.7 ****)
+     
+q_heat_loss_ref(11,1)..  Qout_ref(11) - 0.23*temp_ref(11) =E= -66.7 ; (LHS = 0, INFES = 66.7 ****)
+     
+q_heat_loss_ref(12,1)..  Qout_ref(12) - 0.23*temp_ref(12) =E= -66.7 ; (LHS = 0, INFES = 66.7 ****)
+     
+q_heat_loss_ref(13,1)..  Qout_ref(13) - 0.23*temp_ref(13) =E= -66.7 ; (LHS = 0, INFES = 66.7 ****)
+     
+q_heat_loss_ref(14,1)..  Qout_ref(14) - 0.23*temp_ref(14) =E= -66.7 ; (LHS = 0, INFES = 66.7 ****)
+     
+q_heat_loss_ref(15,1)..  Qout_ref(15) - 0.23*temp_ref(15) =E= -66.7 ; (LHS = 0, INFES = 66.7 ****)
+     
+q_heat_loss_ref(16,1)..  Qout_ref(16) - 0.23*temp_ref(16) =E= -66.7 ; (LHS = 0, INFES = 66.7 ****)
+     
+q_heat_loss_ref(17,1)..  Qout_ref(17) - 0.23*temp_ref(17) =E= -66.7 ; (LHS = 0, INFES = 66.7 ****)
+     
+q_heat_loss_ref(18,1)..  Qout_ref(18) - 0.23*temp_ref(18) =E= -66.7 ; (LHS = 0, INFES = 66.7 ****)
+     
+q_heat_loss_ref(19,1)..  Qout_ref(19) - 0.23*temp_ref(19) =E= -66.7 ; (LHS = 0, INFES = 66.7 ****)
+     
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                 11/09/15 17:46:39 Page 7
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Equation Listing    SOLVE fridge Using MIP From line 115
+
+
+     q_heat_loss_ref  =E=  loss of heat for the refrigator
+
+q_heat_loss_ref(20,1)..  Qout_ref(20) - 0.23*temp_ref(20) =E= -66.7 ; (LHS = 0, INFES = 66.7 ****)
+     
+q_heat_loss_ref(21,1)..  Qout_ref(21) - 0.23*temp_ref(21) =E= -66.7 ; (LHS = 0, INFES = 66.7 ****)
+     
+q_heat_loss_ref(22,1)..  Qout_ref(22) - 0.23*temp_ref(22) =E= -66.7 ; (LHS = 0, INFES = 66.7 ****)
+     
+q_heat_loss_ref(23,1)..  Qout_ref(23) - 0.23*temp_ref(23) =E= -66.7 ; (LHS = 0, INFES = 66.7 ****)
+     
+
+---- q_heat_gain_ref  =E=  gain of heat for the refrigator
+
+q_heat_gain_ref(1,1)..  Qin_ref(1) + 4.545*zfr_ref(1) =E= 0 ; (LHS = 0)
+     
+q_heat_gain_ref(0,1)..  Qin_ref(0) + 4.545*zfr_ref(0) =E= 0 ; (LHS = 0)
+     
+q_heat_gain_ref(2,1)..  Qin_ref(2) + 4.545*zfr_ref(2) =E= 0 ; (LHS = 0)
+     
+q_heat_gain_ref(3,1)..  Qin_ref(3) + 4.545*zfr_ref(3) =E= 0 ; (LHS = 0)
+     
+q_heat_gain_ref(4,1)..  Qin_ref(4) + 4.545*zfr_ref(4) =E= 0 ; (LHS = 0)
+     
+q_heat_gain_ref(5,1)..  Qin_ref(5) + 4.545*zfr_ref(5) =E= 0 ; (LHS = 0)
+     
+q_heat_gain_ref(6,1)..  Qin_ref(6) + 4.545*zfr_ref(6) =E= 0 ; (LHS = 0)
+     
+q_heat_gain_ref(7,1)..  Qin_ref(7) + 4.545*zfr_ref(7) =E= 0 ; (LHS = 0)
+     
+q_heat_gain_ref(8,1)..  Qin_ref(8) + 4.545*zfr_ref(8) =E= 0 ; (LHS = 0)
+     
+q_heat_gain_ref(9,1)..  Qin_ref(9) + 4.545*zfr_ref(9) =E= 0 ; (LHS = 0)
+     
+q_heat_gain_ref(10,1)..  Qin_ref(10) + 4.545*zfr_ref(10) =E= 0 ; (LHS = 0)
+     
+q_heat_gain_ref(11,1)..  Qin_ref(11) + 4.545*zfr_ref(11) =E= 0 ; (LHS = 0)
+     
+q_heat_gain_ref(12,1)..  Qin_ref(12) + 4.545*zfr_ref(12) =E= 0 ; (LHS = 0)
+     
+q_heat_gain_ref(13,1)..  Qin_ref(13) + 4.545*zfr_ref(13) =E= 0 ; (LHS = 0)
+     
+q_heat_gain_ref(14,1)..  Qin_ref(14) + 4.545*zfr_ref(14) =E= 0 ; (LHS = 0)
+     
+q_heat_gain_ref(15,1)..  Qin_ref(15) + 4.545*zfr_ref(15) =E= 0 ; (LHS = 0)
+     
+q_heat_gain_ref(16,1)..  Qin_ref(16) + 4.545*zfr_ref(16) =E= 0 ; (LHS = 0)
+     
+q_heat_gain_ref(17,1)..  Qin_ref(17) + 4.545*zfr_ref(17) =E= 0 ; (LHS = 0)
+     
+q_heat_gain_ref(18,1)..  Qin_ref(18) + 4.545*zfr_ref(18) =E= 0 ; (LHS = 0)
+     
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                 11/09/15 17:46:39 Page 8
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Equation Listing    SOLVE fridge Using MIP From line 115
+
+
+     q_heat_gain_ref  =E=  gain of heat for the refrigator
+
+q_heat_gain_ref(19,1)..  Qin_ref(19) + 4.545*zfr_ref(19) =E= 0 ; (LHS = 0)
+     
+q_heat_gain_ref(20,1)..  Qin_ref(20) + 4.545*zfr_ref(20) =E= 0 ; (LHS = 0)
+     
+q_heat_gain_ref(21,1)..  Qin_ref(21) + 4.545*zfr_ref(21) =E= 0 ; (LHS = 0)
+     
+q_heat_gain_ref(22,1)..  Qin_ref(22) + 4.545*zfr_ref(22) =E= 0 ; (LHS = 0)
+     
+q_heat_gain_ref(23,1)..  Qin_ref(23) + 4.545*zfr_ref(23) =E= 0 ; (LHS = 0)
+     
+
+---- q_tmin_ref  =G=  minimum temperature of the refrigator
+
+q_tmin_ref(1)..  temp_ref(1) =G= 270 ; (LHS = 0, INFES = 270 ****)
+     
+q_tmin_ref(0)..  temp_ref(0) =G= 270 ; (LHS = 0, INFES = 270 ****)
+     
+q_tmin_ref(2)..  temp_ref(2) =G= 270 ; (LHS = 0, INFES = 270 ****)
+     
+q_tmin_ref(3)..  temp_ref(3) =G= 270 ; (LHS = 0, INFES = 270 ****)
+     
+q_tmin_ref(4)..  temp_ref(4) =G= 270 ; (LHS = 0, INFES = 270 ****)
+     
+q_tmin_ref(5)..  temp_ref(5) =G= 270 ; (LHS = 0, INFES = 270 ****)
+     
+q_tmin_ref(6)..  temp_ref(6) =G= 270 ; (LHS = 0, INFES = 270 ****)
+     
+q_tmin_ref(7)..  temp_ref(7) =G= 270 ; (LHS = 0, INFES = 270 ****)
+     
+q_tmin_ref(8)..  temp_ref(8) =G= 270 ; (LHS = 0, INFES = 270 ****)
+     
+q_tmin_ref(9)..  temp_ref(9) =G= 270 ; (LHS = 0, INFES = 270 ****)
+     
+q_tmin_ref(10)..  temp_ref(10) =G= 270 ; (LHS = 0, INFES = 270 ****)
+     
+q_tmin_ref(11)..  temp_ref(11) =G= 270 ; (LHS = 0, INFES = 270 ****)
+     
+q_tmin_ref(12)..  temp_ref(12) =G= 270 ; (LHS = 0, INFES = 270 ****)
+     
+q_tmin_ref(13)..  temp_ref(13) =G= 270 ; (LHS = 0, INFES = 270 ****)
+     
+q_tmin_ref(14)..  temp_ref(14) =G= 270 ; (LHS = 0, INFES = 270 ****)
+     
+q_tmin_ref(15)..  temp_ref(15) =G= 270 ; (LHS = 0, INFES = 270 ****)
+     
+q_tmin_ref(16)..  temp_ref(16) =G= 270 ; (LHS = 0, INFES = 270 ****)
+     
+q_tmin_ref(17)..  temp_ref(17) =G= 270 ; (LHS = 0, INFES = 270 ****)
+     
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                 11/09/15 17:46:39 Page 9
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Equation Listing    SOLVE fridge Using MIP From line 115
+
+
+     q_tmin_ref  =G=  minimum temperature of the refrigator
+
+q_tmin_ref(18)..  temp_ref(18) =G= 270 ; (LHS = 0, INFES = 270 ****)
+     
+q_tmin_ref(19)..  temp_ref(19) =G= 270 ; (LHS = 0, INFES = 270 ****)
+     
+q_tmin_ref(20)..  temp_ref(20) =G= 270 ; (LHS = 0, INFES = 270 ****)
+     
+q_tmin_ref(21)..  temp_ref(21) =G= 270 ; (LHS = 0, INFES = 270 ****)
+     
+q_tmin_ref(22)..  temp_ref(22) =G= 270 ; (LHS = 0, INFES = 270 ****)
+     
+q_tmin_ref(23)..  temp_ref(23) =G= 270 ; (LHS = 0, INFES = 270 ****)
+     
+
+---- q_tmax_ref  =L=  maximum temperature of the refrigator
+
+q_tmax_ref(1)..  temp_ref(1) =L= 277 ; (LHS = 0)
+     
+q_tmax_ref(0)..  temp_ref(0) =L= 277 ; (LHS = 0)
+     
+q_tmax_ref(2)..  temp_ref(2) =L= 277 ; (LHS = 0)
+     
+q_tmax_ref(3)..  temp_ref(3) =L= 277 ; (LHS = 0)
+     
+q_tmax_ref(4)..  temp_ref(4) =L= 277 ; (LHS = 0)
+     
+q_tmax_ref(5)..  temp_ref(5) =L= 277 ; (LHS = 0)
+     
+q_tmax_ref(6)..  temp_ref(6) =L= 277 ; (LHS = 0)
+     
+q_tmax_ref(7)..  temp_ref(7) =L= 277 ; (LHS = 0)
+     
+q_tmax_ref(8)..  temp_ref(8) =L= 277 ; (LHS = 0)
+     
+q_tmax_ref(9)..  temp_ref(9) =L= 277 ; (LHS = 0)
+     
+q_tmax_ref(10)..  temp_ref(10) =L= 277 ; (LHS = 0)
+     
+q_tmax_ref(11)..  temp_ref(11) =L= 277 ; (LHS = 0)
+     
+q_tmax_ref(12)..  temp_ref(12) =L= 277 ; (LHS = 0)
+     
+q_tmax_ref(13)..  temp_ref(13) =L= 277 ; (LHS = 0)
+     
+q_tmax_ref(14)..  temp_ref(14) =L= 277 ; (LHS = 0)
+     
+q_tmax_ref(15)..  temp_ref(15) =L= 277 ; (LHS = 0)
+     
+q_tmax_ref(16)..  temp_ref(16) =L= 277 ; (LHS = 0)
+     
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/09/15 17:46:39 Page 10
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Equation Listing    SOLVE fridge Using MIP From line 115
+
+
+     q_tmax_ref  =L=  maximum temperature of the refrigator
+
+q_tmax_ref(17)..  temp_ref(17) =L= 277 ; (LHS = 0)
+     
+q_tmax_ref(18)..  temp_ref(18) =L= 277 ; (LHS = 0)
+     
+q_tmax_ref(19)..  temp_ref(19) =L= 277 ; (LHS = 0)
+     
+q_tmax_ref(20)..  temp_ref(20) =L= 277 ; (LHS = 0)
+     
+q_tmax_ref(21)..  temp_ref(21) =L= 277 ; (LHS = 0)
+     
+q_tmax_ref(22)..  temp_ref(22) =L= 277 ; (LHS = 0)
+     
+q_tmax_ref(23)..  temp_ref(23) =L= 277 ; (LHS = 0)
+     
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/09/15 17:46:39 Page 11
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Column Listing      SOLVE fridge Using MIP From line 115
+
+
+---- Qin_ref  Heat we put in the refrigator (neg.)
+
+Qin_ref(1)
+                (.LO, .L, .UP, .M = -INF, 0, +INF, 0)
+       -1       q_temp_equ_ref(1,1)
+        1       q_heat_gain_ref(1,1)
+
+Qin_ref(0)
+                (.LO, .L, .UP, .M = -INF, 0, +INF, 0)
+       -1       q_temp_equ_ref(0,1)
+        1       q_heat_gain_ref(0,1)
+
+Qin_ref(2)
+                (.LO, .L, .UP, .M = -INF, 0, +INF, 0)
+       -1       q_temp_equ_ref(2,1)
+        1       q_heat_gain_ref(2,1)
+
+REMAINING 21 ENTRIES SKIPPED
+
+---- Qout_ref  Heat which escapes from the refrigator
+
+Qout_ref(1)
+                (.LO, .L, .UP, .M = -INF, 0, +INF, 0)
+        1       q_temp_equ_ref(1,1)
+        1       q_heat_loss_ref(1,1)
+
+Qout_ref(0)
+                (.LO, .L, .UP, .M = -INF, 0, +INF, 0)
+        1       q_temp_equ_ref(0,1)
+        1       q_heat_loss_ref(0,1)
+
+Qout_ref(2)
+                (.LO, .L, .UP, .M = -INF, 0, +INF, 0)
+        1       q_temp_equ_ref(2,1)
+        1       q_heat_loss_ref(2,1)
+
+REMAINING 21 ENTRIES SKIPPED
+
+---- temp_ref  Temperature of the refrigator(in K)
+
+temp_ref(1)
+                (.LO, .L, .UP, .M = -INF, 0, +INF, 0)
+       -1.005   q_temp_equ_ref(1,1)
+        1.005   q_temp_equ_ref(23,1)
+       -0.23    q_heat_loss_ref(1,1)
+        1       q_tmin_ref(1)
+        1       q_tmax_ref(1)
+
+temp_ref(0)
+                (.LO, .L, .UP, .M = -INF, 0, +INF, 0)
+        1.005   q_temp_equ_ref(1,1)
+       -1.005   q_temp_equ_ref(0,1)
+       -0.23    q_heat_loss_ref(0,1)
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/09/15 17:46:39 Page 12
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Column Listing      SOLVE fridge Using MIP From line 115
+
+
+     temp_ref  Temperature of the refrigator(in K)
+
+        1       q_tmin_ref(0)
+        1       q_tmax_ref(0)
+
+temp_ref(2)
+                (.LO, .L, .UP, .M = -INF, 0, +INF, 0)
+        1.005   q_temp_equ_ref(0,1)
+       -1.005   q_temp_equ_ref(2,1)
+       -0.23    q_heat_loss_ref(2,1)
+        1       q_tmin_ref(2)
+        1       q_tmax_ref(2)
+
+REMAINING 21 ENTRIES SKIPPED
+
+---- dfr_ref  Power consumated by the refrigator
+
+dfr_ref
+                (.LO, .L, .UP, .M = -INF, 0, +INF, 0)
+        1       q_power_ref(1)
+
+
+---- zfr_ref  Defines whether the refrigator is on or off
+
+zfr_ref(1)
+                (.LO, .L, .UP, .M = 0, 0, 1, 0)
+       -1.01    q_power_ref(1)
+        4.545   q_heat_gain_ref(1,1)
+
+zfr_ref(0)
+                (.LO, .L, .UP, .M = 0, 0, 1, 0)
+       -1.01    q_power_ref(1)
+        4.545   q_heat_gain_ref(0,1)
+
+zfr_ref(2)
+                (.LO, .L, .UP, .M = 0, 0, 1, 0)
+       -1.01    q_power_ref(1)
+        4.545   q_heat_gain_ref(2,1)
+
+REMAINING 21 ENTRIES SKIPPED
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/09/15 17:46:39 Page 13
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Model Statistics    SOLVE fridge Using MIP From line 115
+
+
+MODEL STATISTICS
+
+BLOCKS OF EQUATIONS           6     SINGLE EQUATIONS          121
+BLOCKS OF VARIABLES           5     SINGLE VARIABLES           97
+NON ZERO ELEMENTS           265     DISCRETE VARIABLES         24
+
+
+GENERATION TIME      =        0.015 SECONDS      4 MB  24.5.4 r54492 WEX-VS8
+
+
+EXECUTION TIME       =        0.015 SECONDS      4 MB  24.5.4 r54492 WEX-VS8
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/09/15 17:46:39 Page 14
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Solution Report     SOLVE fridge Using MIP From line 115
+
+
+               S O L V E      S U M M A R Y
+
+     MODEL   fridge              OBJECTIVE  dfr_ref
+     TYPE    MIP                 DIRECTION  MINIMIZE
+     SOLVER  CPLEX               FROM LINE  115
+
+**** SOLVER STATUS     1 Normal Completion         
+**** MODEL STATUS      8 Integer Solution          
+**** OBJECTIVE VALUE               19.1900
+
+ RESOURCE USAGE, LIMIT          0.015      1000.000
+ ITERATION COUNT, LIMIT       174    2000000000
+
+IBM ILOG CPLEX   24.5.4 r54492 Released Oct 15, 2015 VS8 x86 32bit/MS Windows 
+Cplex 12.6.2.0
+
+Space for names approximately 0.00 Mb
+Use option 'names no' to turn use of names off
+MIP status(102): integer optimal, tolerance
+Cplex Time: 0.01sec (det. 3.81 ticks)
+Fixing integer variables, and solving final LP...
+Fixed MIP status(1): optimal
+Cplex Time: 0.00sec (det. 0.10 ticks)
+Solution satisfies tolerances.
+
+MIP Solution:           19.190000    (174 iterations, 58 nodes)
+Final Solve:            19.190000    (0 iterations)
+
+Best possible:          17.620155
+Absolute gap:            1.569845
+Relative gap:            0.081805
+
+
+---- EQU q_power_ref  power used by the refrigator
+
+         LOWER          LEVEL          UPPER         MARGINAL
+
+1          .              .              .             1.0000      
+
+---- EQU q_temp_equ_ref  links heat difference and temperature difference for the refrigator
+
+            LOWER          LEVEL          UPPER         MARGINAL
+
+1 .1          .              .              .             EPS         
+0 .1          .              .              .             EPS         
+2 .1          .              .              .             EPS         
+3 .1          .              .              .             EPS         
+4 .1          .              .              .             EPS         
+5 .1          .              .              .             EPS         
+6 .1          .              .              .             EPS         
+7 .1          .              .              .             EPS         
+8 .1          .              .              .             EPS         
+9 .1          .              .              .             EPS         
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/09/15 17:46:39 Page 15
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Solution Report     SOLVE fridge Using MIP From line 115
+
+
+     EQU q_temp_equ_ref  links heat difference and temperature difference for the refrigator
+
+            LOWER          LEVEL          UPPER         MARGINAL
+
+10.1          .              .              .             EPS         
+11.1          .              .              .             EPS         
+12.1          .              .              .             EPS         
+13.1          .              .              .             EPS         
+14.1          .              .              .             EPS         
+15.1          .              .              .             EPS         
+16.1          .              .              .             EPS         
+17.1          .              .              .             EPS         
+18.1          .              .              .             EPS         
+19.1          .              .              .             EPS         
+20.1          .              .              .             EPS         
+21.1          .              .              .             EPS         
+22.1          .              .              .             EPS         
+23.1          .              .              .             EPS         
+
+---- EQU q_heat_loss_ref  loss of heat for the refrigator
+
+            LOWER          LEVEL          UPPER         MARGINAL
+
+1 .1       -66.7000       -66.7000       -66.7000         EPS         
+0 .1       -66.7000       -66.7000       -66.7000         EPS         
+2 .1       -66.7000       -66.7000       -66.7000         EPS         
+3 .1       -66.7000       -66.7000       -66.7000         EPS         
+4 .1       -66.7000       -66.7000       -66.7000         EPS         
+5 .1       -66.7000       -66.7000       -66.7000         EPS         
+6 .1       -66.7000       -66.7000       -66.7000         EPS         
+7 .1       -66.7000       -66.7000       -66.7000         EPS         
+8 .1       -66.7000       -66.7000       -66.7000         EPS         
+9 .1       -66.7000       -66.7000       -66.7000         EPS         
+10.1       -66.7000       -66.7000       -66.7000         EPS         
+11.1       -66.7000       -66.7000       -66.7000         EPS         
+12.1       -66.7000       -66.7000       -66.7000         EPS         
+13.1       -66.7000       -66.7000       -66.7000         EPS         
+14.1       -66.7000       -66.7000       -66.7000         EPS         
+15.1       -66.7000       -66.7000       -66.7000         EPS         
+16.1       -66.7000       -66.7000       -66.7000         EPS         
+17.1       -66.7000       -66.7000       -66.7000         EPS         
+18.1       -66.7000       -66.7000       -66.7000         EPS         
+19.1       -66.7000       -66.7000       -66.7000         EPS         
+20.1       -66.7000       -66.7000       -66.7000         EPS         
+21.1       -66.7000       -66.7000       -66.7000         EPS         
+22.1       -66.7000       -66.7000       -66.7000         EPS         
+23.1       -66.7000       -66.7000       -66.7000         EPS         
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/09/15 17:46:39 Page 16
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Solution Report     SOLVE fridge Using MIP From line 115
+
+
+---- EQU q_heat_gain_ref  gain of heat for the refrigator
+
+            LOWER          LEVEL          UPPER         MARGINAL
+
+1 .1          .              .              .             EPS         
+0 .1          .              .              .             EPS         
+2 .1          .              .              .             EPS         
+3 .1          .              .              .             EPS         
+4 .1          .              .              .             EPS         
+5 .1          .              .              .             EPS         
+6 .1          .              .              .             EPS         
+7 .1          .              .              .             EPS         
+8 .1          .              .              .             EPS         
+9 .1          .              .              .             EPS         
+10.1          .              .              .             EPS         
+11.1          .              .              .             EPS         
+12.1          .              .              .             EPS         
+13.1          .              .              .             EPS         
+14.1          .              .              .             EPS         
+15.1          .              .              .             EPS         
+16.1          .              .              .             EPS         
+17.1          .              .              .             EPS         
+18.1          .              .              .             EPS         
+19.1          .              .              .             EPS         
+20.1          .              .              .             EPS         
+21.1          .              .              .             EPS         
+22.1          .              .              .             EPS         
+23.1          .              .              .             EPS         
+
+---- EQU q_tmin_ref  minimum temperature of the refrigator
+
+          LOWER          LEVEL          UPPER         MARGINAL
+
+1        270.0000       275.3248        +INF             .          
+0        270.0000       274.1609        +INF             .          
+2        270.0000       273.2634        +INF             .          
+3        270.0000       272.5713        +INF             .          
+4        270.0000       276.5599        +INF             .          
+5        270.0000       275.1134        +INF             .          
+6        270.0000       273.9979        +INF             .          
+7        270.0000       273.1377        +INF             .          
+8        270.0000       276.9967        +INF             .          
+9        270.0000       275.4502        +INF             .          
+10       270.0000       274.2576        +INF             .          
+11       270.0000       273.3380        +INF             .          
+12       270.0000       272.6288        +INF             .          
+13       270.0000       276.6043        +INF             .          
+14       270.0000       275.1476        +INF             .          
+15       270.0000       274.0243        +INF             .          
+16       270.0000       273.1580        +INF             .          
+17       270.0000       272.4900        +INF             .          
+18       270.0000       271.9749        +INF             .          
+19       270.0000       276.1000        +INF             .          
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/09/15 17:46:39 Page 17
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Solution Report     SOLVE fridge Using MIP From line 115
+
+
+     EQU q_tmin_ref  minimum temperature of the refrigator
+
+          LOWER          LEVEL          UPPER         MARGINAL
+
+20       270.0000       274.7587        +INF             .          
+21       270.0000       273.7244        +INF             .          
+22       270.0000       272.9268        +INF             .          
+23       270.0000       276.8341        +INF             .          
+
+---- EQU q_tmax_ref  maximum temperature of the refrigator
+
+          LOWER          LEVEL          UPPER         MARGINAL
+
+1         -INF          275.3248       277.0000          .          
+0         -INF          274.1609       277.0000          .          
+2         -INF          273.2634       277.0000          .          
+3         -INF          272.5713       277.0000          .          
+4         -INF          276.5599       277.0000          .          
+5         -INF          275.1134       277.0000          .          
+6         -INF          273.9979       277.0000          .          
+7         -INF          273.1377       277.0000          .          
+8         -INF          276.9967       277.0000          .          
+9         -INF          275.4502       277.0000          .          
+10        -INF          274.2576       277.0000          .          
+11        -INF          273.3380       277.0000          .          
+12        -INF          272.6288       277.0000          .          
+13        -INF          276.6043       277.0000          .          
+14        -INF          275.1476       277.0000          .          
+15        -INF          274.0243       277.0000          .          
+16        -INF          273.1580       277.0000          .          
+17        -INF          272.4900       277.0000          .          
+18        -INF          271.9749       277.0000          .          
+19        -INF          276.1000       277.0000          .          
+20        -INF          274.7587       277.0000          .          
+21        -INF          273.7244       277.0000          .          
+22        -INF          272.9268       277.0000          .          
+23        -INF          276.8341       277.0000          .          
+
+---- VAR Qin_ref  Heat we put in the refrigator (neg.)
+
+          LOWER          LEVEL          UPPER         MARGINAL
+
+1         -INF           -4.5450        +INF             .          
+0         -INF           -4.5450        +INF             .          
+2         -INF           -4.5450        +INF             .          
+3         -INF             .            +INF             .          
+4         -INF           -4.5450        +INF             .          
+5         -INF           -4.5450        +INF             .          
+6         -INF           -4.5450        +INF             .          
+7         -INF             .            +INF             .          
+8         -INF           -4.5450        +INF             .          
+9         -INF           -4.5450        +INF             .          
+10        -INF           -4.5450        +INF             .          
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/09/15 17:46:39 Page 18
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Solution Report     SOLVE fridge Using MIP From line 115
+
+
+     VAR Qin_ref  Heat we put in the refrigator (neg.)
+
+          LOWER          LEVEL          UPPER         MARGINAL
+
+11        -INF           -4.5450        +INF             .          
+12        -INF             .            +INF             .          
+13        -INF           -4.5450        +INF             .          
+14        -INF           -4.5450        +INF             .          
+15        -INF           -4.5450        +INF             .          
+16        -INF           -4.5450        +INF             .          
+17        -INF           -4.5450        +INF             .          
+18        -INF             .            +INF             .          
+19        -INF           -4.5450        +INF             .          
+20        -INF           -4.5450        +INF             .          
+21        -INF           -4.5450        +INF             .          
+22        -INF             .            +INF             .          
+23        -INF           -4.5450        +INF             .          
+
+---- VAR Qout_ref  Heat which escapes from the refrigator
+
+          LOWER          LEVEL          UPPER         MARGINAL
+
+1         -INF           -3.3753        +INF             .          
+0         -INF           -3.6430        +INF             .          
+2         -INF           -3.8494        +INF             .          
+3         -INF           -4.0086        +INF             .          
+4         -INF           -3.0912        +INF             .          
+5         -INF           -3.4239        +INF             .          
+6         -INF           -3.6805        +INF             .          
+7         -INF           -3.8783        +INF             .          
+8         -INF           -2.9908        +INF             .          
+9         -INF           -3.3465        +INF             .          
+10        -INF           -3.6207        +INF             .          
+11        -INF           -3.8323        +INF             .          
+12        -INF           -3.9954        +INF             .          
+13        -INF           -3.0810        +INF             .          
+14        -INF           -3.4161        +INF             .          
+15        -INF           -3.6744        +INF             .          
+16        -INF           -3.8737        +INF             .          
+17        -INF           -4.0273        +INF             .          
+18        -INF           -4.1458        +INF             .          
+19        -INF           -3.1970        +INF             .          
+20        -INF           -3.5055        +INF             .          
+21        -INF           -3.7434        +INF             .          
+22        -INF           -3.9268        +INF             .          
+23        -INF           -3.0282        +INF             .          
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/09/15 17:46:39 Page 19
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Solution Report     SOLVE fridge Using MIP From line 115
+
+
+---- VAR temp_ref  Temperature of the refrigator(in K)
+
+          LOWER          LEVEL          UPPER         MARGINAL
+
+1         -INF          275.3248        +INF             .          
+0         -INF          274.1609        +INF             .          
+2         -INF          273.2634        +INF             .          
+3         -INF          272.5713        +INF             .          
+4         -INF          276.5599        +INF             .          
+5         -INF          275.1134        +INF             .          
+6         -INF          273.9979        +INF             .          
+7         -INF          273.1377        +INF             .          
+8         -INF          276.9967        +INF             .          
+9         -INF          275.4502        +INF             .          
+10        -INF          274.2576        +INF             .          
+11        -INF          273.3380        +INF             .          
+12        -INF          272.6288        +INF             .          
+13        -INF          276.6043        +INF             .          
+14        -INF          275.1476        +INF             .          
+15        -INF          274.0243        +INF             .          
+16        -INF          273.1580        +INF             .          
+17        -INF          272.4900        +INF             .          
+18        -INF          271.9749        +INF             .          
+19        -INF          276.1000        +INF             .          
+20        -INF          274.7587        +INF             .          
+21        -INF          273.7244        +INF             .          
+22        -INF          272.9268        +INF             .          
+23        -INF          276.8341        +INF             .          
+
+                           LOWER          LEVEL          UPPER         MARGINAL
+
+---- VAR dfr_ref           -INF           19.1900        +INF             .          
+
+  dfr_ref  Power consumated by the refrigator
+
+---- VAR zfr_ref  Defines whether the refrigator is on or off
+
+          LOWER          LEVEL          UPPER         MARGINAL
+
+1           .             1.0000         1.0000         1.0100      
+0           .             1.0000         1.0000         1.0100      
+2           .             1.0000         1.0000         1.0100      
+3           .              .             1.0000         1.0100      
+4           .             1.0000         1.0000         1.0100      
+5           .             1.0000         1.0000         1.0100      
+6           .             1.0000         1.0000         1.0100      
+7           .              .             1.0000         1.0100      
+8           .             1.0000         1.0000         1.0100      
+9           .             1.0000         1.0000         1.0100      
+10          .             1.0000         1.0000         1.0100      
+11          .             1.0000         1.0000         1.0100      
+12          .              .             1.0000         1.0100      
+13          .             1.0000         1.0000         1.0100      
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/09/15 17:46:39 Page 20
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Solution Report     SOLVE fridge Using MIP From line 115
+
+
+     VAR zfr_ref  Defines whether the refrigator is on or off
+
+          LOWER          LEVEL          UPPER         MARGINAL
+
+14          .             1.0000         1.0000         1.0100      
+15          .             1.0000         1.0000         1.0100      
+16          .             1.0000         1.0000         1.0100      
+17          .             1.0000         1.0000         1.0100      
+18          .              .             1.0000         1.0100      
+19          .             1.0000         1.0000         1.0100      
+20          .             1.0000         1.0000         1.0100      
+21          .             1.0000         1.0000         1.0100      
+22          .              .             1.0000         1.0100      
+23          .             1.0000         1.0000         1.0100      
+
+
+**** REPORT SUMMARY :        0     NONOPT
+                             0 INFEASIBLE
+                             0  UNBOUNDED
+
+
+EXECUTION TIME       =        0.000 SECONDS      2 MB  24.5.4 r54492 WEX-VS8
+
+
+USER: GAMS Development Corporation, Washington, DC   G871201/0000CA-ANY
+      Free Demo,  202-342-0180,  sales@gams.com,  www.gams.com   DC0000
+
+
+**** FILE SUMMARY
+
+Input      C:\Users\toond_000\Documents\A Student\P&O 3\Django\ESAT-EnergyHousing\SEH-frigo-huis-vriezer-database-communicatie (1).gms
+Output     C:\Users\toond_000\Documents\A Student\P&O 3\Django\ESAT-EnergyHousing\SEH-frigo-huis-vriezer-database-communicatie (1).lst

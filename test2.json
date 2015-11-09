@@ -1,0 +1,69 @@
+[
+{
+  "fields": {
+    "neighborhood_name": "Buurt",
+    "ambient_temperature": 20.0,
+    "power_consumed": 0.0,
+    "energy_price": 1.0
+  },
+  "model": "smartgrid.neighborhood",
+  "pk": 2
+},
+{
+  "fields": {
+    "neighborhood_name": "niet buurt",
+    "ambient_temperature": 21.0,
+    "power_consumed": 100.0,
+    "energy_price": 1.0
+  },
+  "model": "smartgrid.neighborhood",
+  "pk": 3
+},
+{
+  "fields": {
+    "house_name": "Familie A",
+    "neighbourhood": 2
+  },
+  "model": "smartgrid.house",
+  "pk": 2
+},
+{
+  "fields": {
+    "house_name": "Familie B",
+    "neighbourhood": 2
+  },
+  "model": "smartgrid.house",
+  "pk": 3
+},
+{
+  "fields": {
+    "house_name": "Familie C",
+    "neighbourhood": 3
+  },
+  "model": "smartgrid.house",
+  "pk": 4
+},
+{
+  "fields": {
+    "house": 2,
+    "room_name": "Keuken"
+  },
+  "model": "smartgrid.room",
+  "pk": 2
+},
+{
+  "fields": {
+    "coefficient_of_performance": 0.0,
+    "room": 2,
+    "power_required": 0.0,
+    "currently_on": false,
+    "priority": 0,
+    "mass_of_air": 0.0,
+    "power_consumed": 0.0,
+    "isolation_coefficient": 0.0,
+    "appliance_name": "Koelkast"
+  },
+  "model": "smartgrid.heatloadinvariablepower",
+  "pk": 2
+}
+]

@@ -138,7 +138,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='house',
-            name='neighbourhood',
+            name='neighborhood',
             field=models.ForeignKey(to='smartgrid.Neighborhood'),
         ),
         migrations.AddField(
