@@ -61,11 +61,6 @@ def auth_view(request):
         return HttpResponse(template.render())
 
 
-def loggedin(request):
-    return render_to_response('smartgrid/loggedin.html',
-                              {'full_name': request.user.username})
-
-
 def invalid_login(request):
     return render_to_response('smartgrid/invalid_login.html')
 
@@ -84,18 +79,14 @@ def home(request):
                         {'full_name': request.user.username})
 
 
-def appliances(request):
+def rooms(request):
     rooms_list = Room.objects.all()
-    context = {'rooms_list': rooms_list}
-    return render(request, 'smartgrid/appliances.html', context)
+    return render(request, 'smartgrid/rooms.html', {'rooms_list': rooms_list})
 
 
-def appliance_detail(request):
-    pass
-
-
-
-
+def room_detail(request, room_id):
+    room = get_object_or_404(Room, pk=room_id)
+    return render(request, 'smartgrid/room_detail.html', {'room': room})
 
 
 
