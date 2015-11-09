@@ -12,12 +12,32 @@ from .models import *
 
 # Create your views here.
 
+# Prehomepage
+
 
 def testpage(request):
     # template = loader.get_template('smartgrid/prehomepage.html')
     print 'testpage'
     context = {}
     return render(request, 'smartgrid/prehomepage.html', context)
+
+
+def resultaat(request):
+    return render(request,'smartgrid/resultaat.html')
+
+
+def info_apparaten(request):
+    return render(request,'smartgrid/info_apparaten.html')
+
+
+def vraagzijdesturing(request):
+    return render(request,'smartgrid/vraagzijdesturing.html')
+
+
+def projectverdeling(request):
+    return render(request,'smartgrid/projectverdeling.html')
+
+# Login
 
 
 def login(request):
@@ -54,6 +74,7 @@ def logout(request):
     template = loader.get_template('smartgrid/logout.html')
     return HttpResponse(template.render())
 
+# Na login
 
 def home(request):
     # template = loader.get_template('smartgrid/homepage.html')
