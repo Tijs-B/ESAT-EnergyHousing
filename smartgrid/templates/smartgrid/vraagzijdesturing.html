@@ -1,0 +1,13 @@
+{% extends "smartgrid/base_home.html" %}
+{% load staticfiles %}
+{% block content %}
+<h1>Vraagzijdesturing</h1>
+<div class="row">
+    <div class="col-md-6">
+        <p>Een belangrijk concept om dit probleem op te lossen is &#x2018;vraag volgt aanbod&#x2019;. Dit houdt in dat wanneer er meer energie is, de gebruikers worden aangespoord om te consumeren. Het omgekeerde moet gebeuren bij op een moment wanneer er weinig energieproductie is. Dat concept wordt mooi ge&iuml;llustreerd in onderstaande grafiek. Eenvoudig kunnen we dus stellen dat we de grafiek zo vlak mogelijk maken.</p>
+    </div>
+    <div class="pull-right">
+        <img src="{% static 'smartgrid/img/vraagzijdesturing.png' %}" height="300px">
+    </div>
+</div>
+{% endblock content %}

@@ -12,12 +12,32 @@ from .models import *
 
 # Create your views here.
 
+# Prehomepage
+
 
 def testpage(request):
     # template = loader.get_template('smartgrid/prehomepage.html')
     print 'testpage'
     context = {}
     return render(request, 'smartgrid/prehomepage.html', context)
+
+
+def resultaat(request):
+    return render(request,'smartgrid/resultaat.html')
+
+
+def info_apparaten(request):
+    return render(request,'smartgrid/info_apparaten.html')
+
+
+def vraagzijdesturing(request):
+    return render(request,'smartgrid/vraagzijdesturing.html')
+
+
+def projectverdeling(request):
+    return render(request,'smartgrid/projectverdeling.html')
+
+# Login
 
 
 def login(request):
@@ -30,6 +50,7 @@ def auth_view(request):
     username = request.POST.get('username', '')
     password = request.POST.get('password', '')
     user = auth.authenticate(username=username, password=password)
+    print user
 
     if user is not None:
         auth.login(request, user)
@@ -38,11 +59,6 @@ def auth_view(request):
     else:
         template = loader.get_template('smartgrid/invalid_login.html')
         return HttpResponse(template.render())
-
-
-def loggedin(request):
-    return render_to_response('smartgrid/loggedin.html',
-                              {'full_name': request.user.username})
 
 
 def invalid_login(request):
@@ -54,6 +70,7 @@ def logout(request):
     template = loader.get_template('smartgrid/logout.html')
     return HttpResponse(template.render())
 
+# Na login
 
 def home(request):
     # template = loader.get_template('smartgrid/homepage.html')
@@ -62,18 +79,14 @@ def home(request):
                         {'full_name': request.user.username})
 
 
-def appliances(request):
+def rooms(request):
     rooms_list = Room.objects.all()
-    context = {'rooms_list': rooms_list}
-    return render(request, 'smartgrid/appliances.html', context)
+    return render(request, 'smartgrid/rooms.html', {'rooms_list': rooms_list})
 
 
-def appliance_detail(request):
-    pass
-
-
-
-
+def room_detail(request, room_id):
+    room = get_object_or_404(Room, pk=room_id)
+    return render(request, 'smartgrid/room_detail.html', {'room': room})
 
 
 

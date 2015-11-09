@@ -4,10 +4,9 @@
 
 {% if form.errors %}
     <p class="error">Sorry, that's not a valid username or password</p>
-{% endif%}
-
-
-<form class="form-horizontal" action="{% url 'smartgrid:home' %}" method="post">{% csrf_token %}
+{% endif %}
+<div id="login">
+<form class="form-horizontal" action="{% url 'smartgrid:auth' %}" method="post">{% csrf_token %}
     <div class="form-group">
         <label class="col-sm-2 control-label" for="username">Gebruikersnaam</label>
         <div class="col-sm-10">
@@ -26,5 +25,6 @@
         </div>
     </div>
 </form>
+</div>
 
 {% endblock %}
