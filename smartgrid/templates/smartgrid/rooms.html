@@ -1,0 +1,15 @@
+{% extends "smartgrid/base_login.html" %}
+
+{% block content %}
+<ol class="breadcrumb">
+    <li><a href="{% url 'smartgrid:home' %}">Home</a></li>
+    <li class="active">Kamers</li>
+</ol>
+
+<h2>Kamers</h2>
+<div class="list-group">
+    {% for room in rooms_list %}
+    <a class="list-group-item" href="{% url 'smartgrid:room_detail' room.id %}">{{ room }}</a>
+    {% endfor %}
+</div>
+{% endblock content %}
