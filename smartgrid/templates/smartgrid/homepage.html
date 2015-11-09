@@ -2,8 +2,6 @@
 
 {% block content %}
 <h1>Welkom {{full_name}}!</h1>
-    <div>
-        <li><a href = "{% url 'smartgrid:home' %}">Test</a></li>
-    </div>
+<a href="{% url 'smartgrid:appliances' %}" class="btn btn-primary">Apparaten</a>
 <p></p>
 {% endblock content %}

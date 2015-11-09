@@ -12,4 +12,6 @@ urlpatterns = [
     url(r'^accounts/invalid/$', views.invalid_login, name='invalid_login'),
     # After login
     url(r'^home/$', views.home, name='home'),
+
+    url(r'^appliances/$', views.appliances, name='appliances'),
 ]
