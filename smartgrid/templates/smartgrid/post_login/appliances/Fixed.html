@@ -1,5 +1,37 @@
 {% extends "smartgrid/base.html" %}
 
 {% block content %}
-<p>Test: Hello nice little cloud. F</p>
+<h2> {{ appliance }} </h2>
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+.tg .tg-t9ra{font-size:12px;font-family:Arial, Helvetica, sans-serif !important;;text-align:center;vertical-align:top}
+</style>
+<table class="tg">
+  <tr>
+    <th class="tg-t9ra">Prioriteit</th>
+      {% if priority == 0 %}
+        <th class="tg-t9ra">Laag</th>
+      {% elif priority == 1 %}
+        <th class="tg-t9ra">Normaal</th>
+      {% elif priority == 2 %}
+        <th class="tg-t9ra">Hoog</th>
+      {% else %}
+        <th class="tg-t9ra">Zeer hoog</th>
+      {% endif %}
+  </tr>
+  <tr>
+    <td class="tg-t9ra">Verbruik</td>
+    <td class="tg-t9ra">{{consumption}}</td>
+  </tr>
+  <tr>
+    <td class="tg-t9ra">Momenteel actief</td>
+      {% if currently_on %}
+        <td class="tg-t9ra"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
+      {% else %}
+        <td class="tg-t9ra"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></td>
+      {% endif %}
+  </tr>
+</table>
 {% endblock content %}
