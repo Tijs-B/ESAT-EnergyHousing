@@ -15,11 +15,8 @@ from .models import *
 # Prehomepage
 
 
-def testpage(request):
-    # template = loader.get_template('smartgrid/prehomepage.html')
-    print 'testpage'
-    context = {}
-    return render(request, 'smartgrid/prehomepage.html', context)
+def prehomepage(request):
+    return render(request, 'smartgrid/prehomepage.html')
 
 
 def resultaat(request):
