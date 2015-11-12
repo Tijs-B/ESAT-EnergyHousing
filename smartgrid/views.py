@@ -112,7 +112,12 @@ def fixed(request, appliance_id):
 
 def shiftingloadcycle(request, appliance_id):
     appliance = get_object_or_404(ShiftingLoadCycle, pk=appliance_id)
+
     return render(request, 'smartgrid/post_login/appliances/Shiftingloadcycle.html',
-                  {'appliance': appliance})
+                  {'appliance': appliance,
+                   'flexstart': appliance.flexibility_start,
+                   'flexend': appliance.flexibility_end,
+                   'priority': appliance.priority,
+                   'currently_on': appliance.currently_on})
 
 
