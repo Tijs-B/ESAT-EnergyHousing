@@ -1,4 +1,16 @@
-{% extends "smartgrid/base_home.html" %}
+{% extends "smartgrid/base.html" %}
+
+{% block nav %}
+<ul class="nav">
+    <li><a href="{% url 'smartgrid:home' %}">Home</a></li>
+    <li><a href="{% url 'smartgrid:vraagzijdesturing' %}">Vraagzijdesturing</a></li>
+    <li><a class="active" href="{% url 'smartgrid:info_apparaten' %}">Apparaten</a></li>
+    <li><a href="{% url 'smartgrid:projectverdeling' %}">Projectverdeling</a></li>
+    <li><a href="{% url 'smartgrid:resultaat' %}">Resultaat</a></li>
+    <li><a href="{% url 'smartgrid:login' %}">Log in</a></li>
+</ul>
+{% endblock nav %}
+
 {% block content %}
 <h1>Informatie over apparaten</h1>
 <p>In ons demomodel hebben we een onderscheid gemaakt tussen drie soorten apparaten:</p>

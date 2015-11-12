@@ -28,19 +28,19 @@ def testpage(request):
 
 
 def resultaat(request):
-    return render(request,'smartgrid/resultaat.html')
+    return render(request,'smartgrid/info/resultaat.html')
 
 
 def info_apparaten(request):
-    return render(request,'smartgrid/info_apparaten.html')
+    return render(request,'smartgrid/info/info_apparaten.html')
 
 
 def vraagzijdesturing(request):
-    return render(request,'smartgrid/vraagzijdesturing.html')
+    return render(request,'smartgrid/info/vraagzijdesturing.html')
 
 
 def projectverdeling(request):
-    return render(request,'smartgrid/projectverdeling.html')
+    return render(request,'smartgrid/info/projectverdeling.html')
 
 # Login
 
@@ -80,18 +80,18 @@ def logout(request):
 def home(request):
     # template = loader.get_template('smartgrid/homepage.html')
     # print request.user.username
-    return render(request, 'smartgrid/homepage.html',
+    return render(request, 'smartgrid/post_login/homepage.html',
                         {'full_name': request.user.username})
 
 
 def rooms(request):
     rooms_list = Room.objects.all()
-    return render(request, 'smartgrid/rooms.html', {'rooms_list': rooms_list})
+    return render(request, 'smartgrid/post_login/rooms.html', {'rooms_list': rooms_list})
 
 
 def room_detail(request, room_id):
     room = get_object_or_404(Room, pk=room_id)
-    return render(request, 'smartgrid/room_detail.html', {'room': room})
+    return render(request, 'smartgrid/post_login/room_detail.html', {'room': room})
 
 def trigger_gams(request):
     if request.POST:

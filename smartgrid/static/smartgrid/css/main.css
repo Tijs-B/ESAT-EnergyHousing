@@ -1,10 +1,6 @@
 .html .body {
-	font-family: 'Lato', sans-serif;
+	font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
 	background-color: #fff;
-}
-
-.header h1 {
-	font-family: 'Lobster';
 }
 
 .header {
@@ -15,6 +11,32 @@
 
 .header .btn {
 	margin-top: 40px;
+}
+
+.header .nav {
+	display: inline-block;
+	margin-top: 20px;
+}
+
+.header .nav .active {
+	background-color: #A5D166;
+}
+
+.header .nav li {
+	display: inline-block;
+}
+
+.header .nav li a {
+	color: #fff;
+	display: block;
+}
+
+.header .nav li a:hover {
+	background-color: #7FB436;
+}
+
+.header .nav li a:active {
+	background-color: transparent;
 }
 
 .jumbotron {
