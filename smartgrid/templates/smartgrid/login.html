@@ -2,12 +2,12 @@
 
 {% block nav %}
 <ul class="nav">
-    <li><a class="active" href="{% url 'smartgrid:home' %}">Home</a></li>
+    <li><a href="{% url 'smartgrid:home' %}">Home</a></li>
     <li><a href="{% url 'smartgrid:vraagzijdesturing' %}">Vraagzijdesturing</a></li>
     <li><a href="{% url 'smartgrid:info_apparaten' %}">Apparaten</a></li>
     <li><a href="{% url 'smartgrid:projectverdeling' %}">Projectverdeling</a></li>
     <li><a href="{% url 'smartgrid:resultaat' %}">Resultaat</a></li>
-    <li><a href="{% url 'smartgrid:login' %}">Log in</a></li>
+    <li><a class="active" href="{% url 'smartgrid:login' %}">Log in</a></li>
 </ul>
 {% endblock nav %}
 

@@ -17,5 +17,9 @@ urlpatterns = [
     url(r'^home/$', views.home, name='home'),
 
     url(r'^rooms/$', views.rooms, name='rooms'),
-    url(r'^room/(?P<room_id>[0-9]+)/$', views.room_detail, name='room_detail')
+    url(r'^room/(?P<room_id>[0-9]+)/$', views.room_detail, name='room_detail'),
+    url(r'^room/heatloadinvariable/(?P<appliance_id>[0-9]+)/$', views.heatloadinvariable, name='heatloadinvariable'),
+    url(r'^room/heatloadvariable/(?P<appliance_id>[0-9]+)/$', views.heatloadvariable, name='heatloadvariable'),
+    url(r'^room/fixed/(?P<appliance_id>[0-9]+)/$', views.fixed, name='fixed'),
+    url(r'^room/shiftingloadcycle/(?P<appliance_id>[0-9]+)/$', views.shiftingloadcycle, name='shiftingloadcycle'),
 ]
