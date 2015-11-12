@@ -14,6 +14,9 @@
     <!-- CSS -->
     <link href="{% static 'smartgrid/css/main.css' %}" rel="stylesheet">
 
+    <!--Favicon-->
+    <link rel="shortcut icon" href="{% static 'smartgrid/img/favicon.ico' %}">
+
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via  -->
     <!--[if lt IE 9]>
@@ -26,11 +29,8 @@
     <div class="header">
         <div class="container">
             <div class="row">
-                <div class="col-md-2">
-                    <img id="turbine" height="100px" src="{% static 'smartgrid/img/turbine-small.png' %}">
-                </div>
-                <div class="col-md-3">
-                    <h1>Smart Grid</h1>
+                <div class="col-xs-4">
+                    <a href="{% url 'smartgrid:prehomepage' %}"><img class="logo" height="80px" src="{% static 'smartgrid/img/logo.png' %}" /></a>
                 </div>
                 <div class="pull-right">
                 {% block nav %}
@@ -39,6 +39,9 @@
             </div>
         </div>
     </div>
+
+    {% block jumbo %}
+    {% endblock jumbo %}
 
     <div class="main">
       <div class="container">
@@ -52,8 +55,7 @@
             <div class="row">
 
                 <div class="col-md-6 col-xs-6">
-                    <p>© ESAT5A 2015-2016</p>
-
+                    <p>© 2015, ESAT5A. Alle rechten gereserveerd.</p>
                 </div>
                 <div class="pull-right">
                     <img src="{% static 'smartgrid/img/kuleuven.png' %}" height="40px">
@@ -63,9 +65,5 @@
     </div>
 
     <script src="{% static 'smartgrid/js/jquery.min.js' %}"></script>
-    <script src="{% static 'smartgrid/js/propeller.min.js' %}"></script>
-    <script>
-        $('#turbine').propeller({inertia: 0.99});
-    </script>
   </body>
 </html>
