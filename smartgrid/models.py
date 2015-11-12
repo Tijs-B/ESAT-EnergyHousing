@@ -45,6 +45,9 @@ class Appliance(models.Model):
     )
     currently_on = models.BooleanField(default=False)
 
+    def house_id(self):
+        return self.room.house
+
     # with 'abstract = True', there is no database entry for Appliance, but there will be database entries for classes
     #   that inherit from this class (such as FixedDemand)
     class Meta:
@@ -93,6 +96,19 @@ class ConsumptionProfile(models.Model):
     consumption = models.FloatField()
     # TODO: Consumption profile table
 
+
+class OnOffProfile(models.Model):
+    fixeddemand = models.ForeignKey("FixedDemand", blank=True, null=True)
+    shiftingloadcycle = models.ForeignKey("ShiftingLoadCycle", blank=True, null=True)
+    heatloadinvariablepower = models.ForeignKey("HeatLoadInvariablePower", blank=True, null=True)
+    heatloadvariablepower = models.ForeignKey("HeatLoadVariablePower", blank=True, null=True)
+
+
+class OnOffInfo(models.Model):
+    onoffprofile = models.ForeignKey("OnOffProfile")
+    time = models.IntegerField()
+    OnOff = models.IntegerField(default=0)
+    Info = models.IntegerField(default=0)
 
 ### Sensor ###
 class Sensor(models.Model):

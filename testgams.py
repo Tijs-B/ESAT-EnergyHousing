@@ -17,25 +17,24 @@ db = ws.add_database()
 opt.defines["SupplyDataFileName"] = db.name
 
 set_t = db.add_set('t', 1, 'time period')
-set_app = db.add_set('app', 1, 'appliances of category three')
+set_cat = db.add_set('app', 1, 'appliances of category three')
 
 param_TEMP_AMB = db.add_parameter_dc('TEMP_AMB', [set_t], 'Temperature of the environment (in K) -> time')
-param_UA_REF = db.add_parameter_dc('UA_REF', [set_app], 'isolation constant of the refrigator')
-param_COP_REF = db.add_parameter_dc('COP_REF', [set_app], 'coefficient of performance of the refrigator')
-param_PCOOL_REF = db.add_parameter_dc('PCOOL_REF', [set_app], 'power needed for the refrigator')
-param_MASS_REF = db.add_parameter_dc('MASS_REF', [set_app], 'mass of the cooled air inside the refrigator')
+param_UA_CAT = db.add_parameter_dc('UA_REF', [set_cat], 'isolation constant of the refrigator')
+param_COP_CAT = db.add_parameter_dc('COP_REF', [set_cat], 'coefficient of performance of the refrigator')
+param_PCOOL_CAT = db.add_parameter_dc('PCOOL_REF', [set_cat], 'power needed for the refrigator')
+param_MASS_CAT = db.add_parameter_dc('MASS_REF', [set_cat], 'mass of the cooled air inside the refrigator')
 
 sql = 'SELECT * FROM smartgrid_heatloadinvariablepower'
 c.execute(sql)
 Appliance = c.fetchall()
 for i in Appliance:
-    print i
-    set_app.add_record(str(i[0]))
+    set_cat.add_record(str(i[0]))
 
-    param_COP_REF.add_record(str(i[0])).value = i[6]
-    param_MASS_REF.add_record(str(i[0])).value = i[7]
-    param_PCOOL_REF.add_record(str(i[0])).value = i[4]
-    param_UA_REF.add_record(str(i[0])).value = i[5]
+    param_COP_CAT.add_record(str(i[0])).value = i[6]
+    param_MASS_CAT.add_record(str(i[0])).value = i[7]
+    param_PCOOL_CAT.add_record(str(i[0])).value = i[4]
+    param_UA_CAT.add_record(str(i[0])).value = i[5]
 
 for i in range(0, 24):
     set_t.add_record(str(i))
@@ -46,6 +45,7 @@ if db.check_domains():
     job.run(gams_options=opt, databases=db)
 
     for zfr in job.out_db.get_variable('zfr_ref'):
-        print zfr
+
+        print zfr.level
 else:
     exit('ERROR')

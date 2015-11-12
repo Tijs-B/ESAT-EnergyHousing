@@ -10,6 +10,11 @@ from django.core.context_processors import csrf
 
 from .models import *
 
+#GAMS
+import sqlite3 as sq
+import gams
+import os
+
 # Create your views here.
 
 # Prehomepage
@@ -88,9 +93,10 @@ def room_detail(request, room_id):
     room = get_object_or_404(Room, pk=room_id)
     return render(request, 'smartgrid/room_detail.html', {'room': room})
 
-
-
-
+def trigger_gams(request):
+    if request.POST:
+        print 'trigger gams'
+        x = Appliance()
 
 
 

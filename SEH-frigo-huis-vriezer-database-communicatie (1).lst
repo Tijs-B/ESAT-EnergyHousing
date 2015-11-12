@@ -1,4 +1,4 @@
-GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                 11/09/15 17:46:39 Page 1
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                 11/12/15 15:29:05 Page 1
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 C o m p i l a t i o n
 
@@ -56,7 +56,7 @@ GDXIN   C:\Users\toond_000\Documents\A Student\P&O 3\Django\ESAT-EnergyHousing\_
   47           q_temp_equ_frez(t)       links heat difference and temperature difference for the refrigator
   48           q_heat_loss_frez(t)      loss of heat for the refrigator
   49           q_heat_gain_frez(t)      gain of heat for the refrigator
-GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                 11/09/15 17:46:39 Page 2
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                 11/12/15 15:29:05 Page 2
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 C o m p i l a t i o n
 
@@ -114,7 +114,7 @@ C o m p i l a t i o n
  100   
  101   
  102  Model fridge /q_power_ref, q_temp_equ_ref, q_heat_loss_ref,q_heat_gain_ref,
-GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                 11/09/15 17:46:39 Page 3
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                 11/12/15 15:29:05 Page 3
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 C o m p i l a t i o n
 
@@ -138,7 +138,7 @@ C o m p i l a t i o n
  119  *Solve house using mip minimizing dfr_house ;
  120   
  121  *Solve quarter using mip minimizing dfr_total ;
-GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                 11/09/15 17:46:39 Page 4
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                 11/12/15 15:29:05 Page 4
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Include File Summary
 
@@ -150,7 +150,7 @@ Include File Summary
 
 
 COMPILATION TIME     =        0.000 SECONDS      3 MB  24.5.4 r54492 WEX-VS8
-GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                 11/09/15 17:46:39 Page 5
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                 11/12/15 15:29:05 Page 5
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Equation Listing    SOLVE fridge Using MIP From line 115
 
@@ -206,7 +206,7 @@ q_temp_equ_ref(19,1)..  - Qin_ref(19) + Qout_ref(19) - 1.005*temp_ref(19) + 1.00
      
 q_temp_equ_ref(20,1)..  - Qin_ref(20) + Qout_ref(20) - 1.005*temp_ref(20) + 1.005*temp_ref(21) =E= 0 ; (LHS = 0)
      
-GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                 11/09/15 17:46:39 Page 6
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                 11/12/15 15:29:05 Page 6
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Equation Listing    SOLVE fridge Using MIP From line 115
 
@@ -262,7 +262,7 @@ q_heat_loss_ref(18,1)..  Qout_ref(18) - 0.23*temp_ref(18) =E= -66.7 ; (LHS = 0, 
      
 q_heat_loss_ref(19,1)..  Qout_ref(19) - 0.23*temp_ref(19) =E= -66.7 ; (LHS = 0, INFES = 66.7 ****)
      
-GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                 11/09/15 17:46:39 Page 7
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                 11/12/15 15:29:05 Page 7
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Equation Listing    SOLVE fridge Using MIP From line 115
 
@@ -318,7 +318,7 @@ q_heat_gain_ref(17,1)..  Qin_ref(17) + 4.545*zfr_ref(17) =E= 0 ; (LHS = 0)
      
 q_heat_gain_ref(18,1)..  Qin_ref(18) + 4.545*zfr_ref(18) =E= 0 ; (LHS = 0)
      
-GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                 11/09/15 17:46:39 Page 8
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                 11/12/15 15:29:05 Page 8
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Equation Listing    SOLVE fridge Using MIP From line 115
 
@@ -374,7 +374,7 @@ q_tmin_ref(16)..  temp_ref(16) =G= 270 ; (LHS = 0, INFES = 270 ****)
      
 q_tmin_ref(17)..  temp_ref(17) =G= 270 ; (LHS = 0, INFES = 270 ****)
      
-GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                 11/09/15 17:46:39 Page 9
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                 11/12/15 15:29:05 Page 9
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Equation Listing    SOLVE fridge Using MIP From line 115
 
@@ -430,7 +430,7 @@ q_tmax_ref(15)..  temp_ref(15) =L= 277 ; (LHS = 0)
      
 q_tmax_ref(16)..  temp_ref(16) =L= 277 ; (LHS = 0)
      
-GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/09/15 17:46:39 Page 10
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/12/15 15:29:05 Page 10
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Equation Listing    SOLVE fridge Using MIP From line 115
 
@@ -451,7 +451,7 @@ q_tmax_ref(22)..  temp_ref(22) =L= 277 ; (LHS = 0)
      
 q_tmax_ref(23)..  temp_ref(23) =L= 277 ; (LHS = 0)
      
-GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/09/15 17:46:39 Page 11
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/12/15 15:29:05 Page 11
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Column Listing      SOLVE fridge Using MIP From line 115
 
@@ -509,7 +509,7 @@ temp_ref(0)
         1.005   q_temp_equ_ref(1,1)
        -1.005   q_temp_equ_ref(0,1)
        -0.23    q_heat_loss_ref(0,1)
-GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/09/15 17:46:39 Page 12
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/12/15 15:29:05 Page 12
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Column Listing      SOLVE fridge Using MIP From line 115
 
@@ -554,7 +554,7 @@ zfr_ref(2)
         4.545   q_heat_gain_ref(2,1)
 
 REMAINING 21 ENTRIES SKIPPED
-GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/09/15 17:46:39 Page 13
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/12/15 15:29:05 Page 13
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Model Statistics    SOLVE fridge Using MIP From line 115
 
@@ -566,11 +566,11 @@ BLOCKS OF VARIABLES           5     SINGLE VARIABLES           97
 NON ZERO ELEMENTS           265     DISCRETE VARIABLES         24
 
 
-GENERATION TIME      =        0.015 SECONDS      4 MB  24.5.4 r54492 WEX-VS8
+GENERATION TIME      =        0.016 SECONDS      4 MB  24.5.4 r54492 WEX-VS8
 
 
-EXECUTION TIME       =        0.015 SECONDS      4 MB  24.5.4 r54492 WEX-VS8
-GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/09/15 17:46:39 Page 14
+EXECUTION TIME       =        0.016 SECONDS      4 MB  24.5.4 r54492 WEX-VS8
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/12/15 15:29:05 Page 14
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Solution Report     SOLVE fridge Using MIP From line 115
 
@@ -585,7 +585,7 @@ Solution Report     SOLVE fridge Using MIP From line 115
 **** MODEL STATUS      8 Integer Solution          
 **** OBJECTIVE VALUE               19.1900
 
- RESOURCE USAGE, LIMIT          0.015      1000.000
+ RESOURCE USAGE, LIMIT          0.032      1000.000
  ITERATION COUNT, LIMIT       174    2000000000
 
 IBM ILOG CPLEX   24.5.4 r54492 Released Oct 15, 2015 VS8 x86 32bit/MS Windows 
@@ -594,7 +594,7 @@ Cplex 12.6.2.0
 Space for names approximately 0.00 Mb
 Use option 'names no' to turn use of names off
 MIP status(102): integer optimal, tolerance
-Cplex Time: 0.01sec (det. 3.81 ticks)
+Cplex Time: 0.02sec (det. 3.81 ticks)
 Fixing integer variables, and solving final LP...
 Fixed MIP status(1): optimal
 Cplex Time: 0.00sec (det. 0.10 ticks)
@@ -628,7 +628,7 @@ Relative gap:            0.081805
 7 .1          .              .              .             EPS         
 8 .1          .              .              .             EPS         
 9 .1          .              .              .             EPS         
-GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/09/15 17:46:39 Page 15
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/12/15 15:29:05 Page 15
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Solution Report     SOLVE fridge Using MIP From line 115
 
@@ -680,7 +680,7 @@ Solution Report     SOLVE fridge Using MIP From line 115
 21.1       -66.7000       -66.7000       -66.7000         EPS         
 22.1       -66.7000       -66.7000       -66.7000         EPS         
 23.1       -66.7000       -66.7000       -66.7000         EPS         
-GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/09/15 17:46:39 Page 16
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/12/15 15:29:05 Page 16
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Solution Report     SOLVE fridge Using MIP From line 115
 
@@ -738,7 +738,7 @@ Solution Report     SOLVE fridge Using MIP From line 115
 17       270.0000       272.4900        +INF             .          
 18       270.0000       271.9749        +INF             .          
 19       270.0000       276.1000        +INF             .          
-GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/09/15 17:46:39 Page 17
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/12/15 15:29:05 Page 17
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Solution Report     SOLVE fridge Using MIP From line 115
 
@@ -796,7 +796,7 @@ Solution Report     SOLVE fridge Using MIP From line 115
 8         -INF           -4.5450        +INF             .          
 9         -INF           -4.5450        +INF             .          
 10        -INF           -4.5450        +INF             .          
-GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/09/15 17:46:39 Page 18
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/12/15 15:29:05 Page 18
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Solution Report     SOLVE fridge Using MIP From line 115
 
@@ -847,7 +847,7 @@ Solution Report     SOLVE fridge Using MIP From line 115
 21        -INF           -3.7434        +INF             .          
 22        -INF           -3.9268        +INF             .          
 23        -INF           -3.0282        +INF             .          
-GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/09/15 17:46:39 Page 19
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/12/15 15:29:05 Page 19
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Solution Report     SOLVE fridge Using MIP From line 115
 
@@ -905,7 +905,7 @@ Solution Report     SOLVE fridge Using MIP From line 115
 11          .             1.0000         1.0000         1.0100      
 12          .              .             1.0000         1.0100      
 13          .             1.0000         1.0000         1.0100      
-GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/09/15 17:46:39 Page 20
+GAMS 24.5.4  r54492 Released Oct 15, 2015 WEX-VS8 x86 32bit/MS Windows                                                                                                                                                                11/12/15 15:29:05 Page 20
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Solution Report     SOLVE fridge Using MIP From line 115
 
