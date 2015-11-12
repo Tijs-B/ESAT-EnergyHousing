@@ -17,25 +17,17 @@
     <p class="error">Sorry, that's not a valid username or password</p>
 {% endif %}
 <div id="login">
-<form class="form-horizontal" action="{% url 'smartgrid:auth' %}" method="post">{% csrf_token %}
-    <div class="form-group">
-        <label class="col-sm-2 control-label" for="username">Gebruikersnaam</label>
-        <div class="col-sm-10">
-            <input type="text" name="username" value="" id="username" placeholder="Gebruikersnaam">
+    <form action="{% url 'smartgrid:auth' %}" method="post">{% csrf_token %}
+        <div class="form-group">
+            <label for="username">Gebruikersnaam</label>
+            <input type="text" name="username" value="" class="form-control" id="username" placeholder="Gebruikersnaam" autofocus="autofocus">
         </div>
-    </div>
-    <div class="form-group">
-        <label class="col-sm-2 control-label" for="password">Wachtwoord</label>
-        <div class="col-sm-10">
-            <input type="password" name="password" value="" id="password" placeholder="Wachtwoord">
+        <div class="form-group">
+            <label for="password">Wachtwoord</label>
+            <input type="password" name="password" value="" class="form-control" id="password" placeholder="Wachtwoord">
         </div>
-    </div>
-    <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10">
-            <button type="submit" class="btn btn-default">Log In</button>
-        </div>
-    </div>
-</form>
+        <button type="submit" class="btn btn-default">Log In</button>
+    </form>
 </div>
 
 {% endblock %}

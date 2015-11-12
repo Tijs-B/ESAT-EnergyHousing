@@ -1,82 +1,90 @@
 .html .body {
-	font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
-	background-color: #fff;
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    background-color: #fff;
 }
 
 .container {
-	max-width: 980px;
+    max-width: 980px;
 }
 
 .header {
-	background-color: #8DC53E;
-	color: #fff;
-	padding: 15px 0;
+    background-color: #8DC53E;
+    color: #fff;
+    padding: 15px 0;
 }
 
 .logo:hover {
-	opacity: 0.6;
+    opacity: 0.6;
 }
 
 .header h1 a {
-	color: #fff;
+    color: #fff;
 }
 
 .header h1 a:hover {
-	text-decoration: none;
+    text-decoration: none;
 }
 
 .header .nav {
-	display: inline-block;
-	margin-top: 22px;
+    display: inline-block;
+    margin-top: 22px;
 }
 
 .header .nav .active {
-	background-color: #A5D166;
+    background-color: #A5D166;
 }
 
 .header .nav li {
-	display: inline-block;
+    display: inline-block;
 }
 
 .header .nav li a {
-	color: #fff;
-	display: block;
+    color: #fff;
+    display: block;
 }
 
 .header .nav li a:hover {
-	background-color: #7FB436;
+    background-color: #7FB436;
 }
 
 .header .nav li a:active {
-	background-color: transparent;
+    background-color: transparent;
 }
 
 .jumbotron {
-	color: #fff;
-	text-shadow: 2px 2px 5px #000;
-	min-height: 600px;
-	background: url('../img/jumbo.jpg') no-repeat center center;
-	background-size: cover;
-	padding: 200px 0;
+    color: #fff;
+    text-shadow: 2px 2px 5px #000;
+    min-height: 600px;
+    background: url('../img/jumbo.jpg') no-repeat center center;
+    background-size: cover;
+    padding: 200px 0;
 }
 
 .main {
-	background: url('../img/maincontent-bg.gif') repeat-x bottom center;
-	min-height: 500px;
-	margin-bottom: 0;
-	color: #057343;
-	padding: 30px 0;
-	padding-bottom: 220px;
+    background: url('../img/maincontent-bg.gif') repeat-x bottom center;
+    min-height: 500px;
+    margin-bottom: 0;
+    color: #057343;
+    padding: 30px 0;
+    padding-bottom: 220px;
+}
+
+#login {
+    max-width: 400px;
+    margin: 50px auto;
+    border: 1px solid #8DC53E;
+    border-radius: 3px;
+    padding: 30px;
 }
 
 .breadcrumb {
-	background-color: #f8f8f8;
+    background-color: #f8f8f8;
 }
 
 .footer {
-	background-color: #006838;
-	height: 100px;
-	color: #fff;
-	margin-top: 0;
-	padding-top: 40px;
+    background-color: #006838;
+    height: 100px;
+    color: #fff;
+    margin-top: 0;
+    padding-top: 40px;
 }
