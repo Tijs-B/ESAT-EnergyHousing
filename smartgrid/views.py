@@ -51,7 +51,7 @@ def auth_view(request):
 
     if user is not None:
         auth.login(request, user)
-        template = loader.get_template('smartgrid/homepage.html')
+        template = loader.get_template('smartgrid/post_login/homepage.html')
         return HttpResponse(template.render())
     else:
         template = loader.get_template('smartgrid/invalid_login.html')
@@ -78,17 +78,58 @@ def home(request):
 
 def rooms(request):
     rooms_list = Room.objects.all()
-    return render(request, 'smartgrid/post_login/rooms.html', {'rooms_list': rooms_list})
+    return render(request, 'smartgrid/post_login/rooms.html',
+                  {'rooms_list': rooms_list})
 
 
 def room_detail(request, room_id):
     room = get_object_or_404(Room, pk=room_id)
-    return render(request, 'smartgrid/post_login/room_detail.html', {'room': room})
+    return render(request, 'smartgrid/post_login/room_detail.html',
+                  {'room': room})
+
+## Appliances
+
+def heatloadinvariable(request, appliance_id):
+    appliance = get_object_or_404(HeatLoadInvariablePower, pk=appliance_id)
+    return render(request, 'smartgrid/post_login/appliances/Heatloadinvariable.html',
+                  {'appliance': appliance,
+                   'power_required': appliance.power_required,
+                   'isolation_coefficient': appliance.isolation_coefficient,
+                   'cop': appliance.coefficient_of_performance,
+                   'mass_of_air': appliance.mass_of_air,
+                   'power_consumed': appliance.power_consumed})
 
 
+def heatloadvariable(request, appliance_id):
+    appliance = get_object_or_404(HeatLoadVariablePower, pk=appliance_id)
+    return render(request, 'smartgrid/post_login/appliances/Heatloadvariable.html',
+                  {'appliance': appliance,
+                   'priority': appliance.priority,
+                   'currently_on': appliance.currently_on,
+                   'power_required': appliance.power_required,
+                   'isolation_coefficient': appliance.isolation_coefficient,
+                   'cop': appliance.coefficient_of_performance,
+                   'mass_of_air': appliance.mass_of_air,
+                   'power_consumed': appliance.power_consumed})
 
 
+def fixed(request, appliance_id):
+    appliance = get_object_or_404(FixedDemand, pk=appliance_id)
+    return render(request, 'smartgrid/post_login/appliances/Fixed.html',
+                  {'appliance': appliance,
+                   'consumption': appliance.consumption,
+                   'priority':appliance.priority,
+                   'currently_on':appliance.currently_on})
 
 
+def shiftingloadcycle(request, appliance_id):
+    appliance = get_object_or_404(ShiftingLoadCycle, pk=appliance_id)
+
+    return render(request, 'smartgrid/post_login/appliances/Shiftingloadcycle.html',
+                  {'appliance': appliance,
+                   'flexstart': appliance.flexibility_start,
+                   'flexend': appliance.flexibility_end,
+                   'priority': appliance.priority,
+                   'currently_on': appliance.currently_on})
 
 

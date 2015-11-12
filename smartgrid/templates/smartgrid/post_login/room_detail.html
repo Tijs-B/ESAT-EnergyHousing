@@ -11,25 +11,25 @@
 <div class="list-group">
     {% if room.fixeddemand_set.all %}
         {% for appliance in room.fixeddemand_set.all %}
-            <a class="list-group-item" href="">{{ appliance }}</a>
+            <a class="list-group-item" href="{% url 'smartgrid:fixed' appliance.id %}">{{ appliance }}</a>
         {% endfor %}
     {% endif %}
 
     {% if room.shiftingloadcycle_set.all %}
         {% for appliance in room.shiftingloadcycle_set.all %}
-            <a class="list-group-item" href="">{{ appliance }}</a>
+            <a class="list-group-item" href="{% url 'smartgrid:shiftingloadcycle' appliance.id %}">{{ appliance }}</a>
         {% endfor %}
     {% endif %}
 
     {% if room.heatloadinvariablepower_set.all %}
         {% for appliance in room.heatloadinvariablepower_set.all %}
-            <a class="list-group-item" href="">{{ appliance }}</a>
+            <a class="list-group-item" href="{% url 'smartgrid:heatloadinvariable' appliance.id %}">{{ appliance }}</a>
         {% endfor %}
     {% endif %}
 
     {% if room.heatloadvariablepower_set.all %}
         {% for appliance in room.heatloadvariablepower_set.all %}
-            <a class="list-group-item" href="">{{ appliance }}</a>
+            <a class="list-group-item" href="{% url 'smartgrid:heatloadvariable' appliance.id %}">{{ appliance }}</a>
         {% endfor %}
     {% endif %}
 
