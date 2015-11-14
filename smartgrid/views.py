@@ -10,6 +10,11 @@ from django.core.context_processors import csrf
 
 from .models import *
 
+#GAMS
+import sqlite3 as sq
+import gams
+import os
+
 # Create your views here.
 
 # Prehomepage
@@ -133,3 +138,6 @@ def shiftingloadcycle(request, appliance_id):
                    'currently_on': appliance.currently_on})
 
 
+def trigger_gams(request):
+    if request.POST:
+        print 'trigger gams'

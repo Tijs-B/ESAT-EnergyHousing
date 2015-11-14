@@ -26,7 +26,7 @@ class House(models.Model):
 
 class Room(models.Model):
     def __str__(self):
-        return self.room_name
+        return self.room_name + " " + self.house.house_name
     house = models.ForeignKey("House")
     room_name = models.CharField(max_length=200)
 
@@ -37,12 +37,6 @@ class Appliance(models.Model):
         return self.appliance_name
     room = models.ForeignKey("Room")
     appliance_name = models.CharField(max_length=200)
-    priority = models.IntegerField(default=0, choices=(
-        (0, 'Low'),
-        (1, 'Normal'),
-        (2, 'High'),
-        (3, 'Very High'))
-    )
     currently_on = models.BooleanField(default=False)
 
     # with 'abstract = True', there is no database entry for Appliance, but there will be database entries for classes
@@ -61,11 +55,14 @@ class ShiftingLoadCycle(Appliance):
     def get_flex(self, flexibility_start, flexibility_end):
         return flexibility_start, flexibility_end
 
+
+class ConsumptionProfile(models.Model):
+    shiftingloadcycle = models.ForeignKey("ShiftingLoadCycle", blank=True, null=True)
+    time = models.IntegerField()
+    consumption = models.FloatField()
+
+
 class HeatLoadVariablePower(Appliance):
-#    temperature_min = models.FloatField()
-#    temperature_max = models.FloatField()
-#    power_min = models.FloatField()
-#    power_max = models.FloatField()
     power_required = models.FloatField()                # PHEAT_HOUSE
     isolation_coefficient = models.FloatField()         # UA_HOUSE
     coefficient_of_performance = models.FloatField()    # COP_HOUSE
@@ -75,8 +72,6 @@ class HeatLoadVariablePower(Appliance):
 
 
 class HeatLoadInvariablePower(Appliance):
-#    temperature_min = models.FloatField()
-#    temperature_max = models.FloatField()
     power_required = models.FloatField()                # PCOOL_(REF/FREZ)
     isolation_coefficient = models.FloatField()         # UA_(REF/FREZ)
     coefficient_of_performance = models.FloatField()    # COP_(REF/FREZ)
@@ -85,15 +80,18 @@ class HeatLoadInvariablePower(Appliance):
 #    temperature_inside = models.FloatField()            # temp_(ref/frez)
 
 
-class ConsumptionProfile(models.Model):
-    def __str__(self):
-        return self.appliance.appliance_name + " " + str(self.order)
-    appliance = models.ForeignKey("ShiftingLoadCycle")
-    order = models.IntegerField()
-    duration = models.TimeField()
-    consumption = models.FloatField()
-    # TODO: Consumption profile table
+class OnOffProfile(models.Model):
+    fixeddemand = models.ForeignKey("FixedDemand", blank=True, null=True)
+    shiftingloadcycle = models.ForeignKey("ShiftingLoadCycle", blank=True, null=True)
+    heatloadinvariablepower = models.ForeignKey("HeatLoadInvariablePower", blank=True, null=True)
+    heatloadvariablepower = models.ForeignKey("HeatLoadVariablePower", blank=True, null=True)
 
+
+class OnOffInfo(models.Model):
+    onoffprofile = models.ForeignKey("OnOffProfile")
+    time = models.IntegerField()
+    OnOff = models.IntegerField(default=0)
+    Info = models.IntegerField(default=0)
 
 ### Sensor ###
 class Sensor(models.Model):
