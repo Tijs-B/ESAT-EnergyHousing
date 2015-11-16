@@ -11,9 +11,9 @@ from django.core.context_processors import csrf
 from .models import *
 
 #GAMS
-import sqlite3 as sq
-import gams
-import os
+# import sqlite3 as sq
+# import gams
+# import os
 
 # Create your views here.
 
@@ -94,36 +94,11 @@ def room_detail(request, room_id):
 
 ## Appliances
 
-def heatloadinvariable(request, appliance_id):
-    appliance = get_object_or_404(HeatLoadInvariablePower, pk=appliance_id)
-    return render(request, 'smartgrid/post_login/appliances/Heatloadinvariable.html',
-                  {'appliance': appliance,
-                   'power_required': appliance.power_required,
-                   'isolation_coefficient': appliance.isolation_coefficient,
-                   'cop': appliance.coefficient_of_performance,
-                   'mass_of_air': appliance.mass_of_air,
-                   'power_consumed': appliance.power_consumed})
-
-
-def heatloadvariable(request, appliance_id):
-    appliance = get_object_or_404(HeatLoadVariablePower, pk=appliance_id)
-    return render(request, 'smartgrid/post_login/appliances/Heatloadvariable.html',
-                  {'appliance': appliance,
-                   'priority': appliance.priority,
-                   'currently_on': appliance.currently_on,
-                   'power_required': appliance.power_required,
-                   'isolation_coefficient': appliance.isolation_coefficient,
-                   'cop': appliance.coefficient_of_performance,
-                   'mass_of_air': appliance.mass_of_air,
-                   'power_consumed': appliance.power_consumed})
-
-
 def fixed(request, appliance_id):
     appliance = get_object_or_404(FixedDemand, pk=appliance_id)
     return render(request, 'smartgrid/post_login/appliances/Fixed.html',
                   {'appliance': appliance,
                    'consumption': appliance.consumption,
-                   'priority':appliance.priority,
                    'currently_on':appliance.currently_on})
 
 
@@ -134,9 +109,29 @@ def shiftingloadcycle(request, appliance_id):
                   {'appliance': appliance,
                    'flexstart': appliance.flexibility_start,
                    'flexend': appliance.flexibility_end,
-                   'priority': appliance.priority,
                    'currently_on': appliance.currently_on})
 
+
+def heatloadvariable(request, appliance_id):
+    appliance = get_object_or_404(HeatLoadVariablePower, pk=appliance_id)
+    return render(request, 'smartgrid/post_login/appliances/Heatloadvariable.html',
+                  {'appliance': appliance,
+                   'currently_on': appliance.currently_on,
+                   'power_required': appliance.power_required,
+                   'isolation_coefficient': appliance.isolation_coefficient,
+                   'cop': appliance.coefficient_of_performance,
+                   'mass_of_air': appliance.mass_of_air,
+                   'power_consumed': appliance.power_consumed})
+
+def heatloadinvariable(request, appliance_id):
+    appliance = get_object_or_404(HeatLoadInvariablePower, pk=appliance_id)
+    return render(request, 'smartgrid/post_login/appliances/Heatloadinvariable.html',
+                  {'appliance': appliance,
+                   'power_required': appliance.power_required,
+                   'isolation_coefficient': appliance.isolation_coefficient,
+                   'cop': appliance.coefficient_of_performance,
+                   'mass_of_air': appliance.mass_of_air,
+                   'power_consumed': appliance.power_consumed})
 
 def trigger_gams(request):
     if request.POST:
