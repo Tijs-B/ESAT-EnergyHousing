@@ -52,8 +52,6 @@ class FixedDemand(Appliance):
 class ShiftingLoadCycle(Appliance):
     flexibility_start = models.DateTimeField()
     flexibility_end = models.DateTimeField()
-    def get_flex(self, flexibility_start, flexibility_end):
-        return flexibility_start, flexibility_end
 
 
 class ConsumptionProfile(models.Model):
