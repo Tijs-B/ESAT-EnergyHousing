@@ -56,8 +56,13 @@ class FixedDemandProfile(models.Model):
 
 
 class ShiftingLoadCycle(Appliance):
+<<<<<<< HEAD
     flexibility_start = models.TimeField()
     flexibility_end = models.TimeField()
+=======
+    flexibility_start = models.DateTimeField()
+    flexibility_end = models.DateTimeField()
+>>>>>>> refs/remotes/origin/master
 
 
 class ShiftingLoadProfile(models.Model):
