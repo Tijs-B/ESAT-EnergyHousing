@@ -5,16 +5,25 @@ class Neighborhood(models.Model):
     def __str__(self):
         return self.neighborhood_name
     neighborhood_name = models.CharField(max_length=200)
-    energy_price = models.FloatField(default=1)
-    ambient_temperature = models.FloatField()   # TEMP_AMB(t)
     power_consumed = models.FloatField()        # dfr_totaal
+
+
+class AmbientTemp(models.Model):
+    neighborhood = models.ForeignKey("Neighborhood")
+    time = models.IntegerField()
+    temperature = models.FloatField()
+
+
+class EnergyPrice(models.Model):
+    neighborhood = models.ForeignKey("Neighborhood")
+    time = models.IntegerField()
+    price = models.FloatField()
 
 
 class AvailableEnergy(models.Model):
     neighborhood = models.ForeignKey("Neighborhood")
-    solar = models.FloatField(default=0)
-    wind = models.FloatField(default=0)
-    other = models.FloatField(default=0)
+    time = models.IntegerField()
+    amount = models.FloatField()
 
 
 class House(models.Model):
@@ -45,17 +54,21 @@ class Appliance(models.Model):
         abstract = True
 
 
-class FixedDemand(Appliance):
+class FixedDemandProfile(models.Model):
+    house = models.ForeignKey("House")
+    time = models.IntegerField()
     consumption = models.FloatField()
 
 
 class ShiftingLoadCycle(Appliance):
-    flexibility_start = models.DateTimeField()
-    flexibility_end = models.DateTimeField()
+    flexibility_start = models.TimeField()
+    flexibility_end = models.TimeField()
 
 
-class ConsumptionProfile(models.Model):
-    shiftingloadcycle = models.ForeignKey("ShiftingLoadCycle", blank=True, null=True)
+
+
+class ShiftingLoadProfile(models.Model):
+    shiftingloadcycle = models.ForeignKey("ShiftingLoadCycle")
     time = models.IntegerField()
     consumption = models.FloatField()
 
@@ -79,7 +92,6 @@ class HeatLoadInvariablePower(Appliance):
 
 
 class OnOffProfile(models.Model):
-    fixeddemand = models.ForeignKey("FixedDemand", blank=True, null=True)
     shiftingloadcycle = models.ForeignKey("ShiftingLoadCycle", blank=True, null=True)
     heatloadinvariablepower = models.ForeignKey("HeatLoadInvariablePower", blank=True, null=True)
     heatloadvariablepower = models.ForeignKey("HeatLoadVariablePower", blank=True, null=True)
@@ -91,7 +103,16 @@ class OnOffInfo(models.Model):
     OnOff = models.IntegerField(default=0)
     Info = models.IntegerField(default=0)
 
-### Sensor ###
+    @property
+
+    def house(self):
+        if self.onoffprofile.heatloadvariablepower is not None:
+            return self.onoffprofile.heatloadvariablepower.room.house
+        elif self.onoffprofile.shiftingloadcycle is not None:
+            return self.onoffprofile.shiftingloadcycle.room.house
+
+
+
 class Sensor(models.Model):
     def __str__(self):
         return self.sensor_name

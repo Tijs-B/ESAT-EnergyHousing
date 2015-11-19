@@ -11,42 +11,42 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
+            name='AmbientTemp',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('time', models.IntegerField()),
+                ('temperature', models.FloatField()),
+            ],
+        ),
+        migrations.CreateModel(
             name='AvailableEnergy',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('solar', models.FloatField(default=0)),
-                ('wind', models.FloatField(default=0)),
-                ('other', models.FloatField(default=0)),
+                ('time', models.IntegerField()),
+                ('amount', models.FloatField()),
             ],
         ),
         migrations.CreateModel(
-            name='ConsumptionProfile',
+            name='EnergyPrice',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('order', models.IntegerField()),
-                ('duration', models.TimeField()),
-                ('consumption', models.FloatField()),
+                ('time', models.IntegerField()),
+                ('price', models.FloatField()),
             ],
         ),
         migrations.CreateModel(
-            name='FixedDemand',
+            name='FixedDemandProfile',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('appliance_name', models.CharField(max_length=200)),
-                ('priority', models.IntegerField(default=0, choices=[(0, b'Low'), (1, b'Normal'), (2, b'High'), (3, b'Very High')])),
-                ('currently_on', models.BooleanField(default=False)),
+                ('time', models.IntegerField()),
                 ('consumption', models.FloatField()),
             ],
-            options={
-                'abstract': False,
-            },
         ),
         migrations.CreateModel(
             name='HeatLoadInvariablePower',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('appliance_name', models.CharField(max_length=200)),
-                ('priority', models.IntegerField(default=0, choices=[(0, b'Low'), (1, b'Normal'), (2, b'High'), (3, b'Very High')])),
                 ('currently_on', models.BooleanField(default=False)),
                 ('power_required', models.FloatField()),
                 ('isolation_coefficient', models.FloatField()),
@@ -63,7 +63,6 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('appliance_name', models.CharField(max_length=200)),
-                ('priority', models.IntegerField(default=0, choices=[(0, b'Low'), (1, b'Normal'), (2, b'High'), (3, b'Very High')])),
                 ('currently_on', models.BooleanField(default=False)),
                 ('power_required', models.FloatField()),
                 ('isolation_coefficient', models.FloatField()),
@@ -87,9 +86,24 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('neighborhood_name', models.CharField(max_length=200)),
-                ('energy_price', models.FloatField(default=1)),
-                ('ambient_temperature', models.FloatField()),
                 ('power_consumed', models.FloatField()),
+            ],
+        ),
+        migrations.CreateModel(
+            name='OnOffInfo',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('time', models.IntegerField()),
+                ('OnOff', models.IntegerField(default=0)),
+                ('Info', models.IntegerField(default=0)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='OnOffProfile',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('heatloadinvariablepower', models.ForeignKey(blank=True, to='smartgrid.HeatLoadInvariablePower', null=True)),
+                ('heatloadvariablepower', models.ForeignKey(blank=True, to='smartgrid.HeatLoadVariablePower', null=True)),
             ],
         ),
         migrations.CreateModel(
@@ -121,20 +135,38 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('appliance_name', models.CharField(max_length=200)),
-                ('priority', models.IntegerField(default=0, choices=[(0, b'Low'), (1, b'Normal'), (2, b'High'), (3, b'Very High')])),
                 ('currently_on', models.BooleanField(default=False)),
-                ('flexibility_start', models.DateTimeField()),
-                ('flexibility_end', models.DateTimeField()),
+                ('flexibility_start', models.TimeField()),
+                ('flexibility_end', models.TimeField()),
                 ('room', models.ForeignKey(to='smartgrid.Room')),
             ],
             options={
                 'abstract': False,
             },
         ),
+        migrations.CreateModel(
+            name='ShiftingLoadProfile',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('time', models.IntegerField()),
+                ('consumption', models.FloatField()),
+                ('shiftingloadcycle', models.ForeignKey(to='smartgrid.ShiftingLoadCycle')),
+            ],
+        ),
         migrations.AddField(
             model_name='recording',
             name='sensor',
             field=models.ForeignKey(to='smartgrid.Sensor'),
+        ),
+        migrations.AddField(
+            model_name='onoffprofile',
+            name='shiftingloadcycle',
+            field=models.ForeignKey(blank=True, to='smartgrid.ShiftingLoadCycle', null=True),
+        ),
+        migrations.AddField(
+            model_name='onoffinfo',
+            name='onoffprofile',
+            field=models.ForeignKey(to='smartgrid.OnOffProfile'),
         ),
         migrations.AddField(
             model_name='house',
@@ -152,17 +184,22 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(to='smartgrid.Room'),
         ),
         migrations.AddField(
-            model_name='fixeddemand',
-            name='room',
-            field=models.ForeignKey(to='smartgrid.Room'),
+            model_name='fixeddemandprofile',
+            name='house',
+            field=models.ForeignKey(to='smartgrid.House'),
         ),
         migrations.AddField(
-            model_name='consumptionprofile',
-            name='appliance',
-            field=models.ForeignKey(to='smartgrid.ShiftingLoadCycle'),
+            model_name='energyprice',
+            name='neighborhood',
+            field=models.ForeignKey(to='smartgrid.Neighborhood'),
         ),
         migrations.AddField(
             model_name='availableenergy',
+            name='neighborhood',
+            field=models.ForeignKey(to='smartgrid.Neighborhood'),
+        ),
+        migrations.AddField(
+            model_name='ambienttemp',
             name='neighborhood',
             field=models.ForeignKey(to='smartgrid.Neighborhood'),
         ),
