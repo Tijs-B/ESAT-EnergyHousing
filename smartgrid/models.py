@@ -5,6 +5,7 @@ class Scenario(models.Model):
     scenario_name = models.CharField(max_length=200)
     current_neighborhood = models.CharField(max_length=200)
 
+
 class Neighborhood(models.Model):
     def __str__(self):
         return self.neighborhood_name
