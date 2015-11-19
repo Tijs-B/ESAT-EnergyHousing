@@ -75,10 +75,17 @@ def logout(request):
 # Na login
 
 def home(request):
-    # template = loader.get_template('smartgrid/homepage.html')
-    # print request.user.username
+    scenario = Scenario.objects.all()[0]
+    current_neighborhood_name = scenario.neighbourhood_name
+    current_neighborhood = Neighborhood.objects.get(name=current_neighborhood_name)
+
+    energy_price_data = []
+    for energy_price in current_neighborhood.energy_price_set:
+        energy_price_data.append([(energy_price.time-1)/4, energy_price.price])
+
     return render(request, 'smartgrid/post_login/homepage.html',
-                        {'full_name': request.user.username})
+                        {'full_name': request.user.username,
+                         'energy_price_data': energy_price_data})
 
 
 def rooms(request):
