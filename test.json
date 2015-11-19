@@ -1,99 +1,17 @@
 [
 {
   "fields": {
+    "scenario_name": "test_scenario",
+    "current_neighborhood": "Buurt"
+  },
+  "model": "smartgrid.scenario",
+  "pk": 1
+},
+{
+  "fields": {
     "neighborhood_name": "Buurt",
-    "ambient_temperature": 20.0,
-    "power_consumed": 0.0,
-    "energy_price": 1.0
+    "power_consumed": 0.0
   },
   "model": "smartgrid.neighborhood",
   "pk": 2
-},
-{
-  "fields": {
-    "house_name": "Familie A",
-    "neighbourhood": 2
-  },
-  "model": "smartgrid.house",
-  "pk": 2
-},
-{
-  "fields": {
-    "house": 2,
-    "room_name": "Keuken"
-  },
-  "model": "smartgrid.room",
-  "pk": 2
-},
-{
-  "fields": {
-    "house": 2,
-    "room_name": "Woonkamer"
-  },
-  "model": "smartgrid.room",
-  "pk": 3
-},
-{
-  "fields": {
-    "consumption": 1.0,
-    "room": 3,
-    "currently_on": true,
-    "appliance_name": "FD"
-  },
-  "model": "smartgrid.fixeddemand",
-  "pk": 2
-},
-{
-  "fields": {
-    "flexibility_start": null,
-    "flexibility_end": null,
-    "room": 3,
-    "currently_on": true,
-    "appliance_name": "SLC"
-  },
-  "model": "smartgrid.shiftingloadcycle",
-  "pk": 2
-},
-{
-  "fields": {
-    "coefficient_of_performance": 3.0,
-    "room": 3,
-    "power_required": 1.0,
-    "currently_on": true,
-    "mass_of_air": 4.0,
-    "power_consumed": 5.0,
-    "isolation_coefficient": 2.0,
-    "appliance_name": "HLVP"
-  },
-  "model": "smartgrid.heatloadvariablepower",
-  "pk": 2
-},
-{
-  "fields": {
-    "coefficient_of_performance": 0.0,
-    "room": 2,
-    "power_required": 0.0,
-    "currently_on": false,
-    "mass_of_air": 0.0,
-    "power_consumed": 0.0,
-    "isolation_coefficient": 0.0,
-    "appliance_name": "Koelkast"
-  },
-  "model": "smartgrid.heatloadinvariablepower",
-  "pk": 2
-},
-{
-  "fields": {
-    "coefficient_of_performance": 3.0,
-    "room": 3,
-    "power_required": 1.0,
-    "currently_on": false,
-    "mass_of_air": 4.0,
-    "power_consumed": 5.0,
-    "isolation_coefficient": 2.0,
-    "appliance_name": "HLIP"
-  },
-  "model": "smartgrid.heatloadinvariablepower",
-  "pk": 3
 }
-]
