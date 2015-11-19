@@ -135,4 +135,21 @@ def heatloadinvariable(request, appliance_id):
 
 def trigger_gams(request):
     if request.POST:
-        print 'trigger gams'
+        print 'gams'
+
+
+def make_appliance_list():
+    room = Room.objects.all()
+    room_dictionary = {}
+    for i in range(len(room)):
+        room_dictionary[room[i]] = room[i].house
+
+
+def send_to_pi(request, time):
+    onoffinfo = OnOffInfo.objects.filter(time=time)
+    list_to_send = []
+    for i in range(len(onoffinfo)):
+        print 'test'
+
+
+
