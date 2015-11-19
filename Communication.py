@@ -20,7 +20,7 @@ def make_appliance_list():
 
     # bevat {appliance_name: [house, type, type_id, individual id]}
     appliance_list = {}
-    # om vaste id's te geven: bv: {diepvries_huis_A: 1, diepvries_huis_B: 2,...
+    # om vaste id's te geven: bv: {huis_A: {diepvries_huis_A: 1}, huis_B:{ diepvries_huis_B: 2,...} (huis_A is nummer)
     fixed_appliance_list = {}
 
     id = 0
