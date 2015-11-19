@@ -49,15 +49,19 @@ class FixedDemand(Appliance):
     consumption = models.FloatField()
 
 
+class FixedDemandProfile(models.Model):
+    fixeddemand = models.ForeignKey("FixedDemand")
+    time = models.IntegerField()
+    consumption = models.FloatField()
+
+
 class ShiftingLoadCycle(Appliance):
-    flexibility_start = models.DateTimeField()
-    flexibility_end = models.DateTimeField()
-    def get_flex(self, flexibility_start, flexibility_end):
-        return flexibility_start, flexibility_end
+    flexibility_start = models.TimeField()
+    flexibility_end = models.TimeField()
 
 
-class ConsumptionProfile(models.Model):
-    shiftingloadcycle = models.ForeignKey("ShiftingLoadCycle", blank=True, null=True)
+class ShiftingLoadProfile(models.Model):
+    shiftingloadcycle = models.ForeignKey("ShiftingLoadCycle")
     time = models.IntegerField()
     consumption = models.FloatField()
 
