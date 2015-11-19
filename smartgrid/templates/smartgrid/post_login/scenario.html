@@ -1,5 +1,15 @@
 {% extends "smartgrid/base.html" %}
 
+{% block nav %}
+<ul class="nav">
+    <li><a href="{% url 'smartgrid:home' %}">Home</a></li>
+    <li><a href="{% url 'smartgrid:rooms' %}">Kamers</a></li>
+    <li><a class="active" href="{% url 'smartgrid:scenario' %}">Grafieken</a></li>
+    <li><a href="{% url 'smartgrid:logout' %}">Log uit</a></li>
+</ul>
+{% endblock nav %}
+
+
 {% block content %}
 <h1>Grafieken</h1>
 <div class="graph" id="price_chart"></div>
@@ -141,7 +151,8 @@
             },
             series: [{
                 name: 'Verbruik',
-                data: {{ consumption_data }}
+                // TODO
+                data: []
             }]
         });
     })

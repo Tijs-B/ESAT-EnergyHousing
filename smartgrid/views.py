@@ -135,18 +135,22 @@ def heatloadinvariable(request, appliance_id):
 
 def scenario(request):
     scenario = Scenario.objects.all()[0]
-    current_neighbourhood_name = scenario.neighbourhood_name
-    current_neightbourhood = Neighborhood.objects.get(name=current_neighbourhood_name)
+    current_neighborhood_name = scenario.neighbourhood_name
+    current_neighborhood = Neighborhood.objects.get(name=current_neighborhood_name)
 
     energy_price_data = []
-    for energy_price in current_neightbourhood.energy_price_set:
+    for energy_price in current_neighborhood.energy_price_set:
         energy_price_data.append([(energy_price.time-1)/4, energy_price.price])
 
     available_energy_data = []
-    for available_energy in current_neightbourhood.available_energy_set:
+    for available_energy in current_neighborhood.available_energy_set:
         available_energy_data.append([(available_energy.time-1)/4, available_energy.amount])
 
-    
+    return render(request, 'smartgrid/post_login/senario.html',
+                  {'energy_price_data': energy_price_data,
+                   'available_energy_data': available_energy_data})
+
+
 
 def trigger_gams(request):
     if request.POST:
