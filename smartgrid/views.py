@@ -134,7 +134,19 @@ def heatloadinvariable(request, appliance_id):
                    'power_consumed': appliance.power_consumed})
 
 def scenario(request):
-    pass
+    scenario = Scenario.objects.all()[0]
+    current_neighbourhood_name = scenario.neighbourhood_name
+    current_neightbourhood = Neighborhood.objects.get(name=current_neighbourhood_name)
+
+    energy_price_data = []
+    for energy_price in current_neightbourhood.energy_price_set:
+        energy_price_data.append([(energy_price.time-1)/4, energy_price.price])
+
+    available_energy_data = []
+    for available_energy in current_neightbourhood.available_energy_set:
+        available_energy_data.append([(available_energy.time-1)/4, available_energy.amount])
+
+    
 
 def trigger_gams(request):
     if request.POST:
