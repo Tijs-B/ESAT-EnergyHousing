@@ -3,7 +3,7 @@ import gams
 import os
 import time
 import glob
-
+"""
 conn = sq.connect('db.sqlite3')
 c = conn.cursor()
 
@@ -87,3 +87,18 @@ if db.check_domains():
     conn.commit()
 else:
     exit('ERROR')
+
+"""
+
+conn = sq.connect('db.sqlite3')
+c = conn.cursor()
+
+price = list()
+
+for i in range(1, 45):
+    price.append((i, i, 20, 1))
+for i in range(45, 97):
+    price.append((i, i, 10, 1))
+
+c.executemany("INSERT INTO smartgrid_ambienttemp VALUES (?, ?, ?, ?)", price)
+conn.commit()

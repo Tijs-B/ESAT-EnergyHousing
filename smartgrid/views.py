@@ -138,18 +138,19 @@ def trigger_gams(request):
         print 'gams'
 
 
-def make_appliance_list():
-    room = Room.objects.all()
-    room_dictionary = {}
-    for i in range(len(room)):
-        room_dictionary[room[i]] = room[i].house
-
-
 def send_to_pi(request, time):
     onoffinfo = OnOffInfo.objects.filter(time=time)
     list_to_send = []
-    for i in range(len(onoffinfo)):
-        print 'test'
+    scenario = Scenario.objects.all()[0]
+    # om vaste id's te geven: bv: {diepvries_huis_A: 1, diepvries_huis_B: 2,...}
+    fixed_appliance_dictionary = {}
 
+    for onoff in onoffinfo:
+        if onoff.house.neighbourhood.neighborhood_name == scenario.current_neighborhood:
+            house = onoff.house.house_name
 
-
+            status = onoff.Info
+            #
+            appliance_name = onoff.appliance_name
+            # appliance_id = fixed_appliance_list[appliance_name]
+            list_to_send += [[house, status, appliance_name]]

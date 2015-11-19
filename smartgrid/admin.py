@@ -8,8 +8,13 @@ class HouseInline(admin.StackedInline):
     extra = 0
 
 
+class PriceInline(admin.StackedInline):
+    model = EnergyPrice
+    extra = 1
+
+
 class NeighborhoodAdmin(admin.ModelAdmin):
-    inlines = [HouseInline]
+    inlines = [HouseInline, PriceInline]
 
 
 # House

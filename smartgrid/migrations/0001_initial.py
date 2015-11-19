@@ -123,6 +123,14 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
+            name='Scenario',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('scenario_name', models.CharField(max_length=200)),
+                ('current_neighborhood', models.CharField(max_length=200)),
+            ],
+        ),
+        migrations.CreateModel(
             name='Sensor',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
