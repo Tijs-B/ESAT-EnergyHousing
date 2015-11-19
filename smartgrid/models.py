@@ -1,6 +1,10 @@
 from django.db import models
 
 
+class Scenario(models.Model):
+    scenario_name = models.CharField(max_length=200)
+    current_neighborhood = models.CharField(max_length=200)
+
 class Neighborhood(models.Model):
     def __str__(self):
         return self.neighborhood_name
@@ -110,6 +114,16 @@ class OnOffInfo(models.Model):
             return self.onoffprofile.heatloadvariablepower.room.house
         elif self.onoffprofile.shiftingloadcycle is not None:
             return self.onoffprofile.shiftingloadcycle.room.house
+        elif self.onoffprofile.heatloadinvariablepower is not None:
+            return self.onoffprofile.heatloadinvariablepower.room.house
+
+    def appliance_name(self):
+        if self.onoffprofile.heatloadvariablepower is not None:
+            return self.onoffprofile.heatloadvariablepower.appliance_name
+        elif self.onoffprofile.shiftingloadcycle is not None:
+            return self.onoffprofile.shiftingloadcycle.appliance_name
+        elif self.onoffprofile.heatloadinvariablepower is not None:
+            return self.onoffprofile.heatloadinvariablepower.appliance_name
 
 
 
