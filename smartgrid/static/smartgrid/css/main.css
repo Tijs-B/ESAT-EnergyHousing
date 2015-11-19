@@ -3,6 +3,10 @@
     background-color: #fff;
 }
 
+.container {
+    max-width: 980px;
+}
+
 .content {
 	padding-bottom:100px;
 }
