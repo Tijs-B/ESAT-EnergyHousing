@@ -133,6 +133,9 @@ def heatloadinvariable(request, appliance_id):
                    'mass_of_air': appliance.mass_of_air,
                    'power_consumed': appliance.power_consumed})
 
+def scenario(request):
+    pass
+
 def trigger_gams(request):
     if request.POST:
         print 'trigger gams'

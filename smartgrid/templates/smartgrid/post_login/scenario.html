@@ -1,0 +1,113 @@
+{% extends "smartgrid/base.html" %}
+
+{% block content %}
+<h1>Grafieken</h1>
+<div class="graph" id="price_chart"></div>
+<div class="graph" id="energy_chart"></div>
+<div class="graph" id="consumption_chart"></div>
+
+<h1>Verander scenario</h1>
+{% endblock content %}
+
+{% block script %}
+<script>
+    $(function () {
+        $("#price_chart").highcharts({
+            chart: {
+                type: 'spline'
+            },
+            title: {
+                text: 'Energieprijs'
+            },
+            xAxis: {
+                title: {
+                    enabled: true,
+                    text: 'Tijd'
+                },
+                labels: {
+                    formatter: function () {
+                        return "€" + this.value;
+                    }
+                }
+            },
+            yAxis: {
+                title: {
+                    enabled: true,
+                    text: 'Energieprijs'
+                }
+            },
+            tooltip: {
+                valueSuffix: '€'
+            },
+            series: [{
+                name: 'Energieprijs',
+                data: {{ energy_price_data }}
+            }]
+        });
+        $("#energy_chart").highcharts({
+            chart: {
+                type: 'spline'
+            },
+            title: {
+                text: 'Beschikbare energie'
+            },
+            xAxis: {
+                title: {
+                    enabled: true,
+                    text: 'Tijd'
+                },
+                labels: {
+                    formatter: function () {
+                        return this.value + " kW";
+                    }
+                }
+            },
+            yAxis: {
+                title: {
+                    enabled: true,
+                    text: 'Beschikbare energie'
+                }
+            },
+            tooltip: {
+                valueSuffix: '€'
+            },
+            series: [{
+                name: 'Beschikbare energie',
+                data: {{ available_energy_data }}
+            }]
+        });
+        $("#consumption_chart").highcharts({
+            chart: {
+                type: 'spline'
+            },
+            title: {
+                text: 'Verbruik'
+            },
+            xAxis: {
+                title: {
+                    enabled: true,
+                    text: 'Tijd'
+                },
+                labels: {
+                    formatter: function () {
+                        return this.valie + " kW"
+                    }
+                }
+            },
+            yAxis: {
+                title: {
+                    enabled: true,
+                    text: 'Verbruik'
+                }
+            },
+            tooltip: {
+                valueSuffix: '€'
+            },
+            series: [{
+                name: 'Verbruik',
+                data: {{ consumption_data }}
+            }]
+        });
+    })
+</script>
+{% endblock script %}
