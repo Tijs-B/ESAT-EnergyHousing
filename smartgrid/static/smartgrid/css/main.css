@@ -89,7 +89,7 @@
     padding-top: 40px;
 }
 
-.btn {
+.btn2 {
     border-style: solid;
     border-width: 2px;
     border-color: #fff;
@@ -98,3 +98,16 @@
     background-color: rgba(255, 255, 255, 0.2);
     text-decoration: none;
     color: #fff;
+
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
+    background-image: none;
+}
