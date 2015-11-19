@@ -119,5 +119,8 @@ class Recording(models.Model):
 
 # UserProfile
 class UserDetails(models.Model):
+    def __str__(self):
+        return str(self.user) + " from " + str(self.house)
+
     user = models.ForeignKey(User, unique=True)
     house = models.ForeignKey("House")
