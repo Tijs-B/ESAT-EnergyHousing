@@ -10,7 +10,7 @@ class HouseInline(admin.StackedInline):
 
 class PriceInline(admin.StackedInline):
     model = EnergyPrice
-    extra = 94
+    extra = 1
 
 
 class NeighborhoodAdmin(admin.ModelAdmin):
