@@ -23,9 +23,6 @@ class HouseAdmin(admin.ModelAdmin):
 
 
 # Room
-class FixedDemandInline(admin.StackedInline):
-    model = FixedDemand
-    extra = 0
 
 
 class ShiftingLoadCycleInline(admin.StackedInline):
@@ -44,7 +41,7 @@ class HeatloadInvariablePowerInline(admin.StackedInline):
 
 
 class RoomAdmin(admin.ModelAdmin):
-    inlines = [FixedDemandInline, ShiftingLoadCycleInline, HeatloadVariablePowerInline, HeatloadInvariablePowerInline]
+    inlines = [ShiftingLoadCycleInline, HeatloadVariablePowerInline, HeatloadInvariablePowerInline]
 
 
 
@@ -53,11 +50,10 @@ class RoomAdmin(admin.ModelAdmin):
 
 admin.site.register(Neighborhood, NeighborhoodAdmin)
 admin.site.register(House, HouseAdmin)
-admin.site.register(FixedDemand)
 admin.site.register(ShiftingLoadCycle)
 admin.site.register(HeatLoadVariablePower)
 admin.site.register(HeatLoadInvariablePower)
 admin.site.register(Room, RoomAdmin)
-admin.site.register(ConsumptionProfile)
+admin.site.register(ShiftingLoadProfile)
 admin.site.register(OnOffProfile)
 admin.site.register(OnOffInfo)
