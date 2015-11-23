@@ -7,6 +7,10 @@
     max-width: 980px;
 }
 
+.content {
+	padding-bottom:100px;
+}
+
 .header {
     background-color: #8DC53E;
     color: #fff;
@@ -87,6 +91,7 @@
     color: #fff;
     margin-top: 0;
     padding-top: 40px;
+    box-shadow: 0px 10000px 0px 10000px #006838;
 }
 
 .btn2 {
@@ -98,16 +103,16 @@
     background-color: rgba(255, 255, 255, 0.2);
     text-decoration: none;
     color: #fff;
-
     display: inline-block;
     padding: 6px 12px;
-    margin-bottom: 0;
-    font-weight: 400;
-    line-height: 1.42857143;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: middle;
-    cursor: pointer;
-    user-select: none;
-    background-image: none;
+}
+
+.btn2:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+    color: #000000;
+    text-decoration: none;
+}
+
+.kul:hover{
+    box-shadow: 0 0 10px #000;
 }
