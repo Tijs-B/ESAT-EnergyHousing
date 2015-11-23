@@ -3,7 +3,7 @@ import gams
 import os
 import time
 import glob
-"""
+
 conn = sq.connect('db.sqlite3')
 c = conn.cursor()
 
@@ -88,7 +88,7 @@ if db.check_domains():
 else:
     exit('ERROR')
 
-"""
+
 
 conn = sq.connect('db.sqlite3')
 c = conn.cursor()
