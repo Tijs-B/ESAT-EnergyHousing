@@ -1,12 +1,18 @@
 from gams import *
 import os
 import sys
+import sqlite3 as sq
 
-ws = GamsWorkspace()
 
-ws.gamslib("trnsport")
-t1 = ws.add_job_from_file("trnsport.gms")
-t1.run()
+conn = sq.connect('db.sqlite3')
+c = conn.cursor()
 
-for rec in t1.out_db["x"]:
-    print "x(" + rec.keys[0] + "," + rec.keys[1] + "): level=" + str(rec.level) + " marginal=" + str(rec.marginal)
+price = list()
+
+for i in range(1, 45):
+    price.append((i, i, 20, 1))
+for i in range(45, 97):
+    price.append((i, i, 10, 1))
+
+c.executemany("INSERT INTO smartgrid_ambienttemp VALUES (?, ?, ?, ?)", price)
+conn.commit()
