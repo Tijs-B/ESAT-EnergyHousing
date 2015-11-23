@@ -27,6 +27,7 @@
 
 .header h1 a:hover {
     text-decoration: none;
+    transition-duration: 0.7s;
 }
 
 .header .nav {
@@ -49,6 +50,7 @@
 
 .header .nav li a:hover {
     background-color: #7FB436;
+    transition-duration: 0.7s;
 }
 
 .header .nav li a:active {
@@ -136,4 +138,5 @@
 
 .kul:hover{
     box-shadow: 0 0 10px #000;
+    transition-duration: 0.5s;
 }
