@@ -121,6 +121,7 @@ def heatloadvariable(request, appliance_id):
                    'mass_of_air': appliance.mass_of_air,
                    'power_consumed': appliance.power_consumed})
 
+
 def heatloadinvariable(request, appliance_id):
     appliance = get_object_or_404(HeatLoadInvariablePower, pk=appliance_id)
     return render(request, 'smartgrid/post_login/appliances/Heatloadinvariable.html',
@@ -131,8 +132,10 @@ def heatloadinvariable(request, appliance_id):
                    'mass_of_air': appliance.mass_of_air,
                    'power_consumed': appliance.power_consumed})
 
+
 def trigger_gams(request):
     if request.POST:
+        # gams workshop initialisatie
         ws = gams.GamsWorkspace(working_directory=os.getcwd())
 
         job = ws.add_job_from_file('SEH-frigo-huis-vriezer-database-communicatie (1).gms')
@@ -141,45 +144,90 @@ def trigger_gams(request):
 
         db = ws.add_database()
         opt.defines["SupplyDataFileName"] = db.name
-
+        # definieer de sets
         set_t = db.add_set('t', 1, 'time')
+
+        for i in range(0, 97):
+            set_t.add_record(i)
+
         set_cat1 = db.add_set('cat1', 1, 'appliances of category one')
         set_cat2 = db.add_set('cat2', 1, 'appliances of category two')
-        set_cat3 = db.add_set('cat3', 1, 'appliances of category three')
-        set_cat4 = db.add_set('cat4', 1, 'appliances of category four')
+        set_cat3 = db.add_set('cat3', 1, 'appliances of category three, heatloadinvariablepower')
+        set_cat4 = db.add_set('cat4', 1, 'appliances of category four, heatloadvariablepower')
 
+        scenario = Scenario.objects.all()[0]
+        # buitentemperatuur, prijs en renewables
         param_temp_amb = db.add_parameter_dc('TEMP_AMB', [set_t], 'Temperature of the environment (in K) -> time')
         param_price = db.add_parameter_dc('PRICE', [set_t], 'price of energy')
         param_resloc = db.add_parameter_dc('RESLOC', [set_t], 'local supply renewables')
 
+        ambiant_temp = AmbientTemp.objects.filter(Neighborhood=scenario.current_neighborhood)
+        for i in ambiant_temp:
+            param_temp_amb.add_record(i.time).value = i.temperature
+
+        energy_price = EnergyPrice.objects.filter(Neighborhood=scenario.current_neighborhood)
+        for i in energy_price:
+            param_price.add_record(i.time).value = i.price
+
+        available_energy = AvailableEnergy.objects.filter(Neighborhood=scenario.current_neighborhood)
+        for i in available_energy:
+            param_resloc.add_record(i.time).value = i.amount
+        # fixed demand
         param_dcat1 = db.add_parameter_dc('DCAT1', [set_t], 'category 1 demand')
 
-        param_cyc_cat1 = db.add_parameter_dc('CYC_CAT2', [set_cat2, set_t], 'demand of cat 2')
+        fixed_demand = FixedDemandProfile.objects.filter(Neighborhood=scenario.current_neighborhood)
+        total_consumption = [list() for _ in xrange(97)]
+        # go by every time, add consumption to consumed when time equals fixed_demand.time, add consumption to dcat
+        for time in range(0, 97):
+            consumed = 0
+            for i in fixed_demand:
+                if i.time == time:
+                    consumed += i.consumption
+                param_dcat1.add_record(time).value = consumed
 
+        param_cyc_cat2 = db.add_parameter_dc('CYC_CAT2', [set_cat2, set_t], 'demand of cat 2')
+        # heatloadinvariablepower
         param_ua_cat3 = db.add_parameter_dc('UA_CAT3', [set_cat3], 'isolation constant')
         param_cop_cat3 = db.add_parameter_dc('COP_CAT3', [set_cat3], 'coefficient of performance ')
         param_pcool_cat3 = db.add_parameter_dc('PCOOL_CAT3', [set_cat3], 'power needed ')
         param_mass_cat3 = db.add_parameter_dc('MASS_CAT3', [set_cat3], 'mass of the cooled air inside ')
 
+        category3 = HeatLoadInvariablePower.objects.filter(Neighborhood=scenario.current_neighborhood)
+        for i in category3:
+            set_cat3.add_record(i.appliance_name)
+
+            param_cop_cat3.add_record(i.appliance_name).value = i.coefficient_of_performance
+            param_mass_cat3.add_record(i.appliance_name).value = i.mass_of_air
+            param_pcool_cat3.add_record(i.appliance_name).value = i.power_required
+            param_ua_cat3.add_record(i.appliance_name).value = i.isolation_coefficient
+        # heatloadvariablepower
         param_ua_cat4 = db.add_parameter_dc('UA_CAT4', [set_cat4], 'isolation constant of')
         param_cop_cat4 = db.add_parameter_dc('COP_CAT4', [set_cat4], 'coefficient of performance')
         param_pcool_cat4 = db.add_parameter_dc('PCOOL_CAT4', [set_cat4], 'power needed ')
         param_mass_cat4 = db.add_parameter_dc('MASS_CAT4', [set_cat4], 'mass of the cooled air inside')
 
+        category4 = HeatLoadInvariablePower.objects.filter(Neighborhood=scenario.current_neighborhood)
+        for i in category4:
+            set_cat4.add_record(i.appliance_name)
+
+            param_cop_cat4.add_record(i.appliance_name).value = i.coefficient_of_performance
+            param_mass_cat4.add_record(i.appliance_name).value = i.mass_of_air
+            param_pcool_cat4.add_record(i.appliance_name).value = i.power_required
+            param_ua_cat4.add_record(i.appliance_name).value = i.isolation_coefficient
+
 
 def send_to_pi(request, time):
-    onoffinfo = OnOffInfo.objects.filter(time=time)
-    list_to_send = []
     scenario = Scenario.objects.all()[0]
+    onoffinfo = OnOffInfo.objects.filter(time=time, Neighborhood=scenario.current_neighborhood)
+    list_to_send = []
     # om vaste id's te geven: bv: {diepvries_huis_A: 1, diepvries_huis_B: 2,...}
     fixed_appliance_dictionary = {}
 
     for onoff in onoffinfo:
-        if onoff.house.neighbourhood.neighborhood_name == scenario.current_neighborhood:
-            house = onoff.house.house_name
+        house = onoff.house.house_name
 
-            status = onoff.Info
-            #
-            appliance_name = onoff.appliance_name
-            # appliance_id = fixed_appliance_list[appliance_name]
-            list_to_send += [[house, status, appliance_name]]
+        status = onoff.Info
+        #
+        appliance_name = onoff.appliance_name
+        # appliance_id = fixed_appliance_list[appliance_name]
+        list_to_send += [[house, status, appliance_name]]
