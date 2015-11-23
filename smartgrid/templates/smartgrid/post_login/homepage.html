@@ -10,7 +10,7 @@
 {% endblock nav %}
 
 {% block content %}
-    <h1>Welkom, {{ full_name }}!</h1>
+    <h1>Welkom!</h1>
     <p>De energieprijzen voor vandaag:</p>
     <div class="graph">
 
@@ -46,7 +46,7 @@
                 },
                 labels: {
                     formatter: function () {
-                        return "€" + this.value
+                        return this.value + " EUR"
                     }
                 }
             },
@@ -58,7 +58,7 @@
                 }
             },
             tooltip: {
-                valueSuffix: '€'
+                valueSuffix: ' EUR'
             },
             series: [{
                 name: 'Energieprijs',

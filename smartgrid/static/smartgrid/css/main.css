@@ -114,6 +114,11 @@
     transition-duration: 0.7s;
 }
 
+.btn-primary {
+    background-color: #8DC53E;
+    border: none;
+}
+
 .kul:hover{
     box-shadow: 0 0 10px #000;
 }

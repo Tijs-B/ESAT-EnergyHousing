@@ -24,4 +24,5 @@ urlpatterns = [
     url(r'^room/shiftingloadcycle/(?P<appliance_id>[0-9]+)/$', views.shiftingloadcycle, name='shiftingloadcycle'),
 
     url(r'^scenario/$', views.scenario, name='scenario'),
+    url(r'^scenario/change_scenario/(?P<neighborhood_id>[0-9]+)/$', views.change_scenario, name='change_scenario'),
 ]
