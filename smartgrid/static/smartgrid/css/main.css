@@ -111,6 +111,7 @@
     background-color: rgba(255, 255, 255, 0.5);
     color: #000000;
     text-decoration: none;
+    transition-duration: 0.7s;
 }
 
 .kul:hover{
