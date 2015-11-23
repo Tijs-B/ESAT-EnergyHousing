@@ -114,9 +114,24 @@
     transition-duration: 0.7s;
 }
 
-.btn-primary {
+.btn-green {
     background-color: #8DC53E;
     border: none;
+    color: #fff;
+}
+
+.btn-green:hover {
+    background-color: #7DB035;
+    color: #fff;
+}
+
+.btn-green:active {
+    background-color: #6F9D2F;
+    color: #fff;
+}
+
+.btn-green:visited {
+    color: #fff;
 }
 
 .kul:hover{

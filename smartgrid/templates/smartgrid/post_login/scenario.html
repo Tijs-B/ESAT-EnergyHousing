@@ -21,7 +21,7 @@
     <div class="btn-group-vertical">
         {% for neighborhood in neighborhood_list %}
             {% if neighborhood.neighborhood_name == current_neighborhood_name %}
-                <a type="button" class="btn btn-primary" href="#">{{ neighborhood.neighborhood_name }}</a>
+                <a type="button" class="btn btn-green" href="#">{{ neighborhood.neighborhood_name }}</a>
             {% else %}
                 <a type="button" class="btn btn-default" href="#"></a>
             {% endif %}
