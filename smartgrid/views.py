@@ -10,10 +10,12 @@ from django.core.context_processors import csrf
 
 from .models import *
 
-# GAMS
+#GAMS
+# import sqlite3 as sq
+# import gams
+# import os
 
-import gams
-import os
+# Create your views here.
 
 # Prehomepage
 
@@ -73,10 +75,18 @@ def logout(request):
 # Na login
 
 def home(request):
-    # template = loader.get_template('smartgrid/homepage.html')
-    # print request.user.username
-    return render(request, 'smartgrid/post_login/homepage.html',
-                        {'full_name': request.user.username})
+    # scenario = Scenario.objects.all()[0]
+    # current_neighborhood_name = scenario.neighbourhood_name
+    # current_neighborhood = Neighborhood.objects.get(name=current_neighborhood_name)
+    #
+    # energy_price_data = []
+    # for energy_price in current_neighborhood.energy_price_set:
+    #     energy_price_data.append([(energy_price.time-1)/4, energy_price.price])
+    #
+    # return render(request, 'smartgrid/post_login/homepage.html',
+    #                     {'full_name': request.user.username,
+    #                      'energy_price_data': energy_price_data})
+    return render(request, 'smartgrid/post_login/homepage.html', {'full_name': request.user.username})
 
 
 def rooms(request):
@@ -91,14 +101,14 @@ def room_detail(request, room_id):
                   {'room': room})
 
 ## Appliances
-"""
+
 def fixed(request, appliance_id):
     appliance = get_object_or_404(FixedDemand, pk=appliance_id)
     return render(request, 'smartgrid/post_login/appliances/Fixed.html',
                   {'appliance': appliance,
                    'consumption': appliance.consumption,
                    'currently_on':appliance.currently_on})
-"""
+
 
 def shiftingloadcycle(request, appliance_id):
     appliance = get_object_or_404(ShiftingLoadCycle, pk=appliance_id)
@@ -132,6 +142,32 @@ def heatloadinvariable(request, appliance_id):
                    'mass_of_air': appliance.mass_of_air,
                    'power_consumed': appliance.power_consumed})
 
+def scenario(request):
+    scenario = Scenario.objects.all()[0]
+    current_neighborhood_name = scenario.current_neighborhood
+    current_neighborhood = Neighborhood.objects.get(neighborhood_name=current_neighborhood_name)
+
+    energy_price_data = []
+    for energy_price in current_neighborhood.energyprice_set.all():
+        energy_price_data.append([(float(energy_price.time)-1.0)/4.0, float(energy_price.price)])
+
+    available_energy_data = []
+    for available_energy in current_neighborhood.availableenergy_set.all():
+        available_energy_data.append([(float(available_energy.time)-1.0)/4.0, float(available_energy.amount)])
+
+    neighborhood_list = Neighborhood.objects.all()
+
+    return render(request, 'smartgrid/post_login/scenario.html',
+                  {'current_neighborhood_name': current_neighborhood_name,
+                   'energy_price_data': energy_price_data,
+                   'available_energy_data': available_energy_data,
+                   'neighborhood_list': neighborhood_list})
+
+
+def change_scenario(request, neighborhood_id):
+    neighborhood = get_object_or_404(neighborhood_id)
+    scenario = Scenario.objects.all()[0]
+    scenario.current_neighborhood = neighborhood.neighborhood_name
 
 def trigger_gams(request):
     if request.POST:

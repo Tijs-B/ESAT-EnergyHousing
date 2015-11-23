@@ -1,5 +1,14 @@
 {% extends "smartgrid/base.html" %}
 
+{% block nav %}
+<ul class="nav">
+    <li><a href="{% url 'smartgrid:home' %}">Home</a></li>
+    <li><a class="active" href="{% url 'smartgrid:rooms' %}">Kamers</a></li>
+    <li><a href="{% url 'smartgrid:scenario' %}">Grafieken</a></li>
+    <li><a href="{% url 'smartgrid:logout' %}">Log uit</a></li>
+</ul>
+{% endblock nav %}
+
 {% block content %}
 <ol class="breadcrumb">
     <li><a href="{% url 'smartgrid:home' %}">Home</a></li>
