@@ -49,7 +49,6 @@ class RoomAdmin(admin.ModelAdmin):
     inlines = [ShiftingLoadCycleInline, HeatloadVariablePowerInline, HeatloadInvariablePowerInline]
 
 
-
 # Appliance
 
 

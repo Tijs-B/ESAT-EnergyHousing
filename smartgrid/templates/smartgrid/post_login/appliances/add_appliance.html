@@ -13,8 +13,9 @@
 <h1>Hallo wereld</h1>
 <form action="{% url 'smartgrid:add' room.id %}" method="post">
     {% csrf_token %}
-    {% for appliance in room.appliance_set.all %}
+    {% for appliance in appliances %}
     <input type="radio" name="appliance" value="{{ appliance.id }}"/>
+    <label>{{ appliance }}</label>
     {% endfor %}
     <input type="submit" value="Toevoegen"/>
 </form>

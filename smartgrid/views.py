@@ -5,6 +5,7 @@ from django.views import generic
 from django.template import RequestContext, loader
 from django.contrib import auth
 from django.core.context_processors import csrf
+from itertools import chain
 
 from .models import *
 
@@ -145,24 +146,34 @@ def heatloadinvariable(request, appliance_id):
                    'power_consumed': appliance.power_consumed})
 
 
+# Apparaat toevoegen
 def add_appliance(request, room_id):
-    return render(request, 'smartgrid/post_login/appliances/add_appliance.html')
+    room = get_object_or_404(Room, pk=room_id)
+    appliances = HeatLoadInvariablePower.objects.all()
+    print appliances
+    app = HeatLoadVariablePower.objects.all()
+    print app
+    appliances = list(chain(appliances, app))
+    return render(request, 'smartgrid/post_login/appliances/add_appliance.html', {'room': room, 'appliances': appliances})
 
 
 def add(request, room_id):
     r = get_object_or_404(Room, pk=room_id)
     try:
-        selected_choice = r.choice_set.get(pk=request.POST['appliance'])
+        selected_choice = get_object_or_404(HeatLoadVariablePower, pk=request.POST['appliance'])
+    try:
+        selected_choice = 
     except (KeyError, Appliance.DoesNotExist):
         return render(request, 'smartgrid/post_login/appliance/add_appliance.html', {
             'room': r,
             'error_message': "You didn't select a choice."})
     else:
-        r.appliance_set.all.append(selected_choice)
-        r.appliance_set.all.save()
+        r.heatloadvariablepower_set.add(selected_choice)
+        r.save()
         return HttpResponseRedirect(reverse('smartgrid:room_detail', args=(r.id,)))
 
 
+# Scenario
 def scenario(request):
     scenario = Scenario.objects.all()[0]
     current_neighborhood_name = scenario.current_neighborhood
