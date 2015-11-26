@@ -11,4 +11,11 @@
 
 {% block content %}
 <h1>Hallo wereld</h1>
+<form action="{% url 'smartgrid:add' room.id %}" method="post">
+    {% csrf_token %}
+    {% for appliance in room.appliance_set.all %}
+    <input type="radio" name="appliance" value="{{ appliance.id }}"/>
+    {% endfor %}
+    <input type="submit" value="Toevoegen"/>
+</form>
 {% endblock content %}

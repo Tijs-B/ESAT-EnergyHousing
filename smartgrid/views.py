@@ -1,11 +1,9 @@
-from django.shortcuts import get_object_or_404, render
-from django.shortcuts import render_to_response
+from django.shortcuts import get_object_or_404, render, render_to_response
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.views import generic
 from django.template import RequestContext, loader
 from django.contrib import auth
-# Security:
 from django.core.context_processors import csrf
 
 from .models import *
@@ -107,7 +105,7 @@ def room_detail(request, room_id):
 ## Appliances
 
 def fixed(request, appliance_id):
-    appliance = get_object_or_404(FixedDemand, pk=appliance_id)
+    appliance = get_object_or_404(FixedDemandProfile, pk=appliance_id)
     return render(request, 'smartgrid/post_login/appliances/Fixed.html',
                   {'appliance': appliance,
                    'consumption': appliance.consumption,
@@ -149,6 +147,20 @@ def heatloadinvariable(request, appliance_id):
 
 def add_appliance(request, room_id):
     return render(request, 'smartgrid/post_login/appliances/add_appliance.html')
+
+
+def add(request, room_id):
+    r = get_object_or_404(Room, pk=room_id)
+    try:
+        selected_choice = r.choice_set.get(pk=request.POST['appliance'])
+    except (KeyError, Appliance.DoesNotExist):
+        return render(request, 'smartgrid/post_login/appliance/add_appliance.html', {
+            'room': r,
+            'error_message': "You didn't select a choice."})
+    else:
+        r.appliance_set.all.append(selected_choice)
+        r.appliance_set.all.save()
+        return HttpResponseRedirect(reverse('smartgrid:room_detail', args=(r.id,)))
 
 
 def scenario(request):
