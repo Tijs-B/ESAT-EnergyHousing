@@ -1,25 +1,35 @@
 {% extends "smartgrid/base.html" %}
 
 {% block nav %}
-<ul class="nav">
-    <li><a href="{% url 'smartgrid:home' %}">Home</a></li>
-    <li><a class="active" href="{% url 'smartgrid:vraagzijdesturing' %}">Vraagzijdesturing</a></li>
-    <li><a href="{% url 'smartgrid:info_apparaten' %}">Apparaten</a></li>
-    <li><a href="{% url 'smartgrid:projectverdeling' %}">Projectverdeling</a></li>
-    <li><a href="{% url 'smartgrid:resultaat' %}">Resultaat</a></li>
-    <li><a href="{% url 'smartgrid:login' %}">Log in</a></li>
-</ul>
+    <ul class="nav">
+        <li><a href="{% url 'smartgrid:prehomepage' %}">Start</a></li>
+        <li><a class="active" href="{% url 'smartgrid:vraagzijdesturing' %}">Vraagzijdesturing</a></li>
+        <li><a href="{% url 'smartgrid:info_apparaten' %}">Apparaten</a></li>
+        <li><a href="{% url 'smartgrid:projectverdeling' %}">Projectverdeling</a></li>
+        <li><a href="{% url 'smartgrid:resultaat' %}">Resultaat</a></li>
+        <li><a href="{% url 'smartgrid:login' %}">Log in</a></li>
+    </ul>
 {% endblock nav %}
 
 {% load staticfiles %}
 {% block content %}
-<h1>Vraagzijdesturing</h1>
-<div class="row">
-    <div class="col-md-6">
-        <p>Een belangrijk concept om dit probleem op te lossen is &#x2018;vraag volgt aanbod&#x2019;. Dit houdt in dat wanneer er meer energie is, de gebruikers worden aangespoord om te consumeren. Het omgekeerde moet gebeuren bij op een moment wanneer er weinig energieproductie is. Dat concept wordt mooi ge&iuml;llustreerd in onderstaande grafiek. Eenvoudig kunnen we dus stellen dat we de grafiek zo vlak mogelijk maken.</p>
+    <h1>Vraagzijdesturing</h1>
+    <div class="row">
+        <div class="col-md-6">
+            <p>Vraagzijdesturing baseert zich op het concept &lsquo;vraag volgt aanbod&rsquo;. Dit houdt in dat wanneer
+                er meer energie is, de gebruikers worden aangespoord om te consumeren. Het omgekeerde moet gebeuren bij
+                op een moment wanneer er weinig energieproductie is. Dat concept wordt mooi ge&iuml;llustreerd in
+                bijgevoegde grafiek. Eenvoudig kunnen we dus stellen dat we de grafiek zo vlak mogelijk maken.<br/>
+                De verschuiving van energie kan teweeggebracht worden door het gebruik van toestellen te verschuiven in
+                de tijd. Een mooi voorbeeldje van een toestel waarop dit kan toegepast worden is een wasmachine. De
+                gebruiker wilt dat de was klaar is voor een bepaald tijdstip, maar het maakt niet uit als die nu enkele
+                uren of minuten vroeger is. Ook koel- en verwarmingsmachines kunnen op dit systeem worden aangesloten.
+                Er wordt dan iets meer gekoeld of verwarmt als er veel energie beschikbaar is.<br/>
+                Meer informatie over de verschillende categorie&euml;n van toestellen is te vinden onder de tab &lsquo;apparaten&rsquo;.<br/>
+            </p>
+        </div>
+        <div class="pull-right">
+            <img src="{% static 'smartgrid/img/vraagzijdesturing.png' %}" height="300px">
+        </div>
     </div>
-    <div class="pull-right">
-        <img src="{% static 'smartgrid/img/vraagzijdesturing.png' %}" height="300px">
-    </div>
-</div>
 {% endblock content %}
