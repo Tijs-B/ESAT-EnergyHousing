@@ -25,4 +25,5 @@ urlpatterns = [
 
     url(r'^scenario/$', views.scenario, name='scenario'),
     url(r'^scenario/change_scenario/(?P<neighborhood_id>[0-9]+)/$', views.change_scenario, name='change_scenario'),
+    url(r'^scenario/settime/(?P<i>[0-9]+)/$', views.set_scenario_time, name='set_scenario_time'),
 ]
