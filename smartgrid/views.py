@@ -149,20 +149,18 @@ def heatloadinvariable(request, appliance_id):
 # Apparaat toevoegen
 def add_appliance(request, room_id):
     room = get_object_or_404(Room, pk=room_id)
-    appliances = HeatLoadInvariablePower.objects.all()
-    print appliances
-    app = HeatLoadVariablePower.objects.all()
-    print app
-    appliances = list(chain(appliances, app))
-    return render(request, 'smartgrid/post_login/appliances/add_appliance.html', {'room': room, 'appliances': appliances})
+    appliances = list(chain(HeatLoadInvariablePower.objects.all(),
+                            HeatLoadVariablePower.objects.all(),
+                            ShiftingLoadCycle.objects.all()))
+    return render(request, 'smartgrid/post_login/appliances/add_appliance.html',
+                  {'room': room, 'appliances': appliances})
 
 
 def add(request, room_id):
     r = get_object_or_404(Room, pk=room_id)
     try:
         selected_choice = get_object_or_404(HeatLoadVariablePower, pk=request.POST['appliance'])
-    try:
-        selected_choice = 
+
     except (KeyError, Appliance.DoesNotExist):
         return render(request, 'smartgrid/post_login/appliance/add_appliance.html', {
             'room': r,
