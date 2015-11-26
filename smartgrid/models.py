@@ -1,16 +1,16 @@
 from django.db import models
 
 
-class Scenario(models.Model):
-    scenario_name = models.CharField(max_length=200)
-    current_neighborhood = models.CharField(max_length=200)
-
-
 class Neighborhood(models.Model):
     def __str__(self):
         return self.neighborhood_name
     neighborhood_name = models.CharField(max_length=200)
     power_consumed = models.FloatField()        # dfr_totaal
+
+
+class Scenario(models.Model):
+    scenario_name = models.CharField(max_length=200)
+    current_neighborhood = models.ForeignKey(Neighborhood)
 
 
 class AmbientTemp(models.Model):
@@ -36,6 +36,13 @@ class House(models.Model):
         return self.house_name
     neighbourhood = models.ForeignKey("Neighborhood")
     house_name = models.CharField(max_length=200)
+
+
+class Car(models.Model):
+    house = models.ForeignKey("House")
+    car_name = models.CharField(max_length=200)
+    power_capacity = models.IntegerField()
+    load_capacity = models.IntegerField()
 
 
 class Room(models.Model):
@@ -100,6 +107,7 @@ class OnOffProfile(models.Model):
     shiftingloadcycle = models.ForeignKey("ShiftingLoadCycle", blank=True, null=True)
     heatloadinvariablepower = models.ForeignKey("HeatLoadInvariablePower", blank=True, null=True)
     heatloadvariablepower = models.ForeignKey("HeatLoadVariablePower", blank=True, null=True)
+    car = models.ForeignKey("Car", blank=True, null=True)
 
 
 class OnOffInfo(models.Model):
