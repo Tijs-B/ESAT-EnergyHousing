@@ -1,0 +1,167 @@
+{% extends "smartgrid/base.html" %}
+
+{% block nav %}
+    <ul class="nav">
+        <li><a href="{% url 'smartgrid:home' %}">Home</a></li>
+        <li><a href="{% url 'smartgrid:rooms' %}">Kamers</a></li>
+        <li><a class="active" href="{% url 'smartgrid:scenario' %}">Grafieken</a></li>
+        <li><a href="{% url 'smartgrid:logout' %}">Log uit</a></li>
+    </ul>
+{% endblock nav %}
+
+
+{% block content %}
+    <h1>Grafieken</h1>
+    <h3>Momenteel is het scenario: <strong>{{ current_neighborhood_name }}</strong></h3>
+    <div class="graph" id="price_chart"></div>
+    <div class="graph" id="energy_chart"></div>
+    <div class="graph" id="consumption_chart"></div>
+
+    <h1>Verander scenario</h1>
+    <div class="btn-group-vertical">
+        {% for neighborhood in neighborhood_list %}
+            {% if neighborhood.neighborhood_name == current_neighborhood_name %}
+                <a type="button" class="btn btn-green" href="#">{{ neighborhood.neighborhood_name }}</a>
+            {% else %}
+                <a type="button" class="btn btn-default" href="#"></a>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endblock content %}
+
+{% block script %}
+    <script>
+        $(function () {
+            $("#price_chart").highcharts({
+                title: {
+                    text: 'Energieprijs'
+                },
+                xAxis: {
+                    title: {
+                        enabled: true,
+                        text: 'Tijd'
+                    },
+                    labels: {
+                        formatter: function () {
+                            return this.value + " u"
+                        }
+                    },
+                    tickPositions: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
+                },
+                yAxis: {
+                    title: {
+                        enabled: true,
+                        text: 'Energieprijs'
+                    },
+                    labels: {
+                        formatter: function () {
+                            return this.value + " EUR"
+                        }
+                    }
+                },
+                plotOptions: {
+                    line: {
+                        marker: {
+                            enabled: false
+                        }
+                    }
+                },
+                tooltip: {
+                    valueSuffix: '€'
+                },
+                series: [{
+                    name: 'Energieprijs',
+                    color: '#006838',
+                    data: {{ energy_price_data }}
+                }]
+            });
+            $("#energy_chart").highcharts({
+                title: {
+                    text: 'Beschikbare energie'
+                },
+                xAxis: {
+                    title: {
+                        enabled: true,
+                        text: 'Tijd'
+                    },
+                    labels: {
+                        formatter: function () {
+                            return this.value + " u"
+                        }
+                    },
+                    tickPositions: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
+                },
+                yAxis: {
+                    title: {
+                        enabled: true,
+                        text: 'Beschikbare energie'
+                    },
+                    labels: {
+                        formatter: function () {
+                            return this.value + " kW"
+                        }
+                    }
+                },
+                plotOptions: {
+                    line: {
+                        marker: {
+                            enabled: false
+                        }
+                    }
+                },
+                tooltip: {
+                    valueSuffix: '€'
+                },
+                series: [{
+                    name: 'Beschikbare energie',
+                    color: '#006838',
+                    data: {{ available_energy_data }}
+                }]
+            });
+            $("#consumption_chart").highcharts({
+                title: {
+                    text: 'Verbruik'
+                },
+                xAxis: {
+                    title: {
+                        enabled: true,
+                        text: 'Tijd'
+                    },
+                    labels: {
+                        formatter: function () {
+                            return this.value + " u"
+                        }
+                    },
+                    tickPositions: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
+                },
+                yAxis: {
+                    title: {
+                        enabled: true,
+                        text: 'Verbruik'
+                    },
+                    labels: {
+                        formatter: function () {
+                            return this.value + " kW"
+                        }
+                    }
+                },
+                plotOptions: {
+                    line: {
+                        marker: {
+                            enabled: false
+                        }
+                    }
+                },
+                tooltip: {
+                    valueSuffix: ' EUR'
+                },
+                series: [{
+                    name: 'Verbruik',
+                    color: '#006838',
+                    // TODO
+                    data: []
+                }]
+            });
+        })
+    </script>
+{% endblock script %}
