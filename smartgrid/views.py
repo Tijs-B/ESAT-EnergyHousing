@@ -155,12 +155,16 @@ def scenario(request):
     for available_energy in current_neighborhood.availableenergy_set.all():
         available_energy_data.append([(float(available_energy.time)-1.0)/4.0, float(available_energy.amount)])
 
+    consumption_data = []
+
     neighborhood_list = Neighborhood.objects.all()
 
     return render(request, 'smartgrid/post_login/scenario.html',
-                  {'current_neighborhood_name': current_neighborhood_name,
+                  {'scenario_started': scenario.started,
+                   'current_neighborhood_name': current_neighborhood_name,
                    'energy_price_data': energy_price_data,
                    'available_energy_data': available_energy_data,
+                   'consumption_data': consumption_data,
                    'neighborhood_list': neighborhood_list})
 
 
@@ -168,6 +172,14 @@ def change_scenario(request, neighborhood_id):
     neighborhood = get_object_or_404(neighborhood_id)
     scenario = Scenario.objects.all()[0]
     scenario.current_neighborhood = neighborhood.neighborhood_name
+    return scenario(request)
+
+
+def set_scenario_time(request, i):
+    scenario = Scenario.objects.all()[0]
+    scenario.time = i
+    # send_to_pi(i)
+    return HttpResponse("OK")
 
 def trigger_gams(request):
     if request.POST:

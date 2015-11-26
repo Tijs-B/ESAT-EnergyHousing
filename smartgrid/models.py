@@ -4,6 +4,8 @@ from django.db import models
 class Scenario(models.Model):
     scenario_name = models.CharField(max_length=200)
     current_neighborhood = models.CharField(max_length=200)
+    time = models.IntegerField(default=1)
+    started = models.BooleanField(default=False)
 
 
 class Neighborhood(models.Model):
