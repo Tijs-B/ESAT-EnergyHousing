@@ -9,7 +9,7 @@ from django.contrib import auth
 from django.core.context_processors import csrf
 
 from .models import *
-from encryptiefunctie import *
+from demo import *
 
 #GAMS
 # import sqlite3 as sq
@@ -147,7 +147,7 @@ def demo_encryptie(request):
     encryptie = ''
 
     if(request.GET.get('encryptbtn')):
-        encryptie = testfunctie((request.GET.get('mytextbox')))
+        encryptie = demo((request.GET.get('mytextbox')))
 
     return render(request,'smartgrid/post_login/demo_encryptie.html',{ 'encryptie' : encryptie})
 
