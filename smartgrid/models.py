@@ -1,4 +1,5 @@
 from django.db import models
+from django import forms
 
 
 class Scenario(models.Model):
@@ -9,8 +10,9 @@ class Scenario(models.Model):
 class Neighborhood(models.Model):
     def __str__(self):
         return self.neighborhood_name
+
     neighborhood_name = models.CharField(max_length=200)
-    power_consumed = models.FloatField()        # dfr_totaal
+    power_consumed = models.FloatField()  # dfr_totaal
 
 
 class AmbientTemp(models.Model):
@@ -34,6 +36,7 @@ class AvailableEnergy(models.Model):
 class House(models.Model):
     def __str__(self):
         return self.house_name
+
     neighbourhood = models.ForeignKey("Neighborhood")
     house_name = models.CharField(max_length=200)
 
@@ -41,6 +44,7 @@ class House(models.Model):
 class Room(models.Model):
     def __str__(self):
         return self.room_name + " " + self.house.house_name
+
     house = models.ForeignKey("House")
     room_name = models.CharField(max_length=200)
 
@@ -49,6 +53,7 @@ class Room(models.Model):
 class Appliance(models.Model):
     def __str__(self):
         return self.appliance_name
+
     room = models.ForeignKey("Room")
     appliance_name = models.CharField(max_length=200)
     currently_on = models.BooleanField(default=False)
@@ -70,8 +75,6 @@ class ShiftingLoadCycle(Appliance):
     flexibility_end = models.TimeField()
 
 
-
-
 class ShiftingLoadProfile(models.Model):
     shiftingloadcycle = models.ForeignKey("ShiftingLoadCycle")
     time = models.IntegerField()
@@ -79,21 +82,25 @@ class ShiftingLoadProfile(models.Model):
 
 
 class HeatLoadVariablePower(Appliance):
-    power_required = models.FloatField()                # PHEAT_HOUSE
-    isolation_coefficient = models.FloatField()         # UA_HOUSE
-    coefficient_of_performance = models.FloatField()    # COP_HOUSE
-    mass_of_air = models.FloatField()                   # MASS_HOUSE
-    power_consumed = models.FloatField()                # dfr_house
-#    temperature_inside = models.FloatField()            # temp_house
+    power_required = models.FloatField()  # PHEAT_HOUSE
+    isolation_coefficient = models.FloatField()  # UA_HOUSE
+    coefficient_of_performance = models.FloatField()  # COP_HOUSE
+    mass_of_air = models.FloatField()  # MASS_HOUSE
+    power_consumed = models.FloatField()  # dfr_house
+
+
+# temperature_inside = models.FloatField()            # temp_house
 
 
 class HeatLoadInvariablePower(Appliance):
-    power_required = models.FloatField()                # PCOOL_(REF/FREZ)
-    isolation_coefficient = models.FloatField()         # UA_(REF/FREZ)
-    coefficient_of_performance = models.FloatField()    # COP_(REF/FREZ)
-    mass_of_air = models.FloatField()                   # MASS_(REF/FREZ)
-    power_consumed = models.FloatField()                # dfr_(ref/frez)
-#    temperature_inside = models.FloatField()            # temp_(ref/frez)
+    power_required = models.FloatField()  # PCOOL_(REF/FREZ)
+    isolation_coefficient = models.FloatField()  # UA_(REF/FREZ)
+    coefficient_of_performance = models.FloatField()  # COP_(REF/FREZ)
+    mass_of_air = models.FloatField()  # MASS_(REF/FREZ)
+    power_consumed = models.FloatField()  # dfr_(ref/frez)
+
+
+# temperature_inside = models.FloatField()            # temp_(ref/frez)
 
 
 class OnOffProfile(models.Model):
@@ -109,7 +116,6 @@ class OnOffInfo(models.Model):
     Info = models.IntegerField(default=0)
 
     @property
-
     def house(self):
         if self.onoffprofile.heatloadvariablepower is not None:
             return self.onoffprofile.heatloadvariablepower.room.house
@@ -127,10 +133,16 @@ class OnOffInfo(models.Model):
             return self.onoffprofile.heatloadinvariablepower.appliance_name
 
 
+# Forms
+# class ShiftingLoadCycleForm(forms.ModelForm):
+#     class Meta:
+#         model = ShiftingLoadCycle
+#         fields = ['','','']
 
 class Sensor(models.Model):
     def __str__(self):
         return self.sensor_name
+
     sensor_name = models.CharField(max_length=200)
     house = models.ForeignKey("House")
     # type = models.TextField
