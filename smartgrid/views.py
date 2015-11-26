@@ -9,6 +9,7 @@ from django.contrib import auth
 from django.core.context_processors import csrf
 
 from .models import *
+from encryptiefunctie import *
 
 #GAMS
 # import sqlite3 as sq
@@ -141,6 +142,15 @@ def heatloadinvariable(request, appliance_id):
                    'cop': appliance.coefficient_of_performance,
                    'mass_of_air': appliance.mass_of_air,
                    'power_consumed': appliance.power_consumed})
+
+def demo_encryptie(request):
+    encryptie = ''
+
+    if(request.GET.get('encryptbtn')):
+        encryptie = testfunctie((request.GET.get('mytextbox')))
+
+    return render(request,'smartgrid/post_login/demo_encryptie.html',{ 'encryptie' : encryptie})
+
 
 def scenario(request):
     scenario = Scenario.objects.all()[0]
