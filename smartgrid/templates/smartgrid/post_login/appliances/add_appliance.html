@@ -10,13 +10,19 @@
 {% endblock nav %}
 
 {% block content %}
-<h1>Hallo wereld</h1>
-<form action="{% url 'smartgrid:add' room.id %}" method="post">
-    {% csrf_token %}
-    {% for appliance in appliances %}
-    <input type="radio" name="appliance" value="{{ appliance.id }}"/>
-    <label>{{ appliance }}</label>
-    {% endfor %}
-    <input type="submit" value="Toevoegen"/>
-</form>
+<h2>Kies het apparaat dat u wilt toevoegen</h2>
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+<div>
+    <form action="{% url 'smartgrid:add' room.id %}" method="post">
+        {% csrf_token %}
+        {% for appliance in appliances %}
+        <ul>
+            <input type="radio" name="appliance" value="{{ appliance.id }}"/>
+            <label>{{ appliance }}</label>
+        </ul>
+        {% endfor %}
+        <input class="btn btn-default" type="submit" value="Toevoegen"/>
+        <a class="btn btn-default" href="{% url 'smartgrid:room_detail' room.id%}">Terug</a>
+    </form>
+</div>
 {% endblock content %}

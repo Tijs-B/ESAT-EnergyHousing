@@ -143,7 +143,8 @@ def heatloadinvariable(request, appliance_id):
                    'isolation_coefficient': appliance.isolation_coefficient,
                    'cop': appliance.coefficient_of_performance,
                    'mass_of_air': appliance.mass_of_air,
-                   'power_consumed': appliance.power_consumed})
+                   'power_consumed': appliance.power_consumed,
+                   })
 
 
 # Apparaat toevoegen
@@ -158,17 +159,51 @@ def add_appliance(request, room_id):
 
 def add(request, room_id):
     r = get_object_or_404(Room, pk=room_id)
+    # PROBLEEM:
+    # Onze appliances hebben allemaal apart id's dus komen sommige id's overeen.
+    # Bijv: er is een heatloadvariable met id 1 en een shiftingloadcycle met id 1
     try:
         selected_choice = get_object_or_404(HeatLoadVariablePower, pk=request.POST['appliance'])
-
-    except (KeyError, Appliance.DoesNotExist):
-        return render(request, 'smartgrid/post_login/appliance/add_appliance.html', {
-            'room': r,
-            'error_message': "You didn't select a choice."})
-    else:
+        print selected_choice
+    except (KeyError, HeatLoadVariablePower.DoesNotExist):
+        try:
+            selected_choice = get_object_or_404(HeatLoadInvariablePower, pk=request.POST['appliance'])
+        except (KeyError, HeatLoadInvariablePower.DoesNotExist):
+            try:
+                selected_choice = get_object_or_404(ShiftingLoadCycle, pk=request.POST['appliance'])
+            except (KeyError, ShiftingLoadCycle.DoesNotExist):
+                return render(request, 'smartgrid/post_login/appliance/add_appliance.html', {
+                    'room': r,
+                    'error_message': "Gelieve een apparaat te kiezen"})
+    if isinstance(selected_choice, HeatLoadVariablePower):
         r.heatloadvariablepower_set.add(selected_choice)
         r.save()
         return HttpResponseRedirect(reverse('smartgrid:room_detail', args=(r.id,)))
+    elif isinstance(selected_choice, HeatLoadInvariablePower):
+        r.heatloadinvariablepower_set.add(selected_choice)
+        r.save()
+        return HttpResponseRedirect(reverse('smartgrid:room_detail', args=(r.id,)))
+    elif isinstance(selected_choice, ShiftingLoadCycle):
+        r.shiftingloadcycle_set.add(selected_choice)
+        r.save()
+        return HttpResponseRedirect(reverse('smartgrid:room_detail', args=(r.id,)))
+    else:
+        return render(request, 'smartgrid/post_login/appliance/add_appliance.html', {
+            'room': r,
+            'error_message': "Het lijkt erop dat er iets is misgegaan, probeer opnieuw a.u.b."})
+
+
+#
+#     except (KeyError, Appliance.DoesNotExist):
+#     return render(request, 'smartgrid/post_login/appliance/add_appliance.html', {
+#         'room': r,
+#         'error_message': "You didn't select a choice."})
+#
+# else:
+# r.heatloadvariablepower_set.add(selected_choice)
+# r.save()
+# return HttpResponseRedirect(reverse('smartgrid:room_detail', args=(r.id,)))
+
 
 
 # Scenario
