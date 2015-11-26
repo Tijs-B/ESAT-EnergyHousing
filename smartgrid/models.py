@@ -38,6 +38,12 @@ class House(models.Model):
     house_name = models.CharField(max_length=200)
 
 
+class FixedDemandProfile(models.Model):
+    house = models.ForeignKey("House")
+    time = models.IntegerField()
+    consumption = models.FloatField()
+
+
 class Car(models.Model):
     house = models.ForeignKey("House")
     car_name = models.CharField(max_length=200)
@@ -66,17 +72,9 @@ class Appliance(models.Model):
         abstract = True
 
 
-class FixedDemandProfile(models.Model):
-    house = models.ForeignKey("House")
-    time = models.IntegerField()
-    consumption = models.FloatField()
-
-
 class ShiftingLoadCycle(Appliance):
     flexibility_start = models.TimeField()
     flexibility_end = models.TimeField()
-
-
 
 
 class ShiftingLoadProfile(models.Model):
@@ -91,7 +89,8 @@ class HeatLoadVariablePower(Appliance):
     coefficient_of_performance = models.FloatField()    # COP_HOUSE
     mass_of_air = models.FloatField()                   # MASS_HOUSE
     power_consumed = models.FloatField()                # dfr_house
-#    temperature_inside = models.FloatField()            # temp_house
+    temperature_min_inside = models.FloatField()            # temp_house
+    temperature_max_inside = models.FloatField()
 
 
 class HeatLoadInvariablePower(Appliance):
@@ -100,7 +99,8 @@ class HeatLoadInvariablePower(Appliance):
     coefficient_of_performance = models.FloatField()    # COP_(REF/FREZ)
     mass_of_air = models.FloatField()                   # MASS_(REF/FREZ)
     power_consumed = models.FloatField()                # dfr_(ref/frez)
-#    temperature_inside = models.FloatField()            # temp_(ref/frez)
+    temperature_min_inside = models.FloatField()            # temp_house
+    temperature_max_inside = models.FloatField()
 
 
 class OnOffProfile(models.Model):
@@ -133,7 +133,6 @@ class OnOffInfo(models.Model):
             return self.onoffprofile.shiftingloadcycle.appliance_name
         elif self.onoffprofile.heatloadinvariablepower is not None:
             return self.onoffprofile.heatloadinvariablepower.appliance_name
-
 
 
 class Sensor(models.Model):

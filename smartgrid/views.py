@@ -173,6 +173,7 @@ def change_scenario(request, neighborhood_id):
 
 
 def trigger_gams(request):
+    house = House.objects.all()
     if request.POST:
         # gams workshop initialisatie
         ws = gams.GamsWorkspace(working_directory=os.getcwd())

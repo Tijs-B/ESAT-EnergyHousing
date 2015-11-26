@@ -1,71 +1,64 @@
-
+$onempty
+$GDXIN %SupplyDataFileName%
 $eolcom #
 
 Sets
-         t       time period /T01*T96/
-         tw      Quarters that are not allowed to have the first part of the power curve of the washing machine /T01*T30,T70*T96/
-         tlim(t) /T01/
-         i       /0*2/
-         cat1    appliances of category one /iPod/
-         cat2    appliances of category two /wm1, dk1/
-         cat3    appliances of category three /refrigerator1,refrigerator2, freezer/
-         cat4    appliances of category four  /heat_house1,heat_house2/
-         cat5    appliances of category five  /electric_car/
+         t       time period
+         cat1    appliances of category one
+         cat2    appliances of category two
+         cat3    appliances of category three
+         cat5    appliances of category five
 ;
-
+$LOAD t, cat1, cat2, cat3, cat5
 ALIAS(t,ta);
 ALIAS(t,tt);
 
 Parameters
 *        Global
          TEMP_AMB(t)     Temperature of the environment (in K) -> time
-         PRICE(t)        price of energy /T01*T24 1.050, T25*T36 0.080, T37*T63 0.060,T64*T71 70,T72*T82 0.085,T83*T96 0.070/
-         RESLOC(t)       local supply of renewables /T01*T29 1,T30*T40 3.5,T41*T96 1/
+         PRICE(t)        price of energy
+         RESLOC(t)       local supply of renewables
 
 *        Cat1
-         D_TOT_CAT1(t)            category 1 demand (fixed)       /T01*T24 2,T25*T36 3, T37*T63 2.5,T64*T71 2.7,T72*T82 3.5,T83*T96 3/
+         D_TOT_CAT1(t)            category 1 demand (fixed)
 
 
 *        Cat2
-         D_CYCLE_CAT2(cat2, ta)   demand cycle per cat2 appliance /wm1.T01 350, wm1.T02 100,wm1.T03 80, wm1.T04 70, dk1.T01 350, dk1.T02 100, dk1.T03 80/
-         N_CYCLES_CAT2(cat2)      number of cycles per day        /wm1 1, dk1 1/
-         DUR_CAT2(cat2)           duration of wm cycle            /wm1 4, dk1 3/
+         D_CYCLE_CAT2(cat2, ta)   demand cycle per cat2 appliance
+         N_CYCLES_CAT2(cat2)      number of cycles per day
+         DUR_CAT2(cat2)           duration of wm cycle
 
 
 
 *        Cat3
-         UA_CAT3(cat3)          isolation constant of the refrigator       /refrigerator1 0.0525,refrigerator2 0.0525,freezer 0.0825/
-         COP_CAT3(cat3)         coefficient of performance of the refrigator  /refrigerator1 -10.0,refrigerator2 -10.0,freezer -9.0/
-         PCOOL_CAT3(cat3)       power needed for the refrigator   /refrigerator1 0.225,refrigerator2 0.225, freezer 0.5/
-         MASS_CAT3(cat3)        mass of the cooled air inside the refrigator   /refrigerator1 1.0, refrigerator2 1.0, freezer 1.0/
-         T_MIN_CAT3(cat3)      minimal temperature inside the cat3 device /refrigerator1 270, refrigerator2 270, freezer 250/
-         T_MAX_CAT3(cat3)      maximal temperature inside the cat3 device /refrigerator1 277, refrigerator2 277, freezer 255/
+         UA_CAT3(cat3)          isolation constant of the refrigator
+         COP_CAT3(cat3)         coefficient of performance of the refrigator
+         PCOOL_CAT3(cat3)       power needed for the refrigator
+         MASS_CAT3(cat3)        mass of the cooled air inside the refrigator
+         T_MIN_CAT3(cat3)      minimal temperature inside the cat3 device
+         T_MAX_CAT3(cat3)      maximal temperature inside the cat3 device
 
 *        Cat4
-         UA_HOUSE        isolation constant of the house
-         COP_HOUSE       coefficient of performance of the house
-         PHEAT_HOUSE     power needed for the boiler of the house
-         MASS_HOUSE      mass of the heated air inside the house
-         T_MIN_CAT4(t)   minimal temperature inside the cat3 device /T01*T24 284,T25*T40 290,T41*T72 284,T73*T96 290 /
-         T_MAX_CAT4(t)     maximal temperature inside the cat3 device /T01*T24 290,T25*T40 296,T41*T72 290,T73*T96 296/
+         T_MIN_CAT4(t)   minimal temperature inside the cat3 device
+         T_MAX_CAT4(t)     maximal temperature inside the cat3 device
 
 *        Cat5
-         Pload_battery   laadvermogen batterij (in W) /5000/
-         Capacity_battery  capaciteit batterij (in Wh) /100000/
 ;
+$LOAD TEMP_AMB, PRICE, RESLOC, D_TOT_CAT1, D_CYCLE_CAT2, N_CYCLES_CAT2, DUR_CAT2, UA_CAT3, COP_CAT3, PCOOL_CAT3, MASS_CAT3, T_MIN_CAT3, T_MAX_CAT3, T_MIN_CAT4, T_MAX_CAT4
 
-TEMP_AMB(t) = 273;
-
-UA_HOUSE = 4;
-COP_HOUSE  = 200;
-PHEAT_HOUSE = 1.5;
-MASS_HOUSE = 250;
 
 SCALARS
-         PRICECURT        price of curtailing RES [€]    /45/
-         CP               thermodynamic coeficient       /1.005/;
+         PRICECURT        price of curtailing RES [€]
+         CP               thermodynamic coeficient
+         UA_HOUSE         Isolation constant of the house
+         COP_HOUSE        coefficient of performance of the house
+         PHEAT_HOUSE      power needed for the boiler of the house
+         MASS_HOUSE       mass of the heated air inside the house
+         Pload_battery    laadvermogen batterij (in W)
+         Capacity_battery capaciteit batterij (in Wh)
+         POWER_LIMIT      maximal power the house can take from the grid (in kW)
 ;
-
+$LOAD PRICECURT, CP, UA_HOUSE, COP_HOUSE, PHEAT_HOUSE, MASS_HOUSE, Pload_battery, Capacity_battery, POWER_LIMIT
 
 Variables
          zcost            the energycost
@@ -119,6 +112,7 @@ Equations
          q_objective_function    objective function
          q_zcoste                 Cost function
          q_balance(t)             Electricity balance
+         q_power_limit(t)         power limit of the house
          q_cat1(t)                Demand for appliances of category 1
          q_cat2(t)                Demand for appliances of category 2
          q_cat3(t)                Demand for appliances of category 3
@@ -168,6 +162,10 @@ q_balance(t)..
          P_conv(t) + RESloc(t)
                  =e=
                          P_cat1(t) + P_cat2(t) + P_cat3(t) + P_cat4(t)+ P_cat5(t) + Curt(t);
+q_power_limit(t)..
+         P_conv(t)
+                 =l=
+                         POWER_LIMIT  ;
 
 q_cat1(t)..
          P_cat1(t)
