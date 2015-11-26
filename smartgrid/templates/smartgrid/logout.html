@@ -1,0 +1,19 @@
+{% extends "smartgrid/base.html" %}
+
+{% block nav %}
+<ul class="nav">
+    <li><a href="{% url 'smartgrid:prehomepage' %}">Start</a></li>
+    <li><a href="{% url 'smartgrid:vraagzijdesturing' %}">Vraagzijdesturing</a></li>
+    <li><a href="{% url 'smartgrid:info_apparaten' %}">Apparaten</a></li>
+    <li><a href="{% url 'smartgrid:projectverdeling' %}">Projectverdeling</a></li>
+    <li><a href="{% url 'smartgrid:resultaat' %}">Resultaat</a></li>
+    <li><a class="active" href="{% url 'smartgrid:login' %}">Log in</a></li>
+</ul>
+{% endblock nav %}
+
+{% block content %}
+
+  <h2>Tot ziens!</h2>
+  <p>Klik <a href="{% url 'smartgrid:login' %}">hier</a> om opnieuw in te loggen.</p>
+
+{% endblock %}

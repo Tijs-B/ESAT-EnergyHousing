@@ -1,0 +1,27 @@
+[
+{
+  "fields": {
+    "neighborhood_name": "test",
+    "energy_price": 1.0
+  },
+  "model": "smartgrid.neighborhood",
+  "pk": 1
+},
+{
+  "fields": {
+    "house_name": "testhouse",
+    "neighbourhood": 1
+  },
+  "model": "smartgrid.house",
+  "pk": 2
+},
+{
+  "fields" : {
+    "room_name": "testroom",
+    "house" : 2
+  },
+  "model": "smartgrid.room",
+  "pk": 3
+}
+]
+

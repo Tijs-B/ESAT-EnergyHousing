@@ -1,0 +1,45 @@
+{% extends "smartgrid/base.html" %}
+
+{% block nav %}
+<ul class="nav">
+    <li><a href="{% url 'smartgrid:home' %}">Start</a></li>
+    <li><a class="active" href="{% url 'smartgrid:rooms' %}">Kamers</a></li>
+    <li><a href="{% url 'smartgrid:scenario' %}">Grafieken</a></li>
+    <li><a href="{% url 'smartgrid:logout' %}">Log uit</a></li>
+</ul>
+{% endblock nav %}
+
+
+{% block content %}
+<h2> {{ appliance }} </h2>
+<table class="table">
+  <tr>
+    <td>Nodig vermogen</td>
+    <td>{{power_required}}</td>
+  </tr>
+  <tr>
+    <td>Isolatie co&euml;ffici&euml;nt</td>
+    <td>{{isolation_coefficient}}</td>
+  </tr>
+  <tr>
+    <td>Prestatieco&euml;ffici&euml;nt</td>
+    <td>{{cop}}</td>
+  </tr>
+  <tr>
+    <td>Massa van de lucht</td>
+    <td>{{mass_of_air}}</td>
+  </tr>
+  <tr>
+    <td>Verbruikt vermogen</td>
+    <td>{{power_consumed}}</td>
+  </tr>
+  <tr>
+    <td>Momenteel actief</td>
+      {% if currently_on %}
+        <td><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
+      {% else %}
+        <td><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></td>
+      {% endif %}
+  </tr>
+</table>
+{% endblock content %}

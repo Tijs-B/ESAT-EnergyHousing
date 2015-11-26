@@ -1,18 +1,35 @@
 from django.db import models
-from numpy import *
+
+
+class Scenario(models.Model):
+    scenario_name = models.CharField(max_length=200)
+    current_neighborhood = models.CharField(max_length=200)
 
 
 class Neighborhood(models.Model):
     def __str__(self):
         return self.neighborhood_name
-
-    energy_price = models.FloatField(default=1)
     neighborhood_name = models.CharField(max_length=200)
+    power_consumed = models.FloatField()        # dfr_totaal
+
+
+class AmbientTemp(models.Model):
+    neighborhood = models.ForeignKey("Neighborhood")
+    time = models.IntegerField()
+    temperature = models.FloatField()
+
+
+class EnergyPrice(models.Model):
+    neighborhood = models.ForeignKey("Neighborhood")
+    time = models.IntegerField()
+    price = models.FloatField()
+
+
 class AvailableEnergy(models.Model):
     neighborhood = models.ForeignKey("Neighborhood")
-    solar = models.FloatField(default=0)
-    wind = models.FloatField(default=0)
-    other = models.FloatField(default=0)
+    time = models.IntegerField()
+    amount = models.FloatField()
+
 
 class House(models.Model):
     def __str__(self):
@@ -23,7 +40,7 @@ class House(models.Model):
 
 class Room(models.Model):
     def __str__(self):
-        return self.room_name
+        return self.room_name + " " + self.house.house_name
     house = models.ForeignKey("House")
     room_name = models.CharField(max_length=200)
 
@@ -34,40 +51,89 @@ class Appliance(models.Model):
         return self.appliance_name
     room = models.ForeignKey("Room")
     appliance_name = models.CharField(max_length=200)
-    priority = models.IntegerField(default=0, choices=(
-        (0, 'Low'),
-        (1, 'Normal'),
-        (2, 'High'),
-        (3, 'Very High'))
-    )
+    currently_on = models.BooleanField(default=False)
 
     # with 'abstract = True', there is no database entry for Appliance, but there will be database entries for classes
-    #   that inherit from this class.
+    #   that inherit from this class (such as FixedDemand)
     class Meta:
         abstract = True
 
 
-class FixedDemand(models.Model):
-    pass
+class FixedDemandProfile(models.Model):
+    house = models.ForeignKey("House")
+    time = models.IntegerField()
+    consumption = models.FloatField()
 
 
-class HeatloadVariablePower(Appliance):
-    temperature_min = models.FloatField()
-    temperature_max = models.FloatField()
-    power_min = models.FloatField()
-    power_max = models.FloatField()
+class ShiftingLoadCycle(Appliance):
+    flexibility_start = models.TimeField()
+    flexibility_end = models.TimeField()
+
+
+
+
+class ShiftingLoadProfile(models.Model):
+    shiftingloadcycle = models.ForeignKey("ShiftingLoadCycle")
+    time = models.IntegerField()
+    consumption = models.FloatField()
+
+
+class HeatLoadVariablePower(Appliance):
+    power_required = models.FloatField()                # PHEAT_HOUSE
+    isolation_coefficient = models.FloatField()         # UA_HOUSE
+    coefficient_of_performance = models.FloatField()    # COP_HOUSE
+    mass_of_air = models.FloatField()                   # MASS_HOUSE
+    power_consumed = models.FloatField()                # dfr_house
+#    temperature_inside = models.FloatField()            # temp_house
 
 
 class HeatLoadInvariablePower(Appliance):
-    temperature_min = models.FloatField()
-    temperature_max = models.FloatField()
-    power = models.FloatField()
+    power_required = models.FloatField()                # PCOOL_(REF/FREZ)
+    isolation_coefficient = models.FloatField()         # UA_(REF/FREZ)
+    coefficient_of_performance = models.FloatField()    # COP_(REF/FREZ)
+    mass_of_air = models.FloatField()                   # MASS_(REF/FREZ)
+    power_consumed = models.FloatField()                # dfr_(ref/frez)
+#    temperature_inside = models.FloatField()            # temp_(ref/frez)
 
 
-### Sensor ###
+class OnOffProfile(models.Model):
+    shiftingloadcycle = models.ForeignKey("ShiftingLoadCycle", blank=True, null=True)
+    heatloadinvariablepower = models.ForeignKey("HeatLoadInvariablePower", blank=True, null=True)
+    heatloadvariablepower = models.ForeignKey("HeatLoadVariablePower", blank=True, null=True)
+
+
+class OnOffInfo(models.Model):
+    onoffprofile = models.ForeignKey("OnOffProfile")
+    time = models.IntegerField()
+    OnOff = models.IntegerField(default=0)
+    Info = models.IntegerField(default=0)
+
+    @property
+
+    def house(self):
+        if self.onoffprofile.heatloadvariablepower is not None:
+            return self.onoffprofile.heatloadvariablepower.room.house
+        elif self.onoffprofile.shiftingloadcycle is not None:
+            return self.onoffprofile.shiftingloadcycle.room.house
+        elif self.onoffprofile.heatloadinvariablepower is not None:
+            return self.onoffprofile.heatloadinvariablepower.room.house
+
+    def appliance_name(self):
+        if self.onoffprofile.heatloadvariablepower is not None:
+            return self.onoffprofile.heatloadvariablepower.appliance_name
+        elif self.onoffprofile.shiftingloadcycle is not None:
+            return self.onoffprofile.shiftingloadcycle.appliance_name
+        elif self.onoffprofile.heatloadinvariablepower is not None:
+            return self.onoffprofile.heatloadinvariablepower.appliance_name
+
+
+
 class Sensor(models.Model):
+    def __str__(self):
+        return self.sensor_name
+    sensor_name = models.CharField(max_length=200)
     house = models.ForeignKey("House")
-    type = models.TextField
+    # type = models.TextField
 
 
 class Recording(models.Model):

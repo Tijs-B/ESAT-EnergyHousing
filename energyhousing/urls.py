@@ -17,6 +17,6 @@ from django.conf.urls import include, url
 from django.contrib import admin
 
 urlpatterns = [
+    url(r'^', include('smartgrid.urls', namespace="smartgrid")),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^testpage/', include('smartgrid.urls')),
 ]
