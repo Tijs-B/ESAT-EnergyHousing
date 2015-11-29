@@ -3,6 +3,10 @@
     background-color: #fff;
 }
 
+h1, h2, h3, h4, h5, h6 {
+    color: #03492b;
+}
+
 .container {
     max-width: 980px;
 }
@@ -139,4 +143,21 @@
 .kul:hover{
     box-shadow: 0 0 10px #000;
     transition-duration: 0.5s;
+}
+
+.timer {
+    color: #fff;
+    background-color: #d1d1d1;
+    font-size: 35px;
+    text-align: center;
+    padding: 20px 0;
+    border-radius: 5px;
+}
+
+.running {
+    background-color: #8DC53E;
+}
+
+.paused {
+    background-color: #BADC89;
 }

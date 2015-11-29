@@ -1,16 +1,19 @@
 from django.db import models
 
 
+class Scenario(models.Model):
+    scenario_name = models.CharField(max_length=200)
+    current_neighborhood = models.CharField(max_length=200)
+    time = models.IntegerField(default=1)
+    started = models.BooleanField(default=False)
+
+
 class Neighborhood(models.Model):
     def __str__(self):
         return self.neighborhood_name
+
     neighborhood_name = models.CharField(max_length=200)
-    power_consumed = models.FloatField()        # dfr_totaal
-
-
-class Scenario(models.Model):
-    scenario_name = models.CharField(max_length=200)
-    current_neighborhood = models.ForeignKey(Neighborhood)
+    power_consumed = models.FloatField()  # dfr_totaal
 
 
 class AmbientTemp(models.Model):
@@ -34,6 +37,7 @@ class AvailableEnergy(models.Model):
 class House(models.Model):
     def __str__(self):
         return self.house_name
+
     neighbourhood = models.ForeignKey("Neighborhood")
     house_name = models.CharField(max_length=200)
 
@@ -41,7 +45,7 @@ class House(models.Model):
 class FixedDemandProfile(models.Model):
     house = models.ForeignKey("House")
     time = models.IntegerField()
-    consumption = models.FloatField()
+    consumption = models.FloatField
 
 
 class Car(models.Model):
@@ -54,6 +58,7 @@ class Car(models.Model):
 class Room(models.Model):
     def __str__(self):
         return self.room_name + " " + self.house.house_name
+
     house = models.ForeignKey("House")
     room_name = models.CharField(max_length=200)
 
@@ -62,6 +67,7 @@ class Room(models.Model):
 class Appliance(models.Model):
     def __str__(self):
         return self.appliance_name
+
     room = models.ForeignKey("Room")
     appliance_name = models.CharField(max_length=200)
     currently_on = models.BooleanField(default=False)
@@ -84,22 +90,22 @@ class ShiftingLoadProfile(models.Model):
 
 
 class HeatLoadVariablePower(Appliance):
-    power_required = models.FloatField()                # PHEAT_HOUSE
-    isolation_coefficient = models.FloatField()         # UA_HOUSE
-    coefficient_of_performance = models.FloatField()    # COP_HOUSE
-    mass_of_air = models.FloatField()                   # MASS_HOUSE
-    power_consumed = models.FloatField()                # dfr_house
-    temperature_min_inside = models.FloatField()            # temp_house
+    power_required = models.FloatField()  # PHEAT_HOUSE
+    isolation_coefficient = models.FloatField()  # UA_HOUSE
+    coefficient_of_performance = models.FloatField()  # COP_HOUSE
+    mass_of_air = models.FloatField()  # MASS_HOUSE
+    power_consumed = models.FloatField()  # dfr_house
+    temperature_min_inside = models.FloatField()
     temperature_max_inside = models.FloatField()
 
 
 class HeatLoadInvariablePower(Appliance):
-    power_required = models.FloatField()                # PCOOL_(REF/FREZ)
-    isolation_coefficient = models.FloatField()         # UA_(REF/FREZ)
-    coefficient_of_performance = models.FloatField()    # COP_(REF/FREZ)
-    mass_of_air = models.FloatField()                   # MASS_(REF/FREZ)
-    power_consumed = models.FloatField()                # dfr_(ref/frez)
-    temperature_min_inside = models.FloatField()            # temp_house
+    power_required = models.FloatField()  # PCOOL_(REF/FREZ)
+    isolation_coefficient = models.FloatField()  # UA_(REF/FREZ)
+    coefficient_of_performance = models.FloatField()  # COP_(REF/FREZ)
+    mass_of_air = models.FloatField()  # MASS_(REF/FREZ)
+    power_consumed = models.FloatField()  # dfr_(ref/frez)
+    temperature_min_inside = models.FloatField()
     temperature_max_inside = models.FloatField()
 
 
@@ -117,7 +123,6 @@ class OnOffInfo(models.Model):
     Info = models.IntegerField(default=0)
 
     @property
-
     def house(self):
         if self.onoffprofile.heatloadvariablepower is not None:
             return self.onoffprofile.heatloadvariablepower.room.house
@@ -138,6 +143,7 @@ class OnOffInfo(models.Model):
 class Sensor(models.Model):
     def __str__(self):
         return self.sensor_name
+
     sensor_name = models.CharField(max_length=200)
     house = models.ForeignKey("House")
     # type = models.TextField
