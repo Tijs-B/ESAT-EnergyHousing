@@ -48,7 +48,7 @@ $LOAD TEMP_AMB, PRICE, RESLOC, D_TOT_CAT1, D_CYCLE_CAT2, N_CYCLES_CAT2, DUR_CAT2
 
 
 SCALARS
-         PRICECURT        price of curtailing RES [€]
+         PRICECURT        price of curtailing RES [?]
          CP               thermodynamic coeficient
          UA_HOUSE         Isolation constant of the house
          COP_HOUSE        coefficient of performance of the house

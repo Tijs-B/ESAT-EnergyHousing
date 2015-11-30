@@ -49,7 +49,6 @@ class RoomAdmin(admin.ModelAdmin):
     inlines = [ShiftingLoadCycleInline, HeatloadVariablePowerInline, HeatloadInvariablePowerInline]
 
 
-
 # Appliance
 
 
@@ -66,3 +65,4 @@ admin.site.register(EnergyPrice)
 admin.site.register(AmbientTemp)
 admin.site.register(AvailableEnergy)
 admin.site.register(Scenario)
+
