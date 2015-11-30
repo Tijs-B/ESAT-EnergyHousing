@@ -17,6 +17,8 @@ class Neighborhood(models.Model):
 
 
 class AmbientTemp(models.Model):
+    def __str__(self):
+        return self.time
     neighborhood = models.ForeignKey("Neighborhood")
     time = models.IntegerField()
     temperature = models.FloatField()
@@ -45,7 +47,7 @@ class House(models.Model):
 class FixedDemandProfile(models.Model):
     house = models.ForeignKey("House")
     time = models.IntegerField()
-    consumption = models.FloatField
+    consumption = models.FloatField()
 
 
 class Car(models.Model):
@@ -94,7 +96,7 @@ class HeatLoadVariablePower(Appliance):
     isolation_coefficient = models.FloatField()  # UA_HOUSE
     coefficient_of_performance = models.FloatField()  # COP_HOUSE
     mass_of_air = models.FloatField()  # MASS_HOUSE
-    power_consumed = models.FloatField()  # dfr_house
+    # power_consumed = models.FloatField()  # dfr_house
     temperature_min_inside = models.FloatField()
     temperature_max_inside = models.FloatField()
 
@@ -104,7 +106,7 @@ class HeatLoadInvariablePower(Appliance):
     isolation_coefficient = models.FloatField()  # UA_(REF/FREZ)
     coefficient_of_performance = models.FloatField()  # COP_(REF/FREZ)
     mass_of_air = models.FloatField()  # MASS_(REF/FREZ)
-    power_consumed = models.FloatField()  # dfr_(ref/frez)
+    # power_consumed = models.FloatField()  # dfr_(ref/frez)
     temperature_min_inside = models.FloatField()
     temperature_max_inside = models.FloatField()
 
@@ -146,10 +148,12 @@ class Sensor(models.Model):
 
     sensor_name = models.CharField(max_length=200)
     house = models.ForeignKey("House")
+    value = models.FloatField()
     # type = models.TextField
 
-
+"""
 class Recording(models.Model):
     sensor = models.ForeignKey("Sensor")
     value = models.FloatField()
     timestamp = models.DateTimeField()
+"""

@@ -1,5 +1,5 @@
 $onempty
-$GDXIN %SupplyDataFileName%
+$GDXIN C:\Users\toond_000\Documents\A Student\P&O 3\Django\ESAT-EnergyHousing\_gams_py_gdb0.gdx
 $eolcom #
 
 Sets
@@ -40,23 +40,25 @@ Parameters
          T_MAX_CAT4(t)     maximal temperature inside the cat3 device
 
 *        scalars
-         UA_HOUSE         Isolation constant of the house
-         COP_HOUSE        coefficient of performance of the house
-         PHEAT_HOUSE      power needed for the boiler of the house
-         MASS_HOUSE       mass of the heated air inside the house
-         Pload_battery    laadvermogen batterij (in W)
-         Capacity_battery capaciteit batterij (in Wh)
+
 
 ;
 $LOAD TEMP_AMB, PRICE, RESLOC,
 $LOAD D_TOT_CAT1, D_CYCLE_CAT2, N_CYCLES_CAT2, DUR_CAT2, UA_CAT3, COP_CAT3, PCOOL_CAT3, MASS_CAT3, T_MIN_CAT3, T_MAX_CAT3, T_MIN_CAT4, T_MAX_CAT4
-$LOAD UA_HOUSE, COP_HOUSE, PHEAT_HOUSE, MASS_HOUSE, Pload_battery, Capacity_battery
+* $LOAD UA_HOUSE, COP_HOUSE, PHEAT_HOUSE, MASS_HOUSE, Pload_battery, Capacity_battery
 
 SCALAR
          PRICECURT        price of curtailing RES [€]  /45/
          CP               thermodynamic coeficient      /1.005/
          POWER_LIMIT      maximal power the house can take from the grid (in kW) /9400/
 
+         UA_HOUSE         Isolation constant of the house /%UA%/
+         COP_HOUSE        coefficient of performance of the house  /%COP%/
+         PHEAT_HOUSE      power needed for the boiler of the house  /%PHEAT%/
+         MASS_HOUSE       mass of the heated air inside the house  /%MASS%/
+
+         Pload_battery    laadvermogen batterij (in W) /%PLOAD%/
+         Capacity_battery capaciteit batterij (in Wh) /%CAP%/
 ;
 
 

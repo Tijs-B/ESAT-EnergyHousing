@@ -27,6 +27,15 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
+            name='Car',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('car_name', models.CharField(max_length=200)),
+                ('power_capacity', models.IntegerField()),
+                ('load_capacity', models.IntegerField()),
+            ],
+        ),
+        migrations.CreateModel(
             name='EnergyPrice',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -39,7 +48,6 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('time', models.IntegerField()),
-                ('consumption', models.FloatField()),
             ],
         ),
         migrations.CreateModel(
@@ -53,6 +61,8 @@ class Migration(migrations.Migration):
                 ('coefficient_of_performance', models.FloatField()),
                 ('mass_of_air', models.FloatField()),
                 ('power_consumed', models.FloatField()),
+                ('temperature_min_inside', models.FloatField()),
+                ('temperature_max_inside', models.FloatField()),
             ],
             options={
                 'abstract': False,
@@ -69,6 +79,8 @@ class Migration(migrations.Migration):
                 ('coefficient_of_performance', models.FloatField()),
                 ('mass_of_air', models.FloatField()),
                 ('power_consumed', models.FloatField()),
+                ('temperature_min_inside', models.FloatField()),
+                ('temperature_max_inside', models.FloatField()),
             ],
             options={
                 'abstract': False,
@@ -102,6 +114,7 @@ class Migration(migrations.Migration):
             name='OnOffProfile',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('car', models.ForeignKey(blank=True, to='smartgrid.Car', null=True)),
                 ('heatloadinvariablepower', models.ForeignKey(blank=True, to='smartgrid.HeatLoadInvariablePower', null=True)),
                 ('heatloadvariablepower', models.ForeignKey(blank=True, to='smartgrid.HeatLoadVariablePower', null=True)),
             ],
@@ -128,6 +141,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('scenario_name', models.CharField(max_length=200)),
                 ('current_neighborhood', models.CharField(max_length=200)),
+                ('time', models.IntegerField(default=1)),
+                ('started', models.BooleanField(default=False)),
             ],
         ),
         migrations.CreateModel(
@@ -200,6 +215,11 @@ class Migration(migrations.Migration):
             model_name='energyprice',
             name='neighborhood',
             field=models.ForeignKey(to='smartgrid.Neighborhood'),
+        ),
+        migrations.AddField(
+            model_name='car',
+            name='house',
+            field=models.ForeignKey(to='smartgrid.House'),
         ),
         migrations.AddField(
             model_name='availableenergy',
