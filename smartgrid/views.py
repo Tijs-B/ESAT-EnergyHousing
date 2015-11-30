@@ -7,8 +7,10 @@ from django.template import RequestContext, loader
 from django.contrib import auth
 # Security:
 from django.core.context_processors import csrf
+import cgi
 
 from .models import *
+from demo import *
 
 #GAMS
 # import sqlite3 as sq
@@ -142,6 +144,16 @@ def heatloadinvariable(request, appliance_id):
                    'cop': appliance.coefficient_of_performance,
                    'mass_of_air': appliance.mass_of_air,
                    'power_consumed': appliance.power_consumed})
+
+
+def demo_encryptie(request):
+    encryptie = ''
+
+    if(request.GET.get('encryptbtn')):
+        encryptie = demo((request.GET.get('mytextbox')))
+    print encryptie
+    return render(request,'smartgrid/post_login/demo_encryptie.html',{ 'encryptie' : encryptie })
+
 
 
 def scenario(request):
