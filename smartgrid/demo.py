@@ -8,4 +8,4 @@ def demo(string):
        a = NORX(32,4,1,128)
        cipher_bit = a.AEADEnc(['0x1293','0x128746','0x218976','0x12123'],['0x127a','0x123c'],'010101010',message,'10101101010')
        cipher_hex = BitArray(bin=cipher_bit[0]).hex
-       return cipher_hex.decode('hex')
+       return cipher_hex

@@ -7,6 +7,7 @@ from django.template import RequestContext, loader
 from django.contrib import auth
 # Security:
 from django.core.context_processors import csrf
+import cgi
 
 from .models import *
 from demo import *
@@ -148,8 +149,8 @@ def demo_encryptie(request):
 
     if(request.GET.get('encryptbtn')):
         encryptie = demo((request.GET.get('mytextbox')))
-
-    return render(request,'smartgrid/post_login/demo_encryptie.html',{ 'encryptie' : encryptie})
+    print encryptie
+    return render(request,'smartgrid/post_login/demo_encryptie.html',{ 'encryptie' : encryptie })
 
 
 def scenario(request):
