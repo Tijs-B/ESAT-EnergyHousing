@@ -2,17 +2,19 @@ from django.db import models
 from django import forms
 
 
+class Scenario(models.Model):
+    scenario_name = models.CharField(max_length=200)
+    current_neighborhood = models.CharField(max_length=200)
+    time = models.IntegerField(default=1)
+    started = models.BooleanField(default=False)
+    
+
 class Neighborhood(models.Model):
     def __str__(self):
         return self.neighborhood_name
 
     neighborhood_name = models.CharField(max_length=200)
     power_consumed = models.FloatField()  # dfr_totaal
-
-
-class Scenario(models.Model):
-    scenario_name = models.CharField(max_length=200)
-    current_neighborhood = models.ForeignKey(Neighborhood)
 
 
 class AmbientTemp(models.Model):

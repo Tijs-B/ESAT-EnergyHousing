@@ -231,8 +231,7 @@ def scenario(request):
     neighborhood_list = Neighborhood.objects.all()
 
     return render(request, 'smartgrid/post_login/scenario.html',
-                  {'scenario_started': scenario.started,
-                   'current_neighborhood_name': current_neighborhood_name,
+                  {'current_neighborhood_name': current_neighborhood_name,
                    'energy_price_data': energy_price_data,
                    'available_energy_data': available_energy_data,
                    'consumption_data': consumption_data,
