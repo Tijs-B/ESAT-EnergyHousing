@@ -1,11 +1,13 @@
 from django.db import models
+from django import forms
 
 
 class Neighborhood(models.Model):
     def __str__(self):
         return self.neighborhood_name
+
     neighborhood_name = models.CharField(max_length=200)
-    power_consumed = models.FloatField()        # dfr_totaal
+    power_consumed = models.FloatField()  # dfr_totaal
 
 
 class Scenario(models.Model):
@@ -34,6 +36,7 @@ class AvailableEnergy(models.Model):
 class House(models.Model):
     def __str__(self):
         return self.house_name
+
     neighbourhood = models.ForeignKey("Neighborhood")
     house_name = models.CharField(max_length=200)
 
@@ -54,6 +57,7 @@ class Car(models.Model):
 class Room(models.Model):
     def __str__(self):
         return self.room_name + " " + self.house.house_name
+
     house = models.ForeignKey("House")
     room_name = models.CharField(max_length=200)
 
@@ -62,6 +66,7 @@ class Room(models.Model):
 class Appliance(models.Model):
     def __str__(self):
         return self.appliance_name
+
     room = models.ForeignKey("Room")
     appliance_name = models.CharField(max_length=200)
     currently_on = models.BooleanField(default=False)
@@ -117,7 +122,6 @@ class OnOffInfo(models.Model):
     Info = models.IntegerField(default=0)
 
     @property
-
     def house(self):
         if self.onoffprofile.heatloadvariablepower is not None:
             return self.onoffprofile.heatloadvariablepower.room.house
@@ -138,6 +142,7 @@ class OnOffInfo(models.Model):
 class Sensor(models.Model):
     def __str__(self):
         return self.sensor_name
+
     sensor_name = models.CharField(max_length=200)
     house = models.ForeignKey("House")
     # type = models.TextField
