@@ -12,8 +12,8 @@ from .models import *
 
 # GAMS
 # import sqlite3 as sq
-import gams
-import os
+# import gams
+# import os
 
 
 # Create your views here.
