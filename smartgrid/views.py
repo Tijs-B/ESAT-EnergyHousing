@@ -175,12 +175,16 @@ def add_appliance(request, room_id):
 def add(request, room_id):
     r = get_object_or_404(Room, pk=room_id)
     error_message = "Gelieve een apparaat te kiezen."
+    appliances = list(chain(HeatLoadInvariablePower.objects.all(),
+                            HeatLoadVariablePower.objects.all(),
+                            ShiftingLoadCycle.objects.all()))
     try:
         selected_choice = request.POST['appliance']
     except KeyError:
-        return render(request, 'smartgrid/post_login/appliance/add_appliance.html', {
+        return render(request, 'smartgrid/post_login/appliances/add_appliance.html', {
             'room': r,
-            'error_message': "Gelieve een apparaat te kiezen"})
+            'error_message': "Gelieve een apparaat te kiezen",
+            'appliances': appliances})
 
     appliance = list(chain(ShiftingLoadCycle.objects.all().filter(appliance_name=selected_choice),
                            HeatLoadInvariablePower.objects.all().filter(appliance_name=selected_choice),
@@ -201,7 +205,8 @@ def add(request, room_id):
     else:
         return render(request, 'smartgrid/post_login/appliance/add_appliance.html', {
             'room': r,
-            'error_message': "Het lijkt erop dat er iets is misgegaan, probeer opnieuw a.u.b."})
+            'error_message': "Het lijkt erop dat er iets is misgegaan, probeer opnieuw a.u.b.",
+            'appliances': appliances})
 
 
 def scenario(request):

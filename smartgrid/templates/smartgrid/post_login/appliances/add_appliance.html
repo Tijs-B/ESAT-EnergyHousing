@@ -10,11 +10,10 @@
 {% endblock nav %}
 
 {% block content %}
-<h2>Kies het apparaat dat u wilt toevoegen</h2>
-
 {% if error_message %}
 <p><strong>{{ error_message }}</strong></p>
 {% endif %}
+<h2>Kies het apparaat dat u wilt toevoegen</h2>
 
 <div>
     <form action="{% url 'smartgrid:add' room.id %}" method="post">
