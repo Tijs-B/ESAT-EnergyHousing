@@ -1,19 +1,21 @@
-from django.shortcuts import get_object_or_404, render, render_to_response
+from django.shortcuts import get_object_or_404, render
+from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.views import generic
 from django.template import RequestContext, loader
 from django.contrib import auth
+# Security:
 from django.core.context_processors import csrf
-from itertools import chain
+import cgi
 
 from .models import *
+from demo import *
 
-
-# GAMS
+#GAMS
 # import sqlite3 as sq
-# import gams
-# import os
+import gams
+import os
 
 
 # Create your views here.
@@ -26,20 +28,19 @@ def prehomepage(request):
 
 
 def resultaat(request):
-    return render(request, 'smartgrid/info/resultaat.html')
+    return render(request,'smartgrid/info/resultaat.html')
 
 
 def info_apparaten(request):
-    return render(request, 'smartgrid/info/info_apparaten.html')
+    return render(request,'smartgrid/info/info_apparaten.html')
 
 
 def vraagzijdesturing(request):
-    return render(request, 'smartgrid/info/vraagzijdesturing.html')
+    return render(request,'smartgrid/info/vraagzijdesturing.html')
 
 
 def projectverdeling(request):
-    return render(request, 'smartgrid/info/projectverdeling.html')
-
+    return render(request,'smartgrid/info/projectverdeling.html')
 
 # Login
 
@@ -74,7 +75,6 @@ def logout(request):
     template = loader.get_template('smartgrid/logout.html')
     return HttpResponse(template.render())
 
-
 # Na login
 
 def home(request):
@@ -103,21 +103,15 @@ def room_detail(request, room_id):
     return render(request, 'smartgrid/post_login/room_detail.html',
                   {'room': room})
 
-
 ## Appliances
 '''
 def fixed(request, appliance_id):
-    appliance = get_object_or_404(FixedDemandProfile, pk=appliance_id)
+    appliance = get_object_or_404(FixedDemand, pk=appliance_id)
     return render(request, 'smartgrid/post_login/appliances/Fixed.html',
                   {'appliance': appliance,
                    'consumption': appliance.consumption,
-<<<<<<< HEAD
-                   'currently_on': appliance.currently_on})
-
-=======
                    'currently_on':appliance.currently_on})
 '''
-
 
 def shiftingloadcycle(request, appliance_id):
     appliance = get_object_or_404(ShiftingLoadCycle, pk=appliance_id)
@@ -149,70 +143,18 @@ def heatloadinvariable(request, appliance_id):
                    'isolation_coefficient': appliance.isolation_coefficient,
                    'cop': appliance.coefficient_of_performance,
                    'mass_of_air': appliance.mass_of_air,
-                   'power_consumed': appliance.power_consumed,
-                   })
+                   'power_consumed': appliance.power_consumed})
 
 
-# Apparaat toevoegen
-def add_appliance(request, room_id):
-    room = get_object_or_404(Room, pk=room_id)
-    appliances = list(chain(HeatLoadInvariablePower.objects.all(),
-                            HeatLoadVariablePower.objects.all(),
-                            ShiftingLoadCycle.objects.all()))
-    return render(request, 'smartgrid/post_login/appliances/add_appliance.html',
-                  {'room': room, 'appliances': appliances})
+def demo_encryptie(request):
+    encryptie = ''
+
+    if(request.GET.get('encryptbtn')):
+        encryptie = demo((request.GET.get('mytextbox')))
+    print encryptie
+    return render(request,'smartgrid/post_login/demo_encryptie.html',{ 'encryptie' : encryptie })
 
 
-def add(request, room_id):
-    r = get_object_or_404(Room, pk=room_id)
-    error_message = "Gelieve een apparaat te kiezen."
-    try:
-        selected_choice = get_object_or_404(HeatLoadVariablePower, pk=request.POST['appliance'])
-        print selected_choice
-    except (KeyError, HeatLoadVariablePower.DoesNotExist):
-        try:
-            selected_choice = get_object_or_404(HeatLoadInvariablePower, pk=request.POST['appliance'])
-        except (KeyError, HeatLoadInvariablePower.DoesNotExist):
-            try:
-                selected_choice = get_object_or_404(ShiftingLoadCycle, pk=request.POST['appliance'])
-            except (KeyError, ShiftingLoadCycle.DoesNotExist):
-                return render(request, 'smartgrid/post_login/appliance/add_appliance.html', {
-                    'room': r,
-                    'error_message': error_message,
-                })
-
-    if isinstance(selected_choice, HeatLoadVariablePower):
-        r.heatloadvariablepower_set.add(selected_choice)
-        r.save()
-        return HttpResponseRedirect(reverse('smartgrid:room_detail', args=(r.id,)))
-    elif isinstance(selected_choice, HeatLoadInvariablePower):
-        r.heatloadinvariablepower_set.add(selected_choice)
-        r.save()
-        return HttpResponseRedirect(reverse('smartgrid:room_detail', args=(r.id,)))
-    elif isinstance(selected_choice, ShiftingLoadCycle):
-        r.shiftingloadcycle_set.add(selected_choice)
-        r.save()
-        return HttpResponseRedirect(reverse('smartgrid:room_detail', args=(r.id,)))
-    else:
-        return render(request, 'smartgrid/post_login/appliance/add_appliance.html', {
-            'room': r,
-            'error_message': "Het lijkt erop dat er iets is misgegaan, probeer opnieuw a.u.b."})
-
-
-#
-#     except (KeyError, Appliance.DoesNotExist):
-#     return render(request, 'smartgrid/post_login/appliance/add_appliance.html', {
-#         'room': r,
-#         'error_message': "You didn't select a choice."})
-#
-# else:
-# r.heatloadvariablepower_set.add(selected_choice)
-# r.save()
-# return HttpResponseRedirect(reverse('smartgrid:room_detail', args=(r.id,)))
-
-
-
-# Scenario
 
 def scenario(request):
     scenario = Scenario.objects.all()[0]
@@ -221,11 +163,11 @@ def scenario(request):
 
     energy_price_data = []
     for energy_price in current_neighborhood.energyprice_set.all():
-        energy_price_data.append([(float(energy_price.time) - 1.0) / 4.0, float(energy_price.price)])
+        energy_price_data.append([(float(energy_price.time)-1.0)/4.0, float(energy_price.price)])
 
     available_energy_data = []
     for available_energy in current_neighborhood.availableenergy_set.all():
-        available_energy_data.append([(float(available_energy.time) - 1.0) / 4.0, float(available_energy.amount)])
+        available_energy_data.append([(float(available_energy.time)-1.0)/4.0, float(available_energy.amount)])
 
     consumption_data = []
 
@@ -338,3 +280,5 @@ def trigger_gams(request):
                 param_mass_cat4.add_record(i.appliance_name).value = i.mass_of_air
                 param_pcool_cat4.add_record(i.appliance_name).value = i.power_required
                 param_ua_cat4.add_record(i.appliance_name).value = i.isolation_coefficient
+
+

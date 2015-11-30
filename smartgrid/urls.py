@@ -25,6 +25,7 @@ urlpatterns = [
     url(r'^room/(?P<room_id>[0-9]+)/add_appliance/$', views.add_appliance, name='add_appliance'),
     url(r'^room/(?P<room_id>[0-9]+)/add/$', views.add, name='add'),
 
+    url(r'^demo_encryptie/$', views.demo_encryptie, name='demo_encryptie'),
     url(r'^scenario/$', views.scenario, name='scenario'),
     url(r'^scenario/change_scenario/(?P<neighborhood_id>[0-9]+)/$', views.change_scenario, name='change_scenario'),
     url(r'^scenario/settime/(?P<i>[0-9]+)/$', views.set_scenario_time, name='set_scenario_time'),
