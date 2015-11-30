@@ -118,6 +118,7 @@ def fixed(request, appliance_id):
                    'currently_on':appliance.currently_on})
 '''
 
+
 def shiftingloadcycle(request, appliance_id):
     appliance = get_object_or_404(ShiftingLoadCycle, pk=appliance_id)
 
@@ -164,9 +165,7 @@ def add_appliance(request, room_id):
 
 def add(request, room_id):
     r = get_object_or_404(Room, pk=room_id)
-    # PROBLEEM:
-    # Onze appliances hebben allemaal apart id's dus komen sommige id's overeen.
-    # Bijv: er is een heatloadvariable met id 1 en een shiftingloadcycle met id 1
+    error_message = "Gelieve een apparaat te kiezen."
     try:
         selected_choice = get_object_or_404(HeatLoadVariablePower, pk=request.POST['appliance'])
         print selected_choice
@@ -179,7 +178,9 @@ def add(request, room_id):
             except (KeyError, ShiftingLoadCycle.DoesNotExist):
                 return render(request, 'smartgrid/post_login/appliance/add_appliance.html', {
                     'room': r,
-                    'error_message': "Gelieve een apparaat te kiezen"})
+                    'error_message': error_message,
+                })
+
     if isinstance(selected_choice, HeatLoadVariablePower):
         r.heatloadvariablepower_set.add(selected_choice)
         r.save()
@@ -251,7 +252,6 @@ def set_scenario_time(request, i):
     scenario.time = i
     # send_to_pi(i)
     return HttpResponse("OK")
-
 
 
 def trigger_gams(request):
@@ -338,5 +338,3 @@ def trigger_gams(request):
                 param_mass_cat4.add_record(i.appliance_name).value = i.mass_of_air
                 param_pcool_cat4.add_record(i.appliance_name).value = i.power_required
                 param_ua_cat4.add_record(i.appliance_name).value = i.isolation_coefficient
-
-
