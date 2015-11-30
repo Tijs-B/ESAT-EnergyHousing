@@ -21,7 +21,7 @@
         {% csrf_token %}
         {% for appliance in appliances %}
         <ul>
-            <input type="radio" name="appliance" value="{{ appliance.id }}"/>
+            <input type="radio" name="appliance" value="{{ appliance }}"/>
             <label>{{ appliance }}</label>
         </ul>
         {% endfor %}

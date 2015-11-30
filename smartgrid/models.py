@@ -69,7 +69,6 @@ class Appliance(models.Model):
     def __str__(self):
         return self.appliance_name
 
-    id = models.CharField(primary_key=True, unique=True, max_length=50)
     room = models.ForeignKey("Room")
     appliance_name = models.CharField(max_length=200)
     currently_on = models.BooleanField(default=False)
