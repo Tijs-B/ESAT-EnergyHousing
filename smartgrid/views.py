@@ -11,6 +11,7 @@ import cgi
 
 from .models import *
 from demo import *
+from demo2 import*
 
 #GAMS
 # import sqlite3 as sq
@@ -147,12 +148,35 @@ def heatloadinvariable(request, appliance_id):
 
 
 def demo_encryptie(request):
-    encryptie = ''
+
+    gecodeerd = ''
+    tag1 = ''
+    hexa=''
+    tag2=''
+    oorspronkelijk = ''
+
+    if(request.GET.get('dencryptbtn')):
+        hexa=request.GET.get("hexa")
+        tag2 = request.GET.get("tag2")
+        oorspronkelijk = decrypt(hexa,tag2)
+
 
     if(request.GET.get('encryptbtn')):
-        encryptie = demo((request.GET.get('mytextbox')))
-    print encryptie
-    return render(request,'smartgrid/post_login/demo_encryptie.html',{ 'encryptie' : encryptie })
+       gecodeerd, tag1 = demo((request.GET.get('mytextbox')))
+
+    return render(request,'smartgrid/post_login/demo_encryptie.html',{ 'gecodeerd' : gecodeerd,
+                                                                       'tag1': tag1,
+                                                                       'oorspronkelijk': oorspronkelijk})
+# def demo_dencryptie(request):
+#     oorspronkelijk =''
+#     hexa=''
+#     tag=''
+#     if(request.GET.get('dencryptbtn')):
+#         hexa=request.GET.get("hexa")
+#         tag = request.GET.get("tag")
+#         oorspronkelijk = decrypt(hexa,tag)
+#
+#     return render(request,'smartgrid/post_login/demo_encryptie.html',{ 'oorspronkelijk' : oorspronkelijk})
 
 
 
