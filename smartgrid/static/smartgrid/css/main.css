@@ -161,3 +161,12 @@ h1, h2, h3, h4, h5, h6 {
 .paused {
     background-color: #BADC89;
 }
+
+#slider {
+    padding: 20px;
+    max-width: 400px;
+}
+
+.black {
+    color: #000;
+}

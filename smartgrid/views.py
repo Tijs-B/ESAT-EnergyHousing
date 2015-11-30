@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, redirect
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.views import generic
@@ -12,6 +12,7 @@ from django.core.context_processors import csrf
 import cgi
 
 from .models import *
+import utilities
 from demo import *
 
 
@@ -223,6 +224,9 @@ def scenario(request):
         available_energy_data.append([(float(available_energy.time) - 1.0) / 4.0, float(available_energy.amount)])
 
     consumption_data = []
+    consumption = utilities.get_consumption()
+    for i in range(len(consumption)):
+        consumption_data.append([i/4.0, consumption[i]])
 
     neighborhood_list = Neighborhood.objects.all()
 
@@ -236,16 +240,17 @@ def scenario(request):
 
 
 def change_scenario(request, neighborhood_id):
-    neighborhood = get_object_or_404(neighborhood_id)
+    neighborhood = get_object_or_404(Neighborhood, pk=neighborhood_id)
     scenario = Scenario.objects.all()[0]
     scenario.current_neighborhood = neighborhood.neighborhood_name
-    return scenario(request)
+    scenario.save()
+    return redirect('smartgrid:scenario')
 
 
 def set_scenario_time(request, i):
     scenario = Scenario.objects.all()[0]
     scenario.time = i
-    # send_to_pi(i)
+    # utilities.send_to_pi(i)
     return HttpResponse("OK")
 
 
