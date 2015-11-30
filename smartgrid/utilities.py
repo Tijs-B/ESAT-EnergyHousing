@@ -2,6 +2,7 @@ from models import *
 from planning_verstuurder import *
 import gams
 import os
+from models import *
 
 
 def send_to_pi(time):
@@ -131,5 +132,24 @@ def trigger_gams():
             param_capacity_battery.add_record(1).value = car[0].power_capacity
 
 
+def get_consumption(house=None):
+    consumption = [0 for x in range(96)]
 
+    if house is not None:
+        for fixed_demand_profile in house.fixeddemandprofile_set.all():
+            consumption[fixed_demand_profile.time] += fixed_demand_profile.consumption
 
+        for onoff_info in OnOffInfo.objects.all():
+            if onoff_info.house == house:
+                consumption[onoff_info.time] += onoff_info.OnOff * onoff_info.Info
+
+        return consumption
+
+    else:
+        for fixed_demand_profile in FixedDemandProfile.objects.all():
+            consumption[fixed_demand_profile.time] += fixed_demand_profile.consumption
+
+        for onoff_info in OnOffInfo.objects.all():
+            consumption[onoff_info.time] += onoff_info.OnOff * onoff_info.Info
+
+        return consumption
