@@ -1,0 +1,259 @@
+{% extends "smartgrid/base.html" %}
+{% load staticfiles %}
+
+{% block nav %}
+    <ul class="nav">
+        <li><a href="{% url 'smartgrid:home' %}">Start</a></li>
+        <li><a href="{% url 'smartgrid:rooms' %}">Kamers</a></li>
+        <li><a class="active" href="{% url 'smartgrid:scenario' %}">Grafieken</a></li>
+        <li><a href="{% url 'smartgrid:demo_encryptie' %}">Demo encryptie</a></li>
+        <li><a href="{% url 'smartgrid:logout' %}">Log uit</a></li>
+    </ul>
+{% endblock nav %}
+
+
+{% block content %}
+    <h1>Grafieken</h1>
+    <h3>Momenteel is het scenario: <strong>{{ current_neighborhood_name }}</strong></h3>
+    <div class="row">
+        <div class="col-sm-6" id="price_chart"></div>
+        <div class="col-sm-6" id="energy_chart"></div>
+    </div>
+    <div class="graph" id="consumption_chart"></div>
+
+    <h1>Verander scenario</h1>
+    <div class="btn-group" data-toggle="buttons">
+        {% for neighborhood in neighborhood_list %}
+            {% if neighborhood.neighborhood_name == current_neighborhood_name %}
+                <a type="button" class="btn btn-success btn-lg active">{{ neighborhood.neighborhood_name }}</a>
+            {% else %}
+                <a type="button" class="btn btn-default btn-lg"
+                   href="{% url 'smartgrid:change_scenario' neighborhood.id %}">{{ neighborhood }}</a>
+            {% endif %}
+        {% endfor %}
+    </div>
+    <h1>Scenariobediening</h1>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="timer"></div>
+        </div>
+        <div class="col-md-6" style="margin-top:10px;">
+            <button id="start" class="btn btn-default" aria-label="Left Align" onclick="start_simulation()">
+                <span class="glyphicon glyphicon-play" aria-hidden="true"></span>Start simulatie
+            </button>
+            <button id="pause" class="btn btn-default" onclick="pause_simulation()">
+                <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>Pauzeer simulatie
+            </button>
+            <button id="stop" class="btn btn-danger" onclick="stop_simulation()">Stop simulatie</button>
+            <div id="slider">
+                <input type="range" name="step" id="step" min="0.2" max="5" step="0.1" value="1">
+                <p class="black">Aantal seconden per gesimuleerd kwartier: <b><span id="step-amount"></span></b></p>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block script %}
+    <script src="{% static 'smartgrid/js/highcharts.js' %}"></script>
+    <script>
+
+        started = false;
+        var url = "{% url 'smartgrid:set_scenario_time' 1234567890 %}";
+        i = 1;
+        step = 1;
+
+        function update() {
+            if (i == 1441) {
+                stop_simulation();
+            }
+            if (i % 15 == 0) {
+                var newUrl = url.replace('1234567890', (Math.floor(i / 15)).toString());
+                $.ajax({url: newUrl});
+            }
+            $(".timer").html(twodigits(Math.floor(i / 60)) + "u" + twodigits(i % 60));
+            i++;
+        }
+
+        function twodigits(number) {
+            return (number < 10 ? '0' : '') + number
+        }
+
+        function start_simulation() {
+            if (!started) {
+                started = true;
+                $("#start").addClass("active");
+                $("#pause").removeClass("active");
+                $(".timer").addClass("running").removeClass("paused");
+                timer = setInterval(update, step * 1000 / 15.0);
+            }
+        }
+
+        function stop_simulation() {
+            started = false;
+            $("#start").removeClass("active");
+            $("#pause").removeClass("active");
+            $(".timer").html("00u00").removeClass("running").removeClass("paused");
+            clearInterval(timer);
+            i = 1;
+        }
+
+        function pause_simulation() {
+            if (started) {
+                started = false;
+                $("#start").removeClass("active");
+                $("#pause").addClass("active");
+                $(".timer").removeClass("running").addClass("paused");
+                clearInterval(timer);
+            }
+        }
+
+        $(document).ready(function () {
+            $(".timer").html("00u00");
+            $("#start").removeClass("active");
+            $("#step-amount").html(step);
+            $("#step").val(step);
+            $("#step").change(function () {
+                pause_simulation();
+                $("#step-amount").html($("#step").val());
+                step = $("#step").val();
+                start_simulation();
+            });
+        })
+
+    </script>
+    <script>
+        $(function () {
+            $("#price_chart").highcharts({
+                title: {
+                    text: 'Energieprijs'
+                },
+                xAxis: {
+                    title: {
+                        enabled: true,
+                        text: 'Tijd'
+                    },
+                    labels: {
+                        formatter: function () {
+                            return this.value + " u"
+                        }
+                    },
+                    {#                    tickPositions: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]#}
+                },
+                yAxis: {
+                    title: {
+                        enabled: true,
+                        text: 'Energieprijs'
+                    },
+                    labels: {
+                        formatter: function () {
+                            return this.value + " EUR"
+                        }
+                    }
+                },
+                plotOptions: {
+                    line: {
+                        marker: {
+                            enabled: false
+                        }
+                    }
+                },
+                tooltip: {
+                    valueSuffix: '€'
+                },
+                series: [{
+                    name: 'Energieprijs',
+                    color: '#006838',
+                    data: {{ energy_price_data }}
+                }]
+            });
+            $("#energy_chart").highcharts({
+                title: {
+                    text: 'Beschikbare energie'
+                },
+                xAxis: {
+                    title: {
+                        enabled: true,
+                        text: 'Tijd'
+                    },
+                    labels: {
+                        formatter: function () {
+                            return this.value + " u"
+                        }
+                    },
+                    {#                    tickPositions: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]#}
+                },
+                yAxis: {
+                    title: {
+                        enabled: true,
+                        text: 'Beschikbare energie'
+                    },
+                    labels: {
+                        formatter: function () {
+                            return this.value + " kW"
+                        }
+                    }
+                },
+                plotOptions: {
+                    line: {
+                        marker: {
+                            enabled: false
+                        }
+                    }
+                },
+                tooltip: {
+                    valueSuffix: ' kW'
+                },
+                series: [{
+                    name: 'Beschikbare energie',
+                    color: '#006838',
+                    data: {{ available_energy_data }}
+                }]
+            });
+            $("#consumption_chart").highcharts({
+
+                title: {
+                    text: 'Verbruik'
+                },
+                xAxis: {
+                    title: {
+                        enabled: true,
+                        text: 'Tijd'
+                    },
+                    labels: {
+                        formatter: function () {
+                            return this.value + " u"
+                        }
+                    },
+                    {#                    tickPositions: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]#}
+                },
+                yAxis: {
+                    title: {
+                        enabled: true,
+                        text: 'Verbruik'
+                    },
+                    labels: {
+                        formatter: function () {
+                            return this.value + " kW"
+                        }
+                    }
+                },
+                plotOptions: {
+                    line: {
+                        marker: {
+                            enabled: false
+                        }
+                    }
+                },
+                tooltip: {
+                    valueSuffix: ' kW'
+                },
+                series: [{
+                    name: 'Verbruik',
+                    color: '#006838',
+                    data: {{ consumption_data }}
+                }]
+            });
+        })
+    </script>
+{% endblock script %}

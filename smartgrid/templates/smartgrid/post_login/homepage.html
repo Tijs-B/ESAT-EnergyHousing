@@ -1,18 +1,72 @@
 {% extends "smartgrid/base.html" %}
 
 {% block nav %}
-<ul class="nav">
-    <li><a class="active" href="{% url 'smartgrid:home' %}">Home</a></li>
-    <li><a href="{% url 'smartgrid:vraagzijdesturing' %}">Vraagzijdesturing</a></li>
-    <li><a href="{% url 'smartgrid:info_apparaten' %}">Apparaten</a></li>
-    <li><a href="{% url 'smartgrid:projectverdeling' %}">Projectverdeling</a></li>
-    <li><a href="{% url 'smartgrid:resultaat' %}">Resultaat</a></li>
-    <li><a href="{% url 'smartgrid:login' %}">Log in</a></li>
-</ul>
+    <ul class="nav">
+        <li><a class="active" href="{% url 'smartgrid:home' %}">Start</a></li>
+        <li><a href="{% url 'smartgrid:rooms' %}">Kamers</a></li>
+        <li><a href="{% url 'smartgrid:scenario' %}">Grafieken</a></li>
+        <li><a href="{% url 'smartgrid:demo_encryptie' %}">Demo encryptie</a></li>
+        <li><a href="{% url 'smartgrid:logout' %}">Log uit</a></li>
+    </ul>
 {% endblock nav %}
 
 {% block content %}
-<h1>Welkom {{full_name}}!</h1>
-<a href="{% url 'smartgrid:rooms' %}" class="btn btn-primary">Kamers</a>
-<p></p>
+    <h1>Welkom!</h1>
+    <p>De energieprijzen voor vandaag:</p>
+    <div class="graph">
+
+    </div>
 {% endblock content %}
+
+{% comment %}
+{% block script %}
+<script>
+    $(function () {
+        $("#price_chart").highcharts({
+            chart: {
+                type: 'spline'
+            },
+            title: {
+                text: 'Energieprijs'
+            },
+            xAxis: {
+                title: {
+                    enabled: true,
+                    text: 'Tijd'
+                },
+                labels: {
+                    formatter: function () {
+                        return this.value + " u"
+                    }
+                }
+            },
+            yAxis: {
+                title: {
+                    enabled: true,
+                    text: 'Energieprijs'
+                },
+                labels: {
+                    formatter: function () {
+                        return this.value + " EUR"
+                    }
+                }
+            },
+            plotOptions: {
+                line: {
+                    marker: {
+                        enabled: false
+                    }
+                }
+            },
+            tooltip: {
+                valueSuffix: ' EUR'
+            },
+            series: [{
+                name: 'Energieprijs',
+                data: {{ energy_price_data }}
+            }]
+        });
+    })
+</script>
+{% endblock script %}
+{% endcomment %}
