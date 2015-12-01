@@ -1,28 +1,40 @@
 {% extends "smartgrid/base.html" %}
 
 {% block nav %}
-<ul class="nav">
-    <li><a href="{% url 'smartgrid:prehomepage' %}">Start</a></li>
-    <li><a href="{% url 'smartgrid:vraagzijdesturing' %}">Vraagzijdesturing</a></li>
-    <li><a class="active" href="{% url 'smartgrid:info_apparaten' %}">Apparaten</a></li>
-    <li><a href="{% url 'smartgrid:projectverdeling' %}">Projectverdeling</a></li>
-    <li><a href="{% url 'smartgrid:resultaat' %}">Resultaat</a></li>
-    <li><a href="{% url 'smartgrid:demo_encryptie' %}">Demo encryptie</a></li>
-    <li><a href="{% url 'smartgrid:login' %}">Log in</a></li>
-</ul>
+    <ul class="nav">
+        <li><a href="{% url 'smartgrid:prehomepage' %}">Start</a></li>
+        <li><a href="{% url 'smartgrid:vraagzijdesturing' %}">Vraagzijdesturing</a></li>
+        <li><a class="active" href="{% url 'smartgrid:info_apparaten' %}">Apparaten</a></li>
+        <li><a href="{% url 'smartgrid:projectverdeling' %}">Projectverdeling</a></li>
+        <li><a href="{% url 'smartgrid:resultaat' %}">Resultaat</a></li>
+        <li><a href="{% url 'smartgrid:login' %}">Log in</a></li>
+    </ul>
 {% endblock nav %}
 
 {% block content %}
-<h1>Informatie over apparaten</h1>
-<p>In ons demomodel hebben we een onderscheid gemaakt tussen drie soorten apparaten:</p>
-<ul>
-    <li><strong>Fixed demand:</strong> Dit zijn apparaten die continue moeten kunnen werken en waar het systeem eigenlijk vrij weinig controle over heeft. Voorbeelden zijn een tv, verlichting&#x2026;</li>
-    <li><strong>Heat load:</strong> De apparaten in deze categorie hebben alles te maken met temperaturen. Deze moeten dus niet altijd opstaan maar hebben wel een bepaald bereik voor de temperatuur. In deze categorie maken we nog een extra onderscheid tussen:</li>
+    <h1>Informatie over apparaten</h1>
+    <p>VOORBEELDEN NIET ALTIJD JUIST In ons demomodel hebben we een onderscheid gemaakt tussen drie soorten apparaten:</p>
+    <ul>
+        <li><strong>Fixed demand:</strong> Dit zijn apparaten die continue moeten kunnen werken en waar het systeem
+            eigenlijk vrij weinig controle over heeft. Voorbeelden zijn een tv, verlichting&#x2026;</li>
+        <li><strong>Heat load:</strong> De apparaten in deze categorie hebben alles te maken met temperaturen. Deze
+            moeten dus niet altijd opstaan maar hebben wel een bepaald bereik voor de temperatuur. In deze categorie
+            maken we nog een extra onderscheid tussen:
+        </li>
         <ul>
-            <li><u>Apparaten met een variabel vermogen:</u> bij deze apparaten kunnen we kiezen hoeveel vermogen we leveren. Hieronder vallen bijvoorbeeld een koelkast.</li>
-            <li><u>Apparaten met een invariabel vermogen:</u> hier hebben we geen controle over hoeveel vermogen we leveren aan de apparaten maar kunnen we enkel kiezen of ze aan of uit staan. Voorbeelden hiervan zijn de centrale verwarming of een diepvries.</li>
+            <li><u>Apparaten met een variabel vermogen:</u> bij deze apparaten kunnen we kiezen hoeveel vermogen we
+                leveren. Hieronder vallen bijvoorbeeld een koelkast.
+            </li>
+            <li><u>Apparaten met een invariabel vermogen:</u> hier hebben we geen controle over hoeveel vermogen we
+                leveren aan de apparaten maar kunnen we enkel kiezen of ze aan of uit staan. Voorbeelden hiervan zijn de
+                centrale verwarming of een diepvries.
+            </li>
         </ul>
 
-    <li><strong>Shifting load cycle:</strong> Deze apparaten zijn degene waar het systeem veel controle over heeft. Ze moeten namelijk niet continue aanstaan maar hebben een cyclus die maar op bepaalde momenten gestart moet worden. De bedoeling is dat de gebruikers deze apparaten aanzet en dan een deadline bepaald voor wanneer het apparaat klaar moet zijn. Voorbeelden zijn een afwasmachine, een wasmachine...</li>
-</ul>
+        <li><strong>Shifting load cycle:</strong> Deze apparaten zijn degene waar het systeem veel controle over heeft.
+            Ze moeten namelijk niet continue aanstaan maar hebben een cyclus die maar op bepaalde momenten gestart moet
+            worden. De bedoeling is dat de gebruikers deze apparaten aanzet en dan een deadline bepaald voor wanneer het
+            apparaat klaar moet zijn. Voorbeelden zijn een afwasmachine, een wasmachine...
+        </li>
+    </ul>
 {% endblock content %}
