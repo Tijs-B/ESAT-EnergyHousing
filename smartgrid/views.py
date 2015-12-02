@@ -60,12 +60,10 @@ def auth_view(request):
     username = request.POST.get('username', '')
     password = request.POST.get('password', '')
     user = auth.authenticate(username=username, password=password)
-    print user
 
     if user is not None:
         auth.login(request, user)
-        template = loader.get_template('smartgrid/post_login/homepage.html')
-        return HttpResponse(template.render())
+        return redirect('smartgrid:home')
     else:
         template = loader.get_template('smartgrid/invalid_login.html')
         return HttpResponse(template.render())
