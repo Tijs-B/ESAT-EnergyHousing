@@ -53,7 +53,7 @@ class FixedDemandProfile(models.Model):
 class Car(models.Model):
     house = models.ForeignKey("House")
     car_name = models.CharField(max_length=200)
-    power_capacity = models.IntegerField()
+    total_power_capacity = models.IntegerField()
     load_capacity = models.IntegerField()
 
 

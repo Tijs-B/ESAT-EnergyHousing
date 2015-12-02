@@ -53,7 +53,7 @@ $LOAD T_MIN_CAT4, T_MAX_CAT4
 * $LOAD UA_HOUSE, COP_HOUSE, PHEAT_HOUSE, MASS_HOUSE, Pload_battery, Capacity_battery
 
 SCALAR
-         PRICECURT        price of curtailing RES [€]  /45/
+         PRICECURT        price of curtailing RES [ï¿½]  /45/
          CP               thermodynamic coeficient      /1.005/
          POWER_LIMIT      maximal power the house can take from the grid (in kW) /9400/
          Pload_battery    laadvermogen batterij (in W) /%PLOAD%/
@@ -117,7 +117,7 @@ Equations
          q_objective_function    objective function
          q_zcoste                 Cost function
          q_balance(t)             Electricity balance
-         q_power_limit(t)         power limit of the house
+*         q_power_limit(t)         power limit of the house
          q_cat1(t)                Demand for appliances of category 1
          q_cat2(t)                Demand for appliances of category 2
          q_cat3(t)                Demand for appliances of category 3
@@ -167,10 +167,10 @@ q_balance(t)..
          P_conv(t) + RESloc(t)
                  =e=
                          P_cat1(t) + P_cat2(t) + P_cat3(t) + P_cat4(t)+ P_cat5(t) + Curt(t);
-q_power_limit(t)..
-         P_conv(t)
-                 =l=
-                         POWER_LIMIT  ;
+*q_power_limit(t)..
+*         P_conv(t)
+*                 =l=
+*                         POWER_LIMIT  ;
 
 q_cat1(t)..
          P_cat1(t)
@@ -319,7 +319,7 @@ q_tmin_cat4,q_tmax_cat4,q_z_max_cat4,q_z_min_cat4,q_cat4/;
 
 Model quarter /all/;
 
-option limrow = 25 ;
+option limrow = 300 ;
 option threads = 0;
 *quarter.optcr = 0.01;
 

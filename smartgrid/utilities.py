@@ -66,8 +66,6 @@ def trigger_gams():
             param_t_min_cat4 = db.add_parameter_dc('T_MIN_CAT4', [set_t], 'min temp inside')
             param_t_max_cat4 = db.add_parameter_dc('T_MAX_CAT4', [set_t], 'max temp inside')
 
-
-
             ambiant_temp = AmbientTemp.objects.filter(neighborhood__neighborhood_name=scenario.current_neighborhood)
             for i in ambiant_temp:
                 param_temp_amb.add_record(str(i.time)).value = i.temperature
@@ -104,14 +102,12 @@ def trigger_gams():
             category3 = HeatLoadInvariablePower.objects.filter(room__house__neighbourhood__neighborhood_name=scenario.current_neighborhood, room__house=house)
             for i in category3:
                 set_cat3.add_record(str(i.appliance_name))
-                print i.appliance_name
                 param_cop_cat3.add_record(str(i.appliance_name)).value = i.coefficient_of_performance
                 param_mass_cat3.add_record(str(i.appliance_name)).value = i.mass_of_air
                 param_pcool_cat3.add_record(str(i.appliance_name)).value = i.power_required
                 param_ua_cat3.add_record(str(i.appliance_name)).value = i.isolation_coefficient
                 param_t_min_cat3.add_record(str(i.appliance_name)).value = i.temperature_min_inside
                 param_t_max_cat3.add_record(str(i.appliance_name)).value = i.temperature_max_inside
-
             # house
             """
             param_ua_cat4 = db.add_parameter_dc('UA_HOUSE', ['1'], 'isolation constant of')
@@ -130,10 +126,23 @@ def trigger_gams():
             opt.defines["COP"] = str(category4.coefficient_of_performance)
             opt.defines["PHEAT"] = str(category4.power_required)
             opt.defines["MASS"] = str(category4.mass_of_air)
-
+            for time in range(1, 25):
+                param_t_min_cat4.add_record(str(time)).value = 284
+                param_t_max_cat4.add_record(str(time)).value = 290
+            for time in range(25, 41):
+                param_t_min_cat4.add_record(str(time)).value = 290
+                param_t_max_cat4.add_record(str(time)).value = 296
+            for time in range(41, 73):
+                param_t_min_cat4.add_record(str(time)).value = 284
+                param_t_max_cat4.add_record(str(time)).value = 290
+            for time in range(73, 97):
+                param_t_min_cat4.add_record(str(time)).value = 290
+                param_t_max_cat4.add_record(str(time)).value = 296
+            """
             for time in range(1, 96):
                 param_t_min_cat4.add_record(str(time)).value = category4.temperature_min_inside
                 param_t_max_cat4.add_record(str(time)).value = category4.temperature_max_inside
+            """
             """
             param_pload_battery = db.add_parameter_dc('Pload_battery', ['1'], 'laadvermogen')
             param_capacity_battery = db.add_parameter_dc('Capacity_battery', ['1'], 'capaciteit')
@@ -145,7 +154,6 @@ def trigger_gams():
             """
             opt.defines["PLOAD"] = str(car[0].load_capacity)
             opt.defines["CAP"] = str(car[0].power_capacity)
-
             print 'test last'
 
             print 'job run?'
@@ -153,7 +161,7 @@ def trigger_gams():
             job.run(gams_options=opt, databases=db)
             print 'job run'
             print 'test'
-            x = job.out_db.get_variable('zcost')
-            print x.level
+            # x = job.out_db.get_variable('zcost')
+            # print x.level
             print 'test'
 
