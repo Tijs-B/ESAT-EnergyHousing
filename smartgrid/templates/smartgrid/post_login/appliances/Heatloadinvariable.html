@@ -13,33 +13,33 @@
 {% block content %}
 <h2> {{ appliance }} </h2>
 <table class="table">
-  <tr>
-    <td>Nodig vermogen</td>
-    <td>{{power_required}}</td>
-  </tr>
-  <tr>
-    <td>Isolatie co&euml;ffici&euml;nt</td>
-    <td>{{isolation_coefficient}}</td>
-  </tr>
-  <tr>
-    <td>Prestatieco&euml;ffici&euml;nt</td>
-    <td>{{cop}}</td>
-  </tr>
-  <tr>
-    <td>Massa van de lucht</td>
-    <td>{{mass_of_air}}</td>
-  </tr>
-  <tr>
-    <td>Verbruikt vermogen</td>
-    <td>{{power_consumed}}</td>
-  </tr>
-  <tr>
-    <td>Momenteel actief</td>
-      {% if currently_on %}
+    <tr>
+        <td>Nodig vermogen</td>
+        <td>{{power_required}}</td>
+    </tr>
+    <tr>
+        <td>Isolatie co&euml;ffici&euml;nt</td>
+        <td>{{isolation_coefficient}}</td>
+    </tr>
+    <tr>
+        <td>Prestatieco&euml;ffici&euml;nt</td>
+        <td>{{cop}}</td>
+    </tr>
+    <tr>
+        <td>Massa van de lucht</td>
+        <td>{{mass_of_air}}</td>
+    </tr>
+    <tr>
+        <td>Verbruikt vermogen</td>
+        <td>{{power_consumed}}</td>
+    </tr>
+    <tr>
+        <td>Momenteel actief</td>
+        {% if currently_on %}
         <td><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
-      {% else %}
+        {% else %}
         <td><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></td>
-      {% endif %}
-  </tr>
+        {% endif %}
+    </tr>
 </table>
 {% endblock content %}

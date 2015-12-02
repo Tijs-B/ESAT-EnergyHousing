@@ -1,35 +1,43 @@
 {% extends "smartgrid/base.html" %}
 
 {% block nav %}
-<ul class="nav">
-    <li><a class="active" href="{% url 'smartgrid:prehomepage' %}">Start</a></li>
-    <li><a href="{% url 'smartgrid:vraagzijdesturing' %}">Vraagzijdesturing</a></li>
-    <li><a href="{% url 'smartgrid:info_apparaten' %}">Apparaten</a></li>
-    <li><a href="{% url 'smartgrid:projectverdeling' %}">Projectverdeling</a></li>
-    <li><a href="{% url 'smartgrid:resultaat' %}">Resultaat</a></li>
-    <li><a href="{% url 'smartgrid:login' %}">Log in</a></li>
-</ul>
+    <ul class="nav">
+        <li><a class="active" href="{% url 'smartgrid:prehomepage' %}">Start</a></li>
+        <li><a href="{% url 'smartgrid:vraagzijdesturing' %}">Vraagzijdesturing</a></li>
+        <li><a href="{% url 'smartgrid:info_apparaten' %}">Apparaten</a></li>
+        <li><a href="{% url 'smartgrid:projectverdeling' %}">Projectverdeling</a></li>
+        <li><a href="{% url 'smartgrid:resultaat' %}">Resultaat</a></li>
+        <li><a href="{% url 'smartgrid:login' %}">Log in</a></li>
+    </ul>
 {% endblock nav %}
 
 {% block jumbo %}
-<div class="jumbotron">
-    <div class="container">
-        <h1>Energy grids made smart.</h1>
-        <p>Dankzij slimme sturing van de vraagzijde, lossen we het energieprobleem voor een beetje op.</p>
-        <a class="btn2" href="#energiesturing">Lees meer</a>
+    <div class="jumbotron">
+        <div class="container">
+            <h1>Energy grids made smart.</h1>
+            <p style="text-align: left">Dankzij slimme sturing van de vraagzijde, lossen we het energieprobleem een
+                beetje op.</p>
+            <a class="btn2" href="#energiesturing">Lees meer</a>
+        </div>
     </div>
-</div>
 {% endblock jumbo %}
 
 {% block content %}
     <h1 id="energiesturing">Waarom energiesturing nodig is</h1>
-<p>
-    De milieuproblematiek is tegenwoordig &eacute;&eacute;n van de belangrijkste uitdagingen voor de mensheid. Om deze op te lossen, wordt er steeds meer overgeschakeld van fossiele brandstoffen naar hernieuwbare energiebronnen.
-</p>
-<p>
-    De derde grootste sector van energieverbruik in Belgi&euml; zijn de huishoudens. Daarom is het belangrijk dat deze ook hun steentje bijdragen. Daarenboven zijn de huishoudens &eacute;&eacute;n van de meest flexibele verbruikers van energie, hierdoor is het gemakkelijker om in deze sector gebruik te maken van de groene, hernieuwbare energiebronnen. Deze produceren nu eenmaal niet een constant energieniveau, denk maar aan een windmolen, meer of minder wind, of een zonnepaneel, zonnig of bewolking.
-</p>
-<p>
-    En dat is nu net waar dit model op ingaat: flexibilisering van het energieverbruik van de huishoudens. Voor meer informatie over de verschillende concepten en aspecten kan u beroep doen op bovenstaande navigatiebalk.
-</p>
+    <p>
+        De milieuproblematiek is tegenwoordig &eacute;&eacute;n van de belangrijkste uitdagingen voor de mensheid. Om
+        deze op te lossen, wordt er steeds meer overgeschakeld van fossiele brandstoffen naar hernieuwbare
+        energiebronnen.
+    </p>
+    <p>
+        De derde grootste sector van energieverbruik in Belgi&euml; zijn de huishoudens. Daarom is het belangrijk dat
+        deze ook hun steentje bijdragen. Daarenboven zijn de huishoudens &eacute;&eacute;n van de meest flexibele
+        verbruikers van energie, hierdoor is het gemakkelijker om in deze sector gebruik te maken van de groene,
+        hernieuwbare energiebronnen. Deze produceren namelijk geen constant energieniveau, denk maar aan een
+        windmolen, die meer of minder wind vangt, of zonnepanelen, bij zonnig weer of met bewolking.
+    </p>
+    <p>
+        En dat is nu net waar dit project op ingaat: flexibilisering van het energieverbruik van de huishoudens. Voor meer
+        informatie over de verschillende concepten en aspecten kan u beroep doen op bovenstaande navigatiebalk.
+    </p>
 {% endblock content %}
