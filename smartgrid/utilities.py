@@ -133,23 +133,86 @@ def trigger_gams():
 
 
 def get_consumption(house=None):
-    consumption = [0 for x in range(96)]
+    """
+    Returns a list of consumption data for the given house, or for all the houses in the current neighborhood together.
+    e.g. [[1, 25.4], [2, 27.3], ..., [96, 12.5]]
+    """
+    scenario = Scenario.objects.all()[0]
+    current_neighborhood_name = scenario.current_neighborhood
+    current_neighborhood = Neighborhood.objects.get(neighborhood_name=current_neighborhood_name)
+
+    consumption = [[i, 0] for i in range(1, 97)]
 
     if house is not None:
         for fixed_demand_profile in house.fixeddemandprofile_set.all():
-            consumption[fixed_demand_profile.time] += fixed_demand_profile.consumption
+            print fixed_demand_profile.time
+            consumption[fixed_demand_profile.time - 1][1] += fixed_demand_profile.consumption
 
         for onoff_info in OnOffInfo.objects.all():
             if onoff_info.house == house:
-                consumption[onoff_info.time] += onoff_info.OnOff * onoff_info.Info
-
-        return consumption
+                consumption[onoff_info.time - 1][1] += onoff_info.OnOff * onoff_info.Info
 
     else:
         for fixed_demand_profile in FixedDemandProfile.objects.all():
-            consumption[fixed_demand_profile.time] += fixed_demand_profile.consumption
+            if fixed_demand_profile.house.neighborhood == current_neighborhood:
+                consumption[fixed_demand_profile.time - 1][1] += fixed_demand_profile.consumption
 
         for onoff_info in OnOffInfo.objects.all():
-            consumption[onoff_info.time] += onoff_info.OnOff * onoff_info.Info
+            if onoff_info.house.neighborhood == current_neighborhood:
+                consumption[onoff_info.time - 1][1] += onoff_info.OnOff * onoff_info.Info
 
-        return consumption
+    return consumption
+
+
+def create_test_database():
+    n = Neighborhood(neighborhood_name="Goede buurt")
+    n.save()
+    print "created neighborhood!"
+
+    for i in range(1, 97):
+        n.ambienttemp_set.create(time=i, temperature=2*i)
+        print "   created ambienttemp! i=" + str(i)
+        n.energyprice_set.create(time=i, price=i**2-3*i)
+        print "   created energyprice! i=" + str(i)
+        n.availableenergy_set.create(time=i, amount=100*i**2 - 50*i)
+        print "   created availableenergy! i=" + str(i)
+
+    s = Scenario(scenario_name="Default scenario", current_neighborhood="Goede buurt", time=1, started=False)
+    s.save()
+    print "created scenario!"
+
+    h1 = House(neighborhood=n, house_name="Huis 1 in de goede buurt")
+    h1.save()
+    print "created house!"
+    for i in range(1, 97):
+        h1.fixeddemandprofile_set.create(time=i, consumption=2*i)
+        print "   created fixeddemand! i=" + str(i)
+
+    r = Room(house=h1, room_name="Keuken")
+    r.save()
+    print "created room!"
+
+    hlv = HeatLoadVariablePower(room=r, appliance_name="HLV", currently_on=False, power_required=100,
+                                isolation_coefficient=10, coefficient_of_performance=1.01, mass_of_air=1000,
+                                power_consumed=100, temperature_min_inside=20, temperature_max_inside=22)
+
+    hlv.save()
+    print "created HLV!"
+
+    oop = OnOffProfile(heatloadvariablepower=hlv)
+    oop.save()
+
+    for i in range(1, 97):
+        oop.onoffinfo_set.create(time=i, OnOff=1 if 30<i<60 else 0, Info=100)
+        print "   created onoffinfo! i=" + str(i)
+
+    h2 = House(neighborhood=n, house_name="Huis 2 in de goede buurt")
+    h2.save()
+
+    for i in range(1, 97):
+        h2.fixeddemandprofile_set.create(time=i, consumption=15)
+        print "   created fixeddemand! i=" + str(i)
+
+    n2 = Neighborhood(neighborhood_name="Andere buurt")
+    n2.save()
+    print "created other neighborhood!"

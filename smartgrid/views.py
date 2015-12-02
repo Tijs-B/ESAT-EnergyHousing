@@ -223,10 +223,13 @@ def scenario(request):
     for available_energy in current_neighborhood.availableenergy_set.all():
         available_energy_data.append([(float(available_energy.time) - 1.0) / 4.0, float(available_energy.amount)])
 
-    consumption_data = []
-    consumption = utilities.get_consumption()
-    for i in range(len(consumption)):
-        consumption_data.append([i/4.0, consumption[i]])
+    consumption_list = []
+    for house in current_neighborhood.house_set.all():
+        name = house.house_name
+        data = utilities.get_consumption(house)
+        consumption_list.append({"name": name, "data": data})
+
+    consumption_list.append({"name": "Volledige buurt", "data": utilities.get_consumption(), "linewidth": 5})
 
     neighborhood_list = Neighborhood.objects.all()
 
@@ -234,7 +237,7 @@ def scenario(request):
                   {'current_neighborhood_name': current_neighborhood_name,
                    'energy_price_data': energy_price_data,
                    'available_energy_data': available_energy_data,
-                   'consumption_data': consumption_data,
+                   'consumption_list': consumption_list,
                    'neighborhood_list': neighborhood_list})
 
 

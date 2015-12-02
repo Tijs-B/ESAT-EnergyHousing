@@ -47,6 +47,7 @@
             <button id="stop" class="btn btn-danger" onclick="stop_simulation()">Stop simulatie</button>
             <div id="slider">
                 <input type="range" name="step" id="step" min="0.2" max="5" step="0.1" value="1">
+
                 <p class="black">Aantal seconden per gesimuleerd kwartier: <b><span id="step-amount"></span></b></p>
             </div>
         </div>
@@ -114,10 +115,13 @@
             $("#step-amount").html(step);
             $("#step").val(step);
             $("#step").change(function () {
+                var did_start = started;
                 pause_simulation();
                 $("#step-amount").html($("#step").val());
                 step = $("#step").val();
-                start_simulation();
+                if (did_start) {
+                    start_simulation();
+                }
             });
         })
 
@@ -248,11 +252,17 @@
                 tooltip: {
                     valueSuffix: ' kW'
                 },
-                series: [{
-                    name: 'Verbruik',
-                    color: '#006838',
-                    data: {{ consumption_data }}
-                }]
+                series: [
+                    {% for consumption in consumption_list %}
+                    {
+                        name: "{{ consumption.name }}",
+                        data: {{ consumption.data }},
+                        {% if consumption.linewidth %}
+                            lineWidth: {{ consumption.linewidth }}
+                        {% endif %}
+                    },
+                    {% endfor %}
+                ]
             });
         })
     </script>

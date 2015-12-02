@@ -14,7 +14,7 @@ class Neighborhood(models.Model):
         return self.neighborhood_name
 
     neighborhood_name = models.CharField(max_length=200)
-    power_consumed = models.FloatField()  # dfr_totaal
+    # power_consumed = models.FloatField()  # dfr_totaal
 
 
 class AmbientTemp(models.Model):
@@ -39,7 +39,7 @@ class House(models.Model):
     def __str__(self):
         return self.house_name
 
-    neighbourhood = models.ForeignKey("Neighborhood")
+    neighborhood = models.ForeignKey("Neighborhood")
     house_name = models.CharField(max_length=200)
 
 
