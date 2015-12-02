@@ -67,3 +67,4 @@ admin.site.register(AvailableEnergy)
 admin.site.register(Scenario)
 admin.site.register(Car)
 admin.site.register(FixedDemandProfile)
+

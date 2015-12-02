@@ -1,4 +1,5 @@
 from django.db import models
+from django import forms
 
 
 class Scenario(models.Model):
@@ -6,14 +7,14 @@ class Scenario(models.Model):
     current_neighborhood = models.CharField(max_length=200)
     time = models.IntegerField(default=1)
     started = models.BooleanField(default=False)
-
+    
 
 class Neighborhood(models.Model):
     def __str__(self):
         return self.neighborhood_name
 
     neighborhood_name = models.CharField(max_length=200)
-    power_consumed = models.FloatField()  # dfr_totaal
+    # power_consumed = models.FloatField()  # dfr_totaal
 
 
 class AmbientTemp(models.Model):
@@ -40,7 +41,7 @@ class House(models.Model):
     def __str__(self):
         return self.house_name
 
-    neighbourhood = models.ForeignKey("Neighborhood")
+    neighborhood = models.ForeignKey("Neighborhood")
     house_name = models.CharField(max_length=200)
 
 
@@ -92,22 +93,22 @@ class ShiftingLoadProfile(models.Model):
 
 
 class HeatLoadVariablePower(Appliance):
-    power_required = models.FloatField()  # PHEAT_HOUSE
-    isolation_coefficient = models.FloatField()  # UA_HOUSE
-    coefficient_of_performance = models.FloatField()  # COP_HOUSE
-    mass_of_air = models.FloatField()  # MASS_HOUSE
-    # power_consumed = models.FloatField()  # dfr_house
-    temperature_min_inside = models.FloatField()
+    power_required = models.FloatField()                # PHEAT_HOUSE
+    isolation_coefficient = models.FloatField()         # UA_HOUSE
+    coefficient_of_performance = models.FloatField()    # COP_HOUSE
+    mass_of_air = models.FloatField()                   # MASS_HOUSE
+    power_consumed = models.FloatField()                # dfr_house
+    temperature_min_inside = models.FloatField()            # temp_house
     temperature_max_inside = models.FloatField()
 
 
 class HeatLoadInvariablePower(Appliance):
-    power_required = models.FloatField()  # PCOOL_(REF/FREZ)
-    isolation_coefficient = models.FloatField()  # UA_(REF/FREZ)
-    coefficient_of_performance = models.FloatField()  # COP_(REF/FREZ)
-    mass_of_air = models.FloatField()  # MASS_(REF/FREZ)
-    # power_consumed = models.FloatField()  # dfr_(ref/frez)
-    temperature_min_inside = models.FloatField()
+    power_required = models.FloatField()                # PCOOL_(REF/FREZ)
+    isolation_coefficient = models.FloatField()         # UA_(REF/FREZ)
+    coefficient_of_performance = models.FloatField()    # COP_(REF/FREZ)
+    mass_of_air = models.FloatField()                   # MASS_(REF/FREZ)
+    power_consumed = models.FloatField()                # dfr_(ref/frez)
+    temperature_min_inside = models.FloatField()            # temp_house
     temperature_max_inside = models.FloatField()
 
 

@@ -1,10 +1,12 @@
 {% extends "smartgrid/base.html" %}
+{% load staticfiles %}
 
 {% block nav %}
     <ul class="nav">
         <li><a class="active" href="{% url 'smartgrid:home' %}">Start</a></li>
         <li><a href="{% url 'smartgrid:rooms' %}">Kamers</a></li>
         <li><a href="{% url 'smartgrid:scenario' %}">Grafieken</a></li>
+        <li><a href="{% url 'smartgrid:demo_encryptie' %}">Demo encryptie</a></li>
         <li><a href="{% url 'smartgrid:logout' %}">Log uit</a></li>
     </ul>
 {% endblock nav %}
@@ -12,60 +14,55 @@
 {% block content %}
     <h1>Welkom!</h1>
     <p>De energieprijzen voor vandaag:</p>
-    <div class="graph">
-
-    </div>
+    <div class="chart" id="price_chart"></div>
 {% endblock content %}
-
-{% comment %}
 {% block script %}
-<script>
-    $(function () {
-        $("#price_chart").highcharts({
-            chart: {
-                type: 'spline'
-            },
-            title: {
-                text: 'Energieprijs'
-            },
-            xAxis: {
+    <script src="{% static 'smartgrid/js/highcharts.js' %}"></script>
+    <script>
+        $(function () {
+            $("#price_chart").highcharts({
                 title: {
-                    enabled: true,
-                    text: 'Tijd'
+                    text: 'Energieprijs van vandaag'
                 },
-                labels: {
-                    formatter: function () {
-                        return this.value + " u"
-                    }
-                }
-            },
-            yAxis: {
-                title: {
-                    enabled: true,
-                    text: 'Energieprijs'
+                xAxis: {
+                    title: {
+                        enabled: true,
+                        text: 'Tijd'
+                    },
+                    labels: {
+                        formatter: function () {
+                            return this.value + " u"
+                        }
+                    },
+                    {#                    tickPositions: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]#}
                 },
-                labels: {
-                    formatter: function () {
-                        return this.value + " EUR"
+                yAxis: {
+                    title: {
+                        enabled: true,
+                        text: 'Energieprijs'
+                    },
+                    labels: {
+                        formatter: function () {
+                            return this.value + " EUR"
+                        }
                     }
-                }
-            },
-            plotOptions: {
-                line: {
-                    marker: {
-                        enabled: false
+                },
+                plotOptions: {
+                    line: {
+                        marker: {
+                            enabled: false
+                        }
                     }
-                }
-            },
-            tooltip: {
-                valueSuffix: ' EUR'
-            },
-            series: [{
-                name: 'Energieprijs',
-                data: {{ energy_price_data }}
-            }]
+                },
+                tooltip: {
+                    valueSuffix: ' EUR'
+                },
+                series: [{
+                    name: 'Energieprijs',
+                    color: '#006838',
+                    data: {{ energy_price_data }}
+                }]
+            });
         });
-    })
-</script>
+    </script>
 {% endblock script %}
-{% endcomment %}

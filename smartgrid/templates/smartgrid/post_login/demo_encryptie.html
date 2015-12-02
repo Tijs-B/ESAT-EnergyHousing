@@ -1,0 +1,23 @@
+{% extends "smartgrid/base.html" %}
+
+{% block nav %}
+    <ul class="nav">
+        <li><a href="{% url 'smartgrid:home' %}">Start</a></li>
+        <li><a href="{% url 'smartgrid:rooms' %}">Kamers</a></li>
+        <li><a href="{% url 'smartgrid:scenario' %}">Grafieken</a></li>
+        <li><a class="active" href="{% url 'smartgrid:demo_encryptie' %}">Demo encryptie</a></li>
+        <li><a href="{% url 'smartgrid:logout' %}">Log uit</a></li>
+    </ul>
+{% endblock nav %}
+{% block content %}
+    <h1>Demonstratie Encryptie</h1>
+
+    <form action="#" method="get">
+        <input type="text" value="" name="mytextbox" size="10"/>
+        <input class="btn btn-default" type="submit" value="Encrypteer" name="encryptbtn">
+    </form>
+
+    {% if encryptie %}
+        <p> Resultaat: {{ encryptie }}</p>
+    {% endif %}
+{% endblock content %}
