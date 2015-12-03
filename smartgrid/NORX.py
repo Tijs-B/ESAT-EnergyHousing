@@ -112,17 +112,11 @@ class NORX():
         if not isinstance(key,list) or not (len(key) == 4):
             print 'Key type or length is invalid.'
             assert False
-        for i in key:
-            if i[:2] != '0x':
-                print 'Key input is invalid.'
-                assert False
+
         if not isinstance(nonce,list) or  not (len(nonce) == 2) or not ((k[:2] == '0x') for k in nonce):
             print 'Nonce type or length is invalid.'
             assert False
-        for i in nonce:
-            if i[:2] != '0x':
-                print 'Nonce input is invalid.'
-                assert False
+
 
         temp_state[0][1] = self.bitarray_creator(nonce[0])
         temp_state[0][2] = self.bitarray_creator(nonce[1])

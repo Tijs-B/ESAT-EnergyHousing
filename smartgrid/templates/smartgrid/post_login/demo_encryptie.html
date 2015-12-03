@@ -27,6 +27,8 @@
 <ul class="list-unstyled">
     <li>Versleutelde boodschap: <code>{{ gecodeerd }}</code></li>
     <li>Tag: <code>{{ tag1 }}</code></li>
+    <li>Nonce: <code>{{ nonce }}</code></li>
+
 </ul>
 {% endif %}
 
@@ -39,6 +41,10 @@
     <div class="form-group">
         <label for="tag2">Tag:</label>
         <input type="text" class="form-control" placeholder="Tag" id="tag2" name="tag2" size="100">
+    </div>
+    <div class="form-group">
+        <label for="Nonce" >Nonce:</label>
+        <input type="text" class="form-control" placeholder="Nonce" id="nonce" name="nonce" size="100">
     </div>
 
     <input type="submit" class="btn btn-default" name="dencryptbtn" value="Decrypteer">
