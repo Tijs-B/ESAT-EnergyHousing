@@ -128,12 +128,10 @@ def trigger_gams():
             opt.defines["COP"] = str(category4.coefficient_of_performance)
             opt.defines["PHEAT"] = str(category4.power_required)
             opt.defines["MASS"] = str(category4.mass_of_air)
-            # todo: load from database ThermoMinProfile, Thermoplusprofile
-            thermo_min_profile = ThermoMinProfile.objects.filter(house=house)
-            for x in thermo_min_profile:
+
+            thermo_profile = ThermoProfile.objects.filter(house=house)
+            for x in thermo_profile:
                 param_t_min_cat4.add_record(str(x.time)).value = x.temp_min
-            thermo_max_profile = ThermoMaxProfile.objects.filter(house=house)
-            for x in thermo_max_profile:
                 param_t_max_cat4.add_record(str(x.time)).value = x.temp_max
             """
             for time in range(1, 25):
