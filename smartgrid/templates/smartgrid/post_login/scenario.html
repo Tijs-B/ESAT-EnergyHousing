@@ -22,16 +22,25 @@
     <div class="graph" id="consumption_chart"></div>
 
     <h1>Verander scenario</h1>
-    <div class="btn-group">
-        {% for neighborhood in neighborhood_list %}
-            {% if neighborhood.neighborhood_name == current_neighborhood_name %}
-                <a type="button" class="btn btn-success btn-lg active">{{ neighborhood.neighborhood_name }}</a>
-            {% else %}
-                <a type="button" class="btn btn-default btn-lg"
-                   href="{% url 'smartgrid:change_scenario' neighborhood.id %}">{{ neighborhood }}</a>
-            {% endif %}
-        {% endfor %}
-    </div>
+
+    {% if neighborhood_list|length == 1 %}
+        <div class="alert alert-danger" role="alert">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            Er is maar &eacute;&eacute;n scenario ingesteld.
+        </div>
+        <a type="button" class="btn btn-success btn-lg active">{{ neighborhood_list.0.neighborhood_name }}</a>
+    {% else %}
+        <div class="btn-group">
+            {% for neighborhood in neighborhood_list %}
+                {% if neighborhood.neighborhood_name == current_neighborhood_name %}
+                    <a type="button" class="btn btn-success btn-lg active">{{ neighborhood.neighborhood_name }}</a>
+                {% else %}
+                    <a type="button" class="btn btn-default btn-lg"
+                       href="{% url 'smartgrid:change_scenario' neighborhood.id %}">{{ neighborhood }}</a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
     <h1>Scenariobediening</h1>
     <div class="row">
         <div class="col-md-6">
@@ -254,13 +263,13 @@
                 },
                 series: [
                     {% for consumption in consumption_list %}
-                    {
-                        name: "{{ consumption.name }}",
-                        data: {{ consumption.data }},
-                        {% if consumption.linewidth %}
-                            lineWidth: {{ consumption.linewidth }}
-                        {% endif %}
-                    },
+                        {
+                            name: "{{ consumption.name }}",
+                            data: {{ consumption.data }},
+                            {% if consumption.linewidth %}
+                                lineWidth: {{ consumption.linewidth }}
+                            {% endif %}
+                        },
                     {% endfor %}
                 ]
             });
