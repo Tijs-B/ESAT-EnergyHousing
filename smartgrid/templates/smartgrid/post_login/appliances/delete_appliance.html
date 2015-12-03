@@ -1,0 +1,31 @@
+{% extends "smartgrid/base.html" %}
+
+{% block nav %}
+<ul class="nav">
+    <li><a href="{% url 'smartgrid:home' %}">Home</a></li>
+    <li><a class="active" href="{% url 'smartgrid:rooms' %}">Kamers</a></li>
+    <li><a href="{% url 'smartgrid:scenario' %}">Grafieken</a></li>
+    <li><a href="{% url 'smartgrid:logout' %}">Log uit</a></li>
+</ul>
+{% endblock nav %}
+
+{% block content %}
+{% if error_message %}
+<p><strong>{{ error_message }}</strong></p>
+{% endif %}
+<h2>Kies het apparaat dat u wilt verwijderen</h2>
+
+<div>
+    <form action="{% url 'smartgrid:delete' room.id %}" method="post">
+        {% csrf_token %}
+        {% for appliance in appliances %}
+        <ul>
+            <input type="radio" name="appliance" value="{{ appliance }}"/>
+            <label>{{ appliance }}</label>
+        </ul>
+        {% endfor %}
+        <input class="btn btn-default" type="submit" value="Verwijderen"/>
+        <a class="btn btn-default" href="{% url 'smartgrid:room_detail' room.id%}">Terug</a>
+    </form>
+</div>
+{% endblock content %}

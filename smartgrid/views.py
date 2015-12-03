@@ -20,6 +20,8 @@ from demo import *
 # GAMS
 # import sqlite3 as sq
 import gams
+
+
 # import os
 
 
@@ -164,11 +166,15 @@ def demo_encryptie(request):
 # Apparaat toevoegen
 def add_appliance(request, room_id):
     room = get_object_or_404(Room, pk=room_id)
-    appliances = list(chain(HeatLoadInvariablePower.objects.all(),
-                            HeatLoadVariablePower.objects.all(),
-                            ShiftingLoadCycle.objects.all()))
+    all_appliances = list(chain(HeatLoadInvariablePower.objects.all(),
+                                HeatLoadVariablePower.objects.all(),
+                                ShiftingLoadCycle.objects.all()))
+    unwanted_appliances = list(chain(HeatLoadInvariablePower.objects.filter(room_id=room_id),
+                                     HeatLoadVariablePower.objects.filter(room_id=room_id),
+                                     ShiftingLoadCycle.objects.filter(room_id=room_id)))
+    wanted_appliances = all_appliances - unwanted_appliances
     return render(request, 'smartgrid/post_login/appliances/add_appliance.html',
-                  {'room': room, 'appliances': appliances})
+                  {'room': room, 'appliances': wanted_appliances})
 
 
 def add(request, room_id):
@@ -204,6 +210,55 @@ def add(request, room_id):
     else:
         return render(request, 'smartgrid/post_login/appliance/add_appliance.html', {
             'room': r,
+            'error_message': "Het lijkt erop dat er iets is misgegaan, probeer opnieuw a.u.b.",
+            'appliances': appliances})
+
+
+def delete_appliance(request, room_id):
+    room = get_object_or_404(Room, pk=room_id)
+    appliances = list(chain(HeatLoadInvariablePower.objects.filter(room_id=room_id),
+                            HeatLoadVariablePower.objects.filter(room_id=room_id),
+                            ShiftingLoadCycle.objects.filter(room_id=room_id)))
+    return render(request, 'smartgrid/post_login/appliances/delete_appliance.html',
+                  {'room': room, 'appliances': appliances})
+
+
+def delete(request, room_id):
+    r = Room.objects.get(room_name='Store')
+    orig_room = get_object_or_404(Room, pk=room_id)
+    error_message = "Gelieve een apparaat te kiezen."
+
+    appliances = list(chain(HeatLoadInvariablePower.objects.filter(room_id=room_id),
+                            HeatLoadVariablePower.objects.filter(room_id=room_id),
+                            ShiftingLoadCycle.objects.filter(room_id=room_id)))
+
+    try:
+        selected_choice = request.POST['appliance']
+    except KeyError:
+        return render(request, 'smartgrid/post_login/appliances/delete_appliance.html', {
+            'room': room_id,
+            'error_message': "Gelieve een apparaat te kiezen",
+            'appliances': appliances})
+
+    appliance = list(chain(ShiftingLoadCycle.objects.all().filter(appliance_name=selected_choice),
+                           HeatLoadInvariablePower.objects.all().filter(appliance_name=selected_choice),
+                           HeatLoadVariablePower.objects.all().filter(appliance_name=selected_choice)))
+
+    if isinstance(appliance[0], HeatLoadVariablePower):
+        r.heatloadvariablepower_set.add(appliance[0])
+        r.save()
+        return HttpResponseRedirect(reverse('smartgrid:room_detail', args=(room_id,)))
+    elif isinstance(appliance[0], HeatLoadInvariablePower):
+        r.heatloadinvariablepower_set.add(appliance[0])
+        r.save()
+        return HttpResponseRedirect(reverse('smartgrid:room_detail', args=(room_id,)))
+    elif isinstance(appliance[0], ShiftingLoadCycle):
+        r.shiftingloadcycle_set.add(appliance[0])
+        r.save()
+        return HttpResponseRedirect(reverse('smartgrid:room_detail', args=(room_id,)))
+    else:
+        return render(request, 'smartgrid/post_login/appliance/delete_appliance.html', {
+            'room': orig_room,
             'error_message': "Het lijkt erop dat er iets is misgegaan, probeer opnieuw a.u.b.",
             'appliances': appliances})
 
