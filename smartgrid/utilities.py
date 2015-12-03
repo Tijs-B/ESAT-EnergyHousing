@@ -1,7 +1,7 @@
 from models import *
 from planning_verstuurder import *
 import gams
-import os
+import os, glob
 from models import *
 
 
@@ -81,15 +81,12 @@ def trigger_gams():
                 param_resloc.add_record(str(i.time)).value = i.amount
             # fixed demand
 
-            fixed_demand = FixedDemandProfile.objects.filter(
-                house__neighborhood__neighborhood_name=scenario.current_neighborhood, house=house)
+            fixed_demand = FixedDemandProfile.objects.filter(house=house)
             for i in fixed_demand:
                 param_dcat1.add_record(str(i.time)).value = i.consumption
 
             # shifting load
-
-            shiftingloadcycle = ShiftingLoadCycle.objects.filter(
-                room__house__neighborhood__neighborhood_name=scenario.current_neighborhood, room__house=house)
+            shiftingloadcycle = ShiftingLoadCycle.objects.filter(room__house=house)
             for i in shiftingloadcycle:
                 set_cat2.add_record(str(i.appliance_name))
 
@@ -104,8 +101,7 @@ def trigger_gams():
 
 
             # heatloadinvariablepower
-            category3 = HeatLoadInvariablePower.objects.filter(
-                room__house__neighborhood__neighborhood_name=scenario.current_neighborhood, room__house=house)
+            category3 = HeatLoadInvariablePower.objects.filter(room__house=house)
             for i in category3:
                 set_cat3.add_record(str(i.appliance_name))
                 param_cop_cat3.add_record(str(i.appliance_name)).value = i.coefficient_of_performance
@@ -122,8 +118,8 @@ def trigger_gams():
             param_pcool_cat4 = db.add_parameter_dc('PCOOL_HOUSE', ['1'], 'power needed ')
             param_mass_cat4 = db.add_parameter_dc('MASS_HOUSE', ['1'], 'mass of the cooled air inside')
             """
-            category4 = HeatLoadVariablePower.objects.filter(
-                room__house__neighborhood__neighborhood_name=scenario.current_neighborhood, room__house=house)[0]
+
+            category4 = HeatLoadVariablePower.objects.filter(room__house=house)[0]
             """
             param_cop_cat4.add_record(['1']).value = category4.coefficient_of_performance
             param_mass_cat4.add_record(['1']).value = category4.mass_of_air
@@ -134,6 +130,14 @@ def trigger_gams():
             opt.defines["COP"] = str(category4.coefficient_of_performance)
             opt.defines["PHEAT"] = str(category4.power_required)
             opt.defines["MASS"] = str(category4.mass_of_air)
+            # todo: load from database ThermoMinProfile, Thermoplusprofile
+            thermo_min_profile = ThermoMinProfile.objects.filter(house=house)
+            for x in thermo_min_profile:
+                param_t_min_cat4.add_record(str(x.time)).value = x.temp_min
+            thermo_max_profile = ThermoMaxProfile.objects.filter(house=house)
+            for x in thermo_max_profile:
+                param_t_max_cat4.add_record(str(x.time)).value = x.temp_max
+            """
             for time in range(1, 25):
                 param_t_min_cat4.add_record(str(time)).value = 284
                 param_t_max_cat4.add_record(str(time)).value = 290
@@ -146,23 +150,21 @@ def trigger_gams():
             for time in range(73, 97):
                 param_t_min_cat4.add_record(str(time)).value = 290
                 param_t_max_cat4.add_record(str(time)).value = 296
-            """
+            
             for time in range(1, 96):
                 param_t_min_cat4.add_record(str(time)).value = category4.temperature_min_inside
                 param_t_max_cat4.add_record(str(time)).value = category4.temperature_max_inside
-            """
-            """
+
             param_pload_battery = db.add_parameter_dc('Pload_battery', ['1'], 'laadvermogen')
             param_capacity_battery = db.add_parameter_dc('Capacity_battery', ['1'], 'capaciteit')
             """
-            car = Car.objects.filter(house__neighborhood__neighborhood_name=scenario.current_neighborhood, house=house)
+            car = Car.objects.filter(house=house)
             """
             param_pload_battery.add_record(['1']).value = car[0].load_capacity
             param_capacity_battery.add_record(['1']).value = car[0].power_capacity
             """
             opt.defines["PLOAD"] = str(car[0].load_capacity)
             opt.defines["CAP"] = str(car[0].total_power_capacity)
-            print 'test last'
 
             print 'job run?'
             print db
@@ -170,10 +172,55 @@ def trigger_gams():
             print 'job run'
             print 'test'
 
+            # CalculatedConsumption
             for x in job.out_db.get_variable('P_conv'):
-                print x.level
+                house.calculatedconsumption_set.create(time=x.keys[0], total_consumption=x.level)
+            # onoffprofile car
+            car_profile = OnOffProfile(car = car[0])
+            car_profile.save()
+            for x in job.out_db.get_variable('P_cat5'):
+                car_profile.onoffinfo_set.create(time=x.keys[0], Info=x.level, OnOff=1 if x.level > 0 else 0)
+            # onoffprofile verwarming (category4)
+            category4_profile = OnOffProfile(heatloadvariablepower=category4)
+            category4_profile.save()
+            for x in job.out_db.get_variable('P_cat4'):
+                category4_profile.onoffinfo_set.create(time=x.keys[0], Info=x.level, OnOff=1 if x.level > 0 else 0)
+            # onoffprofile invariablepower
+            category3_profile = []
+            for index in range(0, len(category3)):
+                category3_profile += [OnOffProfile(heatloadinvariablepower=category3[index])]
+                category3_profile[index].save()
+
+            for x in job.out_db.get_variable('z_cat3'):
+                for index in range(0, len(category3)):
+                    if x.keys[1] == category3[index].appliance_name:
+                        category3_profile[index].onoffinfo_set.create(time=x.keys[0], Info=category3[index].power_required if x.level > 0 else 0, OnOff=x.level)
+            # onoffprofile shiftingload
+            for x in job.out_db.get_variable('ti'):
+                if x.level == 1:
+                    appl_name = x.keys[1]
+                    # get shiftingloadprofile
+                    shiftingloadcycle = ShiftingLoadCycle.objects.filter(room__house=house, appliance_name=appl_name)[0]
+                    # make onoffprofile
+                    shiftingload_consumption = OnOffProfile(shiftingloadcycle=shiftingloadcycle)
+                    shiftingload_consumption.save()
+                    # make onoffinfo
+                    total_duration = 0
+                    shiftingloadprofile = ShiftingLoadProfile.objects.filter(shiftingloadcycle=shiftingloadcycle)
+                    list_of_times = []
+                    for index in range(0, len(shiftingloadprofile)):
+                        total_duration += 1
+                        shiftingload_consumption.onoffinfo_set.create(time=int(x.keys[0])+index, Info=shiftingloadprofile[index].consumption, OnOff=1)
+                        list_of_times += [int(x.keys[0])+index]
+                    # fill the rest with 0
+                    for i in range(1, 97):
+                        if i not in list_of_times:
+                            shiftingload_consumption.onoffinfo_set.create(time=i, Info=0, OnOff=0)
 
             print 'test'
+            for f in glob.glob('_gams_py_*'):
+                if str(f) != '_gams_py_gdb1.gdx':
+                    os.remove(f)
 
 
 def get_consumption(house=None):
@@ -185,25 +232,16 @@ def get_consumption(house=None):
     current_neighborhood_name = scenario.current_neighborhood
     current_neighborhood = Neighborhood.objects.get(neighborhood_name=current_neighborhood_name)
 
-    consumption = [[i, 0] for i in range(1, 97)]
+    consumption = [[i/4.0, 0] for i in range(96)]
 
     if house is not None:
-        for fixed_demand_profile in house.fixeddemandprofile_set.all():
-            print fixed_demand_profile.time
-            consumption[fixed_demand_profile.time - 1][1] += fixed_demand_profile.consumption
-
-        for onoff_info in OnOffInfo.objects.all():
-            if onoff_info.house == house:
-                consumption[onoff_info.time - 1][1] += onoff_info.OnOff * onoff_info.Info
-
+        calculated_consumption = CalculatedConsumption.objects.filter(house=house)
+        for x in calculated_consumption:
+            consumption[x.time-1][1] = x.total_consumption
     else:
-        for fixed_demand_profile in FixedDemandProfile.objects.all():
-            if fixed_demand_profile.house.neighborhood == current_neighborhood:
-                consumption[fixed_demand_profile.time - 1][1] += fixed_demand_profile.consumption
-
-        for onoff_info in OnOffInfo.objects.all():
-            if onoff_info.house.neighborhood == current_neighborhood:
-                consumption[onoff_info.time - 1][1] += onoff_info.OnOff * onoff_info.Info
+        calculated_consumption = CalculatedConsumption.objects.filter(house__neighborhood=current_neighborhood)
+        for x in calculated_consumption:
+            consumption[x.time-1][1] += x.total_consumption
 
     return consumption
 

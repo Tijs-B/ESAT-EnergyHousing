@@ -15,10 +15,8 @@
 {% block content %}
     <h1>Grafieken</h1>
     <h3>Momenteel is het scenario: <strong>{{ current_neighborhood_name }}</strong></h3>
-    <div class="row">
-        <div class="col-sm-6" id="price_chart"></div>
-        <div class="col-sm-6" id="energy_chart"></div>
-    </div>
+    <div class="graph" id="price_chart"></div>
+    <div class="graph" id="energy_chart"></div>
     <div class="graph" id="consumption_chart"></div>
 
     <h1>Verander scenario</h1>

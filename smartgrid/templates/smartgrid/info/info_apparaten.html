@@ -13,28 +13,29 @@
 
 {% block content %}
     <h1>Informatie over apparaten</h1>
-    <p>VOORBEELDEN NIET ALTIJD JUIST In ons demomodel hebben we een onderscheid gemaakt tussen drie soorten apparaten:</p>
+    <p>In ons demomodel is er een onderscheid gemaakt tussen vier soorten apparaten:</p>
     <ul>
-        <li><strong>Fixed demand:</strong> Dit zijn apparaten die continue moeten kunnen werken en waar het systeem
-            eigenlijk vrij weinig controle over heeft. Voorbeelden zijn een tv, verlichting&#x2026;</li>
-        <li><strong>Heat load:</strong> De apparaten in deze categorie hebben alles te maken met temperaturen. Deze
-            moeten dus niet altijd opstaan maar hebben wel een bepaald bereik voor de temperatuur. In deze categorie
-            maken we nog een extra onderscheid tussen:
+        <li><strong>Fixed demand:</strong> Dit zijn apparaten die continue en op een vast moment moeten kunnen werken en
+            waar het systeem vrij weinig controle over heeft. Het verbruik hiervan sturen zou leiden tot een
+            comfortsverlies, wat niet de bedoeling is. Voorbeelden zijn een tv, verlichting&#x2026;
+        </li>
+        <li><strong>Heat load:</strong> De apparaten in deze categorie hebben alles te maken met temperaturen. De
+            apparaten moeten dus niet altijd opstaan maar hebben wel een bepaald interval waarbinnen hun temperatuur
+            moet liggen. In deze categorie maken we nog een extra onderscheid tussen:
         </li>
         <ul>
-            <li><u>Apparaten met een variabel vermogen:</u> bij deze apparaten kunnen we kiezen hoeveel vermogen we
-                leveren. Hieronder vallen bijvoorbeeld een koelkast.
+            <li><u>Apparaten met een variabel vermogen:</u> hier kan het koel- of verwarmingselement een variabel
+                vermogen leveren. Hieronder valt bijvoorbeeld de centrale verwarming van een huis.
             </li>
-            <li><u>Apparaten met een invariabel vermogen:</u> hier hebben we geen controle over hoeveel vermogen we
-                leveren aan de apparaten maar kunnen we enkel kiezen of ze aan of uit staan. Voorbeelden hiervan zijn de
-                centrale verwarming of een diepvries.
+            <li><u>Apparaten met een invariabel vermogen:</u> hier kan het koel- of verwarmingselement enkel aan of uit
+                staan. Voorbeelden hiervan zijn een frigo of een diepvries.
             </li>
         </ul>
 
         <li><strong>Shifting load cycle:</strong> Deze apparaten zijn degene waar het systeem veel controle over heeft.
             Ze moeten namelijk niet continue aanstaan maar hebben een cyclus die maar op bepaalde momenten gestart moet
             worden. De bedoeling is dat de gebruikers deze apparaten aanzet en dan een deadline bepaald voor wanneer het
-            apparaat klaar moet zijn. Voorbeelden zijn een afwasmachine, een wasmachine...
+            apparaat klaar moet zijn. Voorbeelden zijn een afwasmachine, een wasmachine&#x2026;
         </li>
     </ul>
 {% endblock content %}
