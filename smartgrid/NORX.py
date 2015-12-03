@@ -1,136 +1,215 @@
 from bitstring import *
 
 class NORX():
-    def __init__(self,wordlength,number_of_rounds,parallellism,tagsize):
-        """Creates a NORX instance given the correct wordlength,number_of_rounds,parallellism and tagsize.
-        Currently only the instance featuring a wordlength of 32bit, 4 rounds, a parallellism degree of 1 and
-        a tagsize of 4*wordlength is available."""
-#        assert(wordlength == 32)
+    def __init__(self,wordlength = 32,number_of_rounds = 4,parallellism = 1,tagsize =128):
+        """
+        Creates a NORX instance given the correct wordlength,number_of_rounds,parallellism and tagsize.
+        In this implementation only NORX(32,x,1,128) can be created with x a natural number
+        """
+        if wordlength != 32:
+            print 'The wordlength must be 32.'
+            assert False
+        if parallellism != 1:
+            print 'The parallellism degree must be 1.'
+            assert False
+        if tagsize != 128:
+            print 'The tagsize must be four times the wordlength, i.e. 128 bits.'
+            assert False
 
-        self.r = [8,11,16,31]
+
+        self.__r_list = [8,11,16,31]
         u = [
             [ '0x243f6a88', '0x0', '0x0', '0x85a308d3' ],
             [ '0x0', '0x0', '0x0', '0x0' ],
             [ '0x13198a2e', '0x03707344', '0x254f537a', '0x38531d48' ],
             [ '0x839c6e83', '0xf97a3ae5', '0x8c91d88c', '0x11eafb59' ]]
 
-        self.u = [[self.bitarray_creator(u[i][k]) for k in range(4)] for i in range(4)]
+        self.__state_matrix = [[self.bitarray_creator(u[i][k]) for k in range(4)] for i in range(4)]
 
 
-        self.wordlength = self.bitarray_creator(str(hex(wordlength)))
-        self.number_of_rounds = self.bitarray_creator(str(hex(number_of_rounds)))
-        self.parallellism = self.bitarray_creator(str(hex(parallellism)))
-        self.tagsize = self.bitarray_creator(str(hex(tagsize)))
+        self.__wordlength = self.bitarray_creator(str(hex(wordlength)))
+        self.__number_of_rounds = self.bitarray_creator(str(hex(number_of_rounds)))
+        self.__parallellism = self.bitarray_creator(str(hex(parallellism)))
+        self.__tagsize = self.bitarray_creator(str(hex(tagsize)))
 
-    def AEADEnc(self, key, nonce, header, message, trailer = '0101001101110100011001010110011001101011011001010111001100100000011100110111010001110010011000010110011001100110011001010010000001101011011011110111001101110100'):
-        """This is the high level encryption function, which takes several inputs and generates an encrypted message,
-        aswell as a tag"""
+    def AEADEnc(self, key = None, nonce = None, header = None, message = None, trailer = '0101001101110100011001010110011001101011011001010111001100100000011100110111010001110010011000010110011001100110011001010010000001101011011011110111001101110100'):
+        """
+        This is the high level encryption method that generates a ciphertext and a tag given the correct inputs.
+        :param key: a list of length four with strings of hexadecimal numbers as elements,
+        e.g. ['0x1c89','0x1a89','0x1989','0x1129'].
+        :param nonce: a list of length two with strings ofr hexqdecimql numbers as elements,
+        e.g. ['0x1c89','0x1a89'].
+        :param header: a binary string, e.g. '010111'.
+        :param message: a binary string, e.g. '010111'.
+        :param trailer: a binary string, e.g. '010111'.
+        :return: a tuple of ciphertext and tag, e.g. ('0011010','0110')
+        """
+
+        if not isinstance(header,basestring) \
+                or not isinstance(message,basestring) or not isinstance(trailer,basestring):
+            print "An error has occurred due to invalid input."
+            assert False
+
         self.initialize(key, nonce)
         self.absorb(header, '0x1')
         ciphertext = self.encrypt(message, '0x2')
         self.absorb(trailer,'0x4')
-        tag = self.finalise('0x8')
+        tag = self.binstring_creator(self.finalise('0x8'))
+
         return ciphertext, tag
 
 
-    def AEADDec(self, key, nonce, header, ciphertext,tag1, trailer = '0101001101110100011001010110011001101011011001010111001100100000011100110111010001110010011000010110011001100110011001010010000001101011011011110111001101110100'):
-        """This is the high level decryption function, which takes several inputs and generates an encrypted message
+    def AEADDec(self, key = None, nonce = None, header = None, ciphertext = None, tag1 = None, trailer = '0101001101110100011001010110011001101011011001010111001100100000011100110111010001110010011000010110011001100110011001010010000001101011011011110111001101110100'):
         """
+        This is the high level decryption function which generates a decrypted message given the correct inputs.
+        :param key: a list of length two with strings ofr hexadecimal numbers as elements,
+        e.g. ['0x1c89','0x1a89','0x1a89','0x1a89'].
+        :param nonce: a list of length two with strings ofr hexadecimal numbers as elements,
+        e.g. ['0x1c89','0x1a89'].
+        :param header: a binary string, e.g. '010111'.
+        :param ciphertext:a binary string of length 384 or a multiple of 384.
+        :param tag1: a binary string of length 128.
+        :param trailer: a binary string, e.g. '010111'.
+        :return:
+        """
+
+        if not isinstance(header,basestring) or not isinstance(ciphertext,basestring) \
+                or not isinstance(trailer,basestring) or not isinstance(tag1,basestring):
+            print "An error has occurred due to invalid input."
+            assert False
+
         self.initialize(key, nonce)
         self.absorb(header, '0x1')
         message = self.decrypt(ciphertext, '0x2')
         self.absorb(trailer,'0x4')
-        tag2 = self.finalise('0x8')
+        tag2 = self.binstring_creator(self.finalise('0x8'))
+        print tag1
+        print tag2
         if tag1 == tag2:
             return message
         else:
             assert(False)
 
     def get_state(self):
-        return self.u
+        """
+        Fetches the current state of the encryption matrix.
+        """
+        return map(list,self.__state_matrix)
 
     def write_state(self,state):
-        self.u = state
+        """
+        Overwrites the state of the encryption matrix, given a matrix
+        """
+        self.__state_matrix  = state
 
 
     def initialize(self, key, nonce):
+        """
+        Initializes the matrix given a key and nonce of the correct shape.
+        """
         temp_state  = self.get_state()
-        assert isinstance(nonce, list)
-        assert(len(nonce)== 2)
-        assert isinstance(key, list)
-        assert(len(key) == 4)
+
+        if not isinstance(key,list) or not (len(key) == 4):
+            print 'Key type or length is invalid.'
+            assert False
+        for i in key:
+            if i[:2] != '0x':
+                print 'Key input is invalid.'
+                assert False
+        if not isinstance(nonce,list) or  not (len(nonce) == 2) or not ((k[:2] == '0x') for k in nonce):
+            print 'Nonce type or length is invalid.'
+            assert False
+        for i in nonce:
+            if i[:2] != '0x':
+                print 'Nonce input is invalid.'
+                assert False
 
         temp_state[0][1] = self.bitarray_creator(nonce[0])
         temp_state[0][2] = self.bitarray_creator(nonce[1])
         for i in range(4):
             temp_state[1][i] = self.bitarray_creator(key[i])
-        temp_state[3][0] ^= self.wordlength
-        temp_state[3][1] ^= self.number_of_rounds
-        temp_state[3][2] ^= self.parallellism
-        temp_state[3][3] ^= self.tagsize
+        temp_state[3][0] ^= self.__wordlength
+        temp_state[3][1] ^= self.__number_of_rounds
+        temp_state[3][2] ^= self.__parallellism
+        temp_state[3][3] ^= self.__tagsize
 
         self.write_state(temp_state)
 
     def rate_converter(self,bitstring):
+        """
+        Turns the given bitstring into a workable object for the algorithm.
+        A brief overview:
+            - Pads the bitstring to a multiple of 384.
+            - Splits the bitstring into bitarray objects of binary length 32.
+            - Creates a 3x4 matrix with the words as elements.
+        """
 
-
-        remainder= 384 - len(bitstring)%384
+        remainder = 384 - len(bitstring)%384
 
         if remainder != 384:
             bitstring += '1' + (remainder-2)*'0' + '1'
 
-
         bitlist = [self.bitarray_creator(bitstring[i:i+32]) for i in range(0, len(bitstring), 32)]
         u = [bitlist[i:i+12] for i in range(0,len(bitlist),12)]
         return [[u[j][l:l+4] for l in range(0,9,4)] for j in range(len(u))]
-  #      return [bitlist[i:i+12] for i in range(0,len(bitlist),12)]
+
 
 
     def absorb(self,ad,dsc):
+        """
+        Absorbs the header or trailer into the encryption matrix as part of the NORX algorithm.
+        """
+        adata = self.rate_converter(ad)
         temp_state = self.get_state()
 
-
-        adata = self.rate_converter(ad)
         for h in adata:
 
             temp_state[3][3] = temp_state[3][3]^ self.bitarray_creator(dsc)
+            for k in range(self.__number_of_rounds.int):
+                temp_state = self.F(temp_state)
 
-            for k in range(self.number_of_rounds.int):
-                self.F()
-
-            temp_state = self.get_state()
             zero_string = [[self.bitarray_creator('0x0') for i in range(4)]]
             for j  in range(4):
                 for k  in range(4):
                     temp_state[j][k] = temp_state[j][k] ^ (h + zero_string)[j][k]
+
         self.write_state(temp_state)
 
     def bitarray_creator(self,string):
-        #if len(string) < 2 or
-        if string[:2] != '0x':
-            string = '0b' + string
+        """
+        Creates a bitarray object of length 32 in binary given a hexadecimal number or a bitstring.
+        """
+
+        if (string[:2] != '0x') :
+              string = '0b' + string
         b = BitArray(string)
+        # print string
         return BitArray([0]*(32-len(b.bin)) + b)
 
     def binstring_creator(self,text):
+        """
+        Creates a bitstring given a list of bitarray objects.
+        """
         binstring = ''
         for i in text:
             binstring += i.bin
         return binstring
 
     def encrypt(self,message,dsc):
-
-        message = self.bitarray_creator(bin(len(message))).bin + message
-
+        """
+        Absorbs the message into the encryption matrix and generates the ciphertext, as part of a the NORX algorithm.
+        """
         temp_state = self.get_state()
+        message = self.bitarray_creator(bin(len(message))).bin + message
         message = self.rate_converter(message)
         ciphertext = []
         for element in message:
-            temp_state[3][3] = temp_state[3][3] ^ self.bitarray_creator(dsc)
-            for k in range(self.number_of_rounds.int):
-                self.F()
 
-            temp_state = self.get_state()
+            temp_state[3][3] = temp_state[3][3] ^ self.bitarray_creator(dsc)
+
+            for k in range(self.__number_of_rounds.int):
+                temp_state = self.F(temp_state)
+
             temp_cipher = []
             for j in range(3):
                 for k in range(4):
@@ -142,15 +221,19 @@ class NORX():
         return self.binstring_creator(ciphertext)
 
     def decrypt(self,ciphertext,dsc):
+        """
+        Absorbs the ciphertext into the encryption matrix and generates the original message,
+        as part of a the NORX algorithm.
+        """
+        #print ciphertext
         temp_state = self.get_state()
         ciphertext = self.rate_converter(ciphertext)
         message = []
         for element in ciphertext:
             temp_state[3][3] = temp_state[3][3] ^ self.bitarray_creator(dsc)
-            for k in range(self.number_of_rounds.int):
-                self.F()
+            for k in range(self.__number_of_rounds.int):
+                temp_state = self.F(temp_state)
 
-            temp_state = self.get_state()
             temp_message = []
             for j in range(3):
                 for k in range(4):
@@ -169,21 +252,24 @@ class NORX():
 
 
     def finalise(self,dsc):
+        """
+        Generates the tag, as part of the NORX algorithm.
+        """
         temp_state = self.get_state()
         temp_state[3][3] = temp_state[3][3] ^ self.bitarray_creator(dsc)
         for k in range(2):
-            for i in range(self.number_of_rounds.int):
-                self.F()
+            for i in range(self.__number_of_rounds.int):
+                temp_state = self.F(temp_state)
 
-        temp_state = self.get_state()
         tag = temp_state[0]
         self.write_state(temp_state)
         return tag
 
 
-    def F(self):
-        temp_state = self.get_state()
-
+    def F(self,temp_state):
+        """
+        Applies several transformations on the encryption matrix, as part of the NORX algorithm.
+        """
         assert ((len(temp_state) == 4) and (len(temp_state[0]) == 4))
 
         for i in range(4):
@@ -206,31 +292,42 @@ class NORX():
             for k in range(4):
                 temp_state[x[k]][y[i][k]] = output[k]
 
-        self.write_state(temp_state)
+        return temp_state
 
 
     def G(self,input):
+        """
+        Applies several transformations on a list of bitarray objects, as part of the NORX algorithm.
+        """
         for i in range(2):
             input[0] = self.H(input[0], input[1])
-            input[3] = self.rotr(input[3] ^ input[0], self.r[i*2])
+            input[3] = self.rotr(input[3] ^ input[0], self.__r_list[i*2])
             input[2] = self.H(input[2], input[3])
-            input[1] = self.rotr(input[1] ^ input[2], self.r[(i*2)+1])
+            input[1] = self.rotr(input[1] ^ input[2], self.__r_list[(i*2)+1])
             return input
 
     def H(self, x, y):
+        """
+        A fundamental bitwise operation of the NORX algorithm. Returns a bitarray object given two bitarray objects.
+        """
         return (x ^ y) ^ ((x & y) << 1)
 
     def rotr(self, x, n):
-        """Bitwise right rotate, taking into account the
-		   configured word size."""
+        """
+        Bitwise right rotate, as part of the NORX algorithm.
+        """
         mask = (1 << n) - 1
         mask = self.bitarray_creator(str(bin(mask)))
         return (x >> n) | ((x & mask) << (32 - n))
 
 
-#
-# d = NORX(32,4,1,128)
-# print d.AEADEnc(['0x1293','0x128746','0x218976','0x12123'],['0x127a','0x123c'],'010101010','1111111010100101011101010101010111')
-#
-# e = NORX(32,4,1,128)
-# print e.AEADDec(['0x1293','0x128746','0x218976','0x12123'],['0x127a','0x123c'],'010101010','100000001000101000010001001110100100111110000100010100100110110110011010011100011101110000110001011001111001101100100111101111010100111011111110101001010011011101110110010001101010010100101110100101000001101001110110111101001010101111100110100000111011111101111111111010001010111101000000111010111010001010101110011100111010100111100100110001111111011100110010100000101011111010000110',[BitArray('0xe5276417'), BitArray('0x08ada135'), BitArray('0x8ad3ebc9'), BitArray('0xaf9aa20c')])
+
+d = NORX(32,6,1,128)
+print d.AEADEnc(['0x1293','0x128746','0x218976','0x12123'],['0x127a','0x12123'],'010101010','0101001101010101010110101010101010101010101001010101010101010101010101010101010010101010101010101010101000101010101010101010101010010101100110101010101010101101010101001010110010101101101','10101101010')
+
+# f = NORX(32,6,1,128)
+# print f.AEADEnc(['0x1293','0x128746','0x218976','0x12123'],['0x127a','0x123c'],'010101010','0101001101010101010110101010101010101010101001010101010101010101010101010101010010101010101010101010101000101010101010101010101010010101100110101010101010101101010101001010110010101101101','10101101010')
+
+# e = NORX(32,6,1,128)
+# print len(e.AEADDec(['0x1293','0x128746','0x218976','0x12123'],['0x127a','0x123c'],'010101010','011011010010001110000100101111100100000001101010111111101101000011111111101110000011111111101100100000100000100010010110111101111100110010001101101111010111011011000010000101111100001110110000011100011100011011010001010110111001111011010011101011100100010101011101001110000010010001110110101111000010101011001110111111001000111110011010101110111001010100000101110011011001001000110101','00010111010100011110010011100101100101000011101000111111101000110111010011110110100110001001111100000111100110010011001100000101','10101101010'))
+# print len('0101001101010101010110101010101010101010101001010101010101010101010101010101010010101010101010101010101000101010101010101010101010010101100110101010101010101101010101001010110010101101101')
