@@ -75,7 +75,8 @@ def trigger_gams():
             for i in energy_price:
                 param_price.add_record(str(i.time)).value = i.price
 
-            available_energy = AvailableEnergy.objects.filter(neighborhood__neighborhood_name=scenario.current_neighborhood)
+            available_energy = AvailableEnergy.objects.filter(
+                neighborhood__neighborhood_name=scenario.current_neighborhood)
             for i in available_energy:
                 param_resloc.add_record(str(i.time)).value = i.amount
             # fixed demand
@@ -85,7 +86,6 @@ def trigger_gams():
                 param_dcat1.add_record(str(i.time)).value = i.consumption
 
             # shifting load
-
             shiftingloadcycle = ShiftingLoadCycle.objects.filter(room__house=house)
             for i in shiftingloadcycle:
                 set_cat2.add_record(str(i.appliance_name))
@@ -95,7 +95,8 @@ def trigger_gams():
                 shiftingloadprofile = ShiftingLoadProfile.objects.filter(shiftingloadcycle=i)
                 for profile in shiftingloadprofile:
                     total_duration += 1
-                    param_d_cycle_cat2.add_record([str(i.appliance_name), str(profile.time)]).value = profile.consumption
+                    param_d_cycle_cat2.add_record(
+                        [str(i.appliance_name), str(profile.time)]).value = profile.consumption
                 param_dur_cat2.add_record(str(i.appliance_name)).value = total_duration
 
 
@@ -117,6 +118,7 @@ def trigger_gams():
             param_pcool_cat4 = db.add_parameter_dc('PCOOL_HOUSE', ['1'], 'power needed ')
             param_mass_cat4 = db.add_parameter_dc('MASS_HOUSE', ['1'], 'mass of the cooled air inside')
             """
+
             category4 = HeatLoadVariablePower.objects.filter(room__house=house)[0]
             """
             param_cop_cat4.add_record(['1']).value = category4.coefficient_of_performance
@@ -248,11 +250,11 @@ def create_test_database():
     print "created neighborhood!"
 
     for i in range(1, 97):
-        n.ambienttemp_set.create(time=i, temperature=2*i)
+        n.ambienttemp_set.create(time=i, temperature=2 * i)
         print "   created ambienttemp! i=" + str(i)
-        n.energyprice_set.create(time=i, price=i**2-3*i)
+        n.energyprice_set.create(time=i, price=i ** 2 - 3 * i)
         print "   created energyprice! i=" + str(i)
-        n.availableenergy_set.create(time=i, amount=100*i**2 - 50*i)
+        n.availableenergy_set.create(time=i, amount=100 * i ** 2 - 50 * i)
         print "   created availableenergy! i=" + str(i)
 
     s = Scenario(scenario_name="Default scenario", current_neighborhood="Goede buurt", time=1, started=False)
@@ -263,7 +265,7 @@ def create_test_database():
     h1.save()
     print "created house!"
     for i in range(1, 97):
-        h1.fixeddemandprofile_set.create(time=i, consumption=2*i)
+        h1.fixeddemandprofile_set.create(time=i, consumption=2 * i)
         print "   created fixeddemand! i=" + str(i)
 
     r = Room(house=h1, room_name="Keuken")
@@ -281,7 +283,7 @@ def create_test_database():
     oop.save()
 
     for i in range(1, 97):
-        oop.onoffinfo_set.create(time=i, OnOff=1 if 30<i<60 else 0, Info=100)
+        oop.onoffinfo_set.create(time=i, OnOff=1 if 30 < i < 60 else 0, Info=100)
         print "   created onoffinfo! i=" + str(i)
 
     h2 = House(neighborhood=n, house_name="Huis 2 in de goede buurt")
@@ -294,3 +296,13 @@ def create_test_database():
     n2 = Neighborhood(neighborhood_name="Andere buurt")
     n2.save()
     print "created other neighborhood!"
+
+    n3 = Neighborhood(neighborhood_name="Store")
+    n3.save()
+
+    hs = House(neighborhood=n3, house_name="Store")
+    hs.save()
+
+    rs = Room(house=hs, room_name="Store")
+    rs.save()
+    print "created the store! $.$"
