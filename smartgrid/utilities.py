@@ -183,7 +183,6 @@ def get_consumption(house=None):
 
     if house is not None:
         for fixed_demand_profile in house.fixeddemandprofile_set.all():
-            print fixed_demand_profile.time
             consumption[fixed_demand_profile.time - 1][1] += fixed_demand_profile.consumption
 
         for onoff_info in OnOffInfo.objects.all():
