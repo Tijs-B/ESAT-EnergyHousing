@@ -44,6 +44,12 @@
     {% endif %}
 
 </div>
-<a class="btn btn-default" href="{% url 'smartgrid:add_appliance' room.id %}" >Apparaat toevoegen</a>
-<a class="btn btn-default" href="{% url 'smartgrid:delete_appliance' room.id %}" >Apparaat verwijderen</a>
+<a class="btn btn-success" href="{% url 'smartgrid:add_appliance' room.id %}" >
+    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+    Apparaat toevoegen
+</a>
+<a class="btn btn-danger" href="{% url 'smartgrid:delete_appliance' room.id %}" >
+    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+    Apparaat verwijderen
+</a>
 {% endblock content %}

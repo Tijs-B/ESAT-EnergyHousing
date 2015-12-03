@@ -6,6 +6,7 @@ from django.views import generic
 from django.template import RequestContext, loader
 from django.contrib import auth
 from itertools import chain
+import os
 
 # Security:
 from django.core.context_processors import csrf
@@ -242,7 +243,7 @@ def delete(request, room_id):
         selected_choice = request.POST['appliance']
     except KeyError:
         return render(request, 'smartgrid/post_login/appliances/delete_appliance.html', {
-            'room': room_id,
+            'room': orig_room,
             'error_message': "Gelieve een apparaat te kiezen",
             'appliances': appliances})
 
