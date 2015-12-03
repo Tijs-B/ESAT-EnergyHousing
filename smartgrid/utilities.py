@@ -12,7 +12,7 @@ def send_to_pi(time):
     fixed_appliance_dictionary = {}
     list_to_send = []
     for onoff in onoffinfo:
-        if onoff.house.neighbourhood_name == scenario.current_neighborhood:
+        if onoff.house.neighborhood_name == scenario.current_neighborhood:
             house = onoff.house.house_name
             status = onoff.Info
             appliance_name = onoff.appliance_name
@@ -27,7 +27,7 @@ def trigger_gams():
     print 'test'
     for house in house_all:
         print 'test'
-        if house.neighbourhood.neighborhood_name == scenario.current_neighborhood:
+        if house.neighborhood.neighborhood_name == scenario.current_neighborhood:
             # gams workshop initialisatie
             ws = gams.GamsWorkspace(working_directory=os.getcwd(), debug=gams.DebugLevel.ShowLog)
 
@@ -80,13 +80,13 @@ def trigger_gams():
                 param_resloc.add_record(str(i.time)).value = i.amount
             # fixed demand
 
-            fixed_demand = FixedDemandProfile.objects.filter(house__neighbourhood__neighborhood_name=scenario.current_neighborhood, house=house)
+            fixed_demand = FixedDemandProfile.objects.filter(house__neighborhood__neighborhood_name=scenario.current_neighborhood, house=house)
             for i in fixed_demand:
                 param_dcat1.add_record(str(i.time)).value = i.consumption
 
             # shifting load
 
-            shiftingloadcycle = ShiftingLoadCycle.objects.filter(room__house__neighbourhood__neighborhood_name=scenario.current_neighborhood, room__house=house)
+            shiftingloadcycle = ShiftingLoadCycle.objects.filter(room__house__neighborhood__neighborhood_name=scenario.current_neighborhood, room__house=house)
             for i in shiftingloadcycle:
                 set_cat2.add_record(str(i.appliance_name))
 
@@ -100,7 +100,7 @@ def trigger_gams():
 
 
             # heatloadinvariablepower
-            category3 = HeatLoadInvariablePower.objects.filter(room__house__neighbourhood__neighborhood_name=scenario.current_neighborhood, room__house=house)
+            category3 = HeatLoadInvariablePower.objects.filter(room__house__neighborhood__neighborhood_name=scenario.current_neighborhood, room__house=house)
             for i in category3:
                 set_cat3.add_record(str(i.appliance_name))
                 param_cop_cat3.add_record(str(i.appliance_name)).value = i.coefficient_of_performance
@@ -117,7 +117,7 @@ def trigger_gams():
             param_pcool_cat4 = db.add_parameter_dc('PCOOL_HOUSE', ['1'], 'power needed ')
             param_mass_cat4 = db.add_parameter_dc('MASS_HOUSE', ['1'], 'mass of the cooled air inside')
             """
-            category4 = HeatLoadVariablePower.objects.filter(room__house__neighbourhood__neighborhood_name=scenario.current_neighborhood, room__house=house)[0]
+            category4 = HeatLoadVariablePower.objects.filter(room__house__neighborhood__neighborhood_name=scenario.current_neighborhood, room__house=house)[0]
             """
             param_cop_cat4.add_record(['1']).value = category4.coefficient_of_performance
             param_mass_cat4.add_record(['1']).value = category4.mass_of_air
@@ -149,13 +149,13 @@ def trigger_gams():
             param_pload_battery = db.add_parameter_dc('Pload_battery', ['1'], 'laadvermogen')
             param_capacity_battery = db.add_parameter_dc('Capacity_battery', ['1'], 'capaciteit')
             """
-            car = Car.objects.filter(house__neighbourhood__neighborhood_name=scenario.current_neighborhood, house=house)
+            car = Car.objects.filter(house__neighborhood__neighborhood_name=scenario.current_neighborhood, house=house)
             """
             param_pload_battery.add_record(['1']).value = car[0].load_capacity
             param_capacity_battery.add_record(['1']).value = car[0].power_capacity
             """
             opt.defines["PLOAD"] = str(car[0].load_capacity)
-            opt.defines["CAP"] = str(car[0].power_capacity)
+            opt.defines["CAP"] = str(car[0].total_power_capacity)
             print 'test last'
 
             print 'job run?'
@@ -163,8 +163,10 @@ def trigger_gams():
             job.run(gams_options=opt, databases=db)
             print 'job run'
             print 'test'
-            # x = job.out_db.get_variable('zcost')
-            # print x.level
+
+            for x in job.out_db.get_variable('P_conv'):
+                print x.level
+
             print 'test'
 
 

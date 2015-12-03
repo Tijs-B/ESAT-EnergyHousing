@@ -45,10 +45,28 @@ class House(models.Model):
     house_name = models.CharField(max_length=200)
 
 
+class CalculatedConsumption(models.Model):
+    house = models.ForeignKey("House")
+    time = models.IntegerField()
+    total_consumption = models.FloatField()
+
+
 class FixedDemandProfile(models.Model):
     house = models.ForeignKey("House")
     time = models.IntegerField()
     consumption = models.FloatField()
+
+
+class ThermoMinProfile(models.Model):
+    house = models.ForeignKey("House")
+    time = models.IntegerField()
+    temp_min = models.FloatField()
+
+
+class ThermoMaxProfile(models.Model):
+    house = models.ForeignKey("House")
+    time = models.IntegerField()
+    temp_max = models.FloatField()
 
 
 class Car(models.Model):
