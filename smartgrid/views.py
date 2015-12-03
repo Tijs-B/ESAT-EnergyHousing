@@ -59,11 +59,13 @@ def demo_encryptie(request):
     hexa = ''
     tag2 = ''
     oorspronkelijk = ''
-
+    test = ''
     if (request.GET.get('dencryptbtn')):
+        print "DEENCRYPTION"
         hexa = request.GET.get("hexa")
         tag2 = request.GET.get("tag2")
         oorspronkelijk = decrypt(hexa, tag2)
+        print "DECRYPTED" + oorspronkelijk
 
     if (request.GET.get('encryptbtn')):
         gecodeerd, tag1 = demo((request.GET.get('mytextbox')))

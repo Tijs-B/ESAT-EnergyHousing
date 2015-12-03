@@ -16,7 +16,9 @@
 
 
 <form action="#" method="get">
-    <input type="text" value="" name="mytextbox" size="10"/>
+    <div class="form-group">
+        <input type="text" value="" name="mytextbox" class="form-control" placeholder="Voer je bericht in..."/>
+    </div>
     <input class="btn btn-default" type="submit" value="Encrypteer" name="encryptbtn">
 </form>
 
@@ -31,18 +33,18 @@
 
 <form action="#" method="get">
     <div class="form-group">
-        <label for="hex_value">Hexa-Decimale:</label>
-        <input type="text" value="" name="hexa" size="100">
+        <label for="hexa">Hexa-Decimale:</label>
+        <input type="text" class="form-control" placeholder="Hexa-decimale" id="hexa" name="hexa" size="100">
     </div>
     <div class="form-group">
-        <label for="tag">Tag:</label>
-        <input type="text" value="" name="tag2" size="100">
+        <label for="tag2">Tag:</label>
+        <input type="text" class="form-control" placeholder="Tag" id="tag2" name="tag2" size="100">
     </div>
 
-    <button type="submit" class="btn btn-default" name="dencryptbtn">Decrypteer</button>
+    <input type="submit" class="btn btn-default" name="dencryptbtn" value="Decrypteer">
 </form>
 {% if oorspronkelijk %}
-<p>oorspronkelijk:</p>
+<p>Boodschap: <code>{{ oorspronkelijk }}</code></p>
 
 {% endif %}
 
