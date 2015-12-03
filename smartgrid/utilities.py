@@ -179,7 +179,7 @@ def get_consumption(house=None):
     current_neighborhood_name = scenario.current_neighborhood
     current_neighborhood = Neighborhood.objects.get(neighborhood_name=current_neighborhood_name)
 
-    consumption = [[i, 0] for i in range(1, 97)]
+    consumption = [[i/4.0, 0] for i in range(96)]
 
     if house is not None:
         for fixed_demand_profile in house.fixeddemandprofile_set.all():
