@@ -22,7 +22,7 @@
     <div class="graph" id="consumption_chart"></div>
 
     <h1>Verander scenario</h1>
-    <div class="btn-group" data-toggle="buttons">
+    <div class="btn-group">
         {% for neighborhood in neighborhood_list %}
             {% if neighborhood.neighborhood_name == current_neighborhood_name %}
                 <a type="button" class="btn btn-success btn-lg active">{{ neighborhood.neighborhood_name }}</a>
