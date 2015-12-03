@@ -7,13 +7,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('smartgrid', '0001_initial'),
+        ('smartgrid', '0004_auto_20151203_1348'),
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name='scenario',
-            name='current_neighborhood',
-            field=models.ForeignKey(to='smartgrid.Neighborhood'),
+        migrations.RenameField(
+            model_name='house',
+            old_name='neighbourhood',
+            new_name='neighborhood',
         ),
     ]

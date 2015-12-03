@@ -40,23 +40,28 @@ Parameters
          T_MAX_CAT4(t)     maximal temperature inside the cat3 device
 
 *        scalars
-         UA_HOUSE         Isolation constant of the house
-         COP_HOUSE        coefficient of performance of the house
-         PHEAT_HOUSE      power needed for the boiler of the house
-         MASS_HOUSE       mass of the heated air inside the house
-         Pload_battery    laadvermogen batterij (in W)
-         Capacity_battery capaciteit batterij (in Wh)
+
+
+
 
 ;
 $LOAD TEMP_AMB, PRICE, RESLOC,
-$LOAD D_TOT_CAT1, D_CYCLE_CAT2, N_CYCLES_CAT2, DUR_CAT2, UA_CAT3, COP_CAT3, PCOOL_CAT3, MASS_CAT3, T_MIN_CAT3, T_MAX_CAT3, T_MIN_CAT4, T_MAX_CAT4
-$LOAD UA_HOUSE, COP_HOUSE, PHEAT_HOUSE, MASS_HOUSE, Pload_battery, Capacity_battery
+$LOAD D_TOT_CAT1,
+$LOAD D_CYCLE_CAT2, N_CYCLES_CAT2, DUR_CAT2,
+$LOAD UA_CAT3, COP_CAT3, PCOOL_CAT3, MASS_CAT3, T_MIN_CAT3, T_MAX_CAT3,
+$LOAD T_MIN_CAT4, T_MAX_CAT4
+* $LOAD UA_HOUSE, COP_HOUSE, PHEAT_HOUSE, MASS_HOUSE, Pload_battery, Capacity_battery
 
 SCALAR
-         PRICECURT        price of curtailing RES [€]  /45/
+         PRICECURT        price of curtailing RES [ï¿½]  /45/
          CP               thermodynamic coeficient      /1.005/
          POWER_LIMIT      maximal power the house can take from the grid (in kW) /9400/
-
+         Pload_battery    laadvermogen batterij (in W) /%PLOAD%/
+         Capacity_battery capaciteit batterij (in Wh)  /%CAP%/
+         UA_HOUSE         Isolation constant of the house  /%UA%/
+         COP_HOUSE        coefficient of performance of the house /%COP%/
+         PHEAT_HOUSE      power needed for the boiler of the house /%PHEAT%/
+         MASS_HOUSE       mass of the heated air inside the house  /%MASS%/
 ;
 
 
@@ -112,7 +117,7 @@ Equations
          q_objective_function    objective function
          q_zcoste                 Cost function
          q_balance(t)             Electricity balance
-         q_power_limit(t)         power limit of the house
+*         q_power_limit(t)         power limit of the house
          q_cat1(t)                Demand for appliances of category 1
          q_cat2(t)                Demand for appliances of category 2
          q_cat3(t)                Demand for appliances of category 3
@@ -162,10 +167,10 @@ q_balance(t)..
          P_conv(t) + RESloc(t)
                  =e=
                          P_cat1(t) + P_cat2(t) + P_cat3(t) + P_cat4(t)+ P_cat5(t) + Curt(t);
-q_power_limit(t)..
-         P_conv(t)
-                 =l=
-                         POWER_LIMIT  ;
+*q_power_limit(t)..
+*         P_conv(t)
+*                 =l=
+*                         POWER_LIMIT  ;
 
 q_cat1(t)..
          P_cat1(t)
@@ -314,7 +319,7 @@ q_tmin_cat4,q_tmax_cat4,q_z_max_cat4,q_z_min_cat4,q_cat4/;
 
 Model quarter /all/;
 
-option limrow = 25 ;
+option limrow = 300 ;
 option threads = 0;
 *quarter.optcr = 0.01;
 

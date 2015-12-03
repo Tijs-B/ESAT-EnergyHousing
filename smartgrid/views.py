@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, redirect
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.views import generic
@@ -7,19 +7,24 @@ from django.template import RequestContext, loader
 from django.contrib import auth
 from itertools import chain
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import REDIRECT_FIELD_NAME
+import os
+
 # Security:
 from django.core.context_processors import csrf
 import cgi
 
 from .models import *
+
+import utilities
 from demo import *
 from demo2 import *
 
 
 # GAMS
 # import sqlite3 as sq
-# import gams
+import gams
+
+
 # import os
 
 
@@ -81,12 +86,10 @@ def auth_view(request):
     username = request.POST.get('username', '')
     password = request.POST.get('password', '')
     user = auth.authenticate(username=username, password=password)
-    print user
 
     if user is not None:
         auth.login(request, user)
-        template = loader.get_template('smartgrid/post_login/homepage.html')
-        return HttpResponse(template.render())
+        return redirect('smartgrid:home')
     else:
         template = loader.get_template('smartgrid/invalid_login.html')
         return HttpResponse(template.render())
@@ -108,19 +111,18 @@ def logout(request):
 
 @login_required(redirect_field_name='next')
 def home(request):
-    # scenario = Scenario.objects.all()[0]
-    # current_neighborhood_name = scenario.neighbourhood_name
-    # current_neighborhood = Neighborhood.objects.get(name=current_neighborhood_name)
-    #
-    # energy_price_data = []
-    # for energy_price in current_neighborhood.energy_price_set:
-    # energy_price_data.append([(energy_price.time-1)/4, energy_price.price])
-    #
-    # return render(request, 'smartgrid/post_login/homepage.html',
-    # {'full_name': request.user.username,
-    #                      'energy_price_data': energy_price_data})
+    scenario = Scenario.objects.all()[0]
+    current_neighborhood_name = scenario.current_neighborhood
+    current_neighborhood = Neighborhood.objects.get(neighborhood_name=current_neighborhood_name)
 
-    return render(request, 'smartgrid/post_login/homepage.html', {'full_name': request.user.username})
+    energy_price_data = []
+    for energy_price in current_neighborhood.energyprice_set.all():
+        energy_price_data.append([(float(energy_price.time) - 1.0) / 4.0, float(energy_price.price)])
+
+    return render(request, 'smartgrid/post_login/homepage.html',
+                  {'full_name': request.user.username,
+                   'energy_price_data': energy_price_data})
+
 
 
 @login_required(redirect_field_name='next')
@@ -188,27 +190,37 @@ def heatloadinvariable(request, appliance_id):
 # Apparaat toevoegen
 def add_appliance(request, room_id):
     room = get_object_or_404(Room, pk=room_id)
-    appliances = list(chain(HeatLoadInvariablePower.objects.all(),
-                            HeatLoadVariablePower.objects.all(),
-                            ShiftingLoadCycle.objects.all()))
+    all_appliances = list(chain(HeatLoadInvariablePower.objects.all(),
+                                HeatLoadVariablePower.objects.all(),
+                                ShiftingLoadCycle.objects.all()))
+    unwanted_appliances = list(chain(HeatLoadInvariablePower.objects.filter(room_id=room_id),
+                                     HeatLoadVariablePower.objects.filter(room_id=room_id),
+                                     ShiftingLoadCycle.objects.filter(room_id=room_id)))
+    wanted_appliances = [x for x in all_appliances if x not in unwanted_appliances]
     return render(request, 'smartgrid/post_login/appliances/add_appliance.html',
-                  {'room': room, 'appliances': appliances})
+                  {'room': room, 'appliances': wanted_appliances})
 
 
 @login_required(redirect_field_name='next')
 def add(request, room_id):
     r = get_object_or_404(Room, pk=room_id)
     error_message = "Gelieve een apparaat te kiezen."
-    appliances = list(chain(HeatLoadInvariablePower.objects.all(),
-                            HeatLoadVariablePower.objects.all(),
-                            ShiftingLoadCycle.objects.all()))
+
+    all_appliances = list(chain(HeatLoadInvariablePower.objects.all(),
+                                HeatLoadVariablePower.objects.all(),
+                                ShiftingLoadCycle.objects.all()))
+    unwanted_appliances = list(chain(HeatLoadInvariablePower.objects.filter(room_id=room_id),
+                                     HeatLoadVariablePower.objects.filter(room_id=room_id),
+                                     ShiftingLoadCycle.objects.filter(room_id=room_id)))
+    wanted_appliances = [x for x in all_appliances if x not in unwanted_appliances]
+
     try:
         selected_choice = request.POST['appliance']
     except KeyError:
         return render(request, 'smartgrid/post_login/appliances/add_appliance.html', {
             'room': r,
             'error_message': "Gelieve een apparaat te kiezen",
-            'appliances': appliances})
+            'appliances': wanted_appliances})
 
     appliance = list(chain(ShiftingLoadCycle.objects.all().filter(appliance_name=selected_choice),
                            HeatLoadInvariablePower.objects.all().filter(appliance_name=selected_choice),
@@ -230,6 +242,55 @@ def add(request, room_id):
         return render(request, 'smartgrid/post_login/appliance/add_appliance.html', {
             'room': r,
             'error_message': "Het lijkt erop dat er iets is misgegaan, probeer opnieuw a.u.b.",
+            'appliances': wanted_appliances})
+
+
+def delete_appliance(request, room_id):
+    room = get_object_or_404(Room, pk=room_id)
+    appliances = list(chain(HeatLoadInvariablePower.objects.filter(room_id=room_id),
+                            HeatLoadVariablePower.objects.filter(room_id=room_id),
+                            ShiftingLoadCycle.objects.filter(room_id=room_id)))
+    return render(request, 'smartgrid/post_login/appliances/delete_appliance.html',
+                  {'room': room, 'appliances': appliances})
+
+
+def delete(request, room_id):
+    r = Room.objects.get(room_name='Store')
+    orig_room = get_object_or_404(Room, pk=room_id)
+    error_message = "Gelieve een apparaat te kiezen."
+
+    appliances = list(chain(HeatLoadInvariablePower.objects.filter(room_id=room_id),
+                            HeatLoadVariablePower.objects.filter(room_id=room_id),
+                            ShiftingLoadCycle.objects.filter(room_id=room_id)))
+
+    try:
+        selected_choice = request.POST['appliance']
+    except KeyError:
+        return render(request, 'smartgrid/post_login/appliances/delete_appliance.html', {
+            'room': orig_room,
+            'error_message': "Gelieve een apparaat te kiezen",
+            'appliances': appliances})
+
+    appliance = list(chain(ShiftingLoadCycle.objects.all().filter(appliance_name=selected_choice),
+                           HeatLoadInvariablePower.objects.all().filter(appliance_name=selected_choice),
+                           HeatLoadVariablePower.objects.all().filter(appliance_name=selected_choice)))
+
+    if isinstance(appliance[0], HeatLoadVariablePower):
+        r.heatloadvariablepower_set.add(appliance[0])
+        r.save()
+        return HttpResponseRedirect(reverse('smartgrid:room_detail', args=(room_id,)))
+    elif isinstance(appliance[0], HeatLoadInvariablePower):
+        r.heatloadinvariablepower_set.add(appliance[0])
+        r.save()
+        return HttpResponseRedirect(reverse('smartgrid:room_detail', args=(room_id,)))
+    elif isinstance(appliance[0], ShiftingLoadCycle):
+        r.shiftingloadcycle_set.add(appliance[0])
+        r.save()
+        return HttpResponseRedirect(reverse('smartgrid:room_detail', args=(room_id,)))
+    else:
+        return render(request, 'smartgrid/post_login/appliance/delete_appliance.html', {
+            'room': orig_room,
+            'error_message': "Het lijkt erop dat er iets is misgegaan, probeer opnieuw a.u.b.",
             'appliances': appliances})
 
 
@@ -247,30 +308,36 @@ def scenario(request):
     for available_energy in current_neighborhood.availableenergy_set.all():
         available_energy_data.append([(float(available_energy.time) - 1.0) / 4.0, float(available_energy.amount)])
 
-    consumption_data = []
+    consumption_list = []
+    for house in current_neighborhood.house_set.all():
+        name = house.house_name
+        data = utilities.get_consumption(house)
+        consumption_list.append({"name": name, "data": data})
+
+    consumption_list.append({"name": "Volledige buurt", "data": utilities.get_consumption(), "linewidth": 5})
 
     neighborhood_list = Neighborhood.objects.all()
 
     return render(request, 'smartgrid/post_login/scenario.html',
-                  {'scenario_started': scenario.started,
-                   'current_neighborhood_name': current_neighborhood_name,
+                  {'current_neighborhood_name': current_neighborhood_name,
                    'energy_price_data': energy_price_data,
                    'available_energy_data': available_energy_data,
-                   'consumption_data': consumption_data,
+                   'consumption_list': consumption_list,
                    'neighborhood_list': neighborhood_list})
 
 
 def change_scenario(request, neighborhood_id):
-    neighborhood = get_object_or_404(neighborhood_id)
+    neighborhood = get_object_or_404(Neighborhood, pk=neighborhood_id)
     scenario = Scenario.objects.all()[0]
     scenario.current_neighborhood = neighborhood.neighborhood_name
-    return scenario(request)
+    scenario.save()
+    return redirect('smartgrid:scenario')
 
 
 def set_scenario_time(request, i):
     scenario = Scenario.objects.all()[0]
     scenario.time = i
-    # send_to_pi(i)
+    # utilities.send_to_pi(i)
     return HttpResponse("OK")
 
 
