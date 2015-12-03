@@ -18,6 +18,8 @@ class Neighborhood(models.Model):
 
 
 class AmbientTemp(models.Model):
+    def __str__(self):
+        return self.time
     neighborhood = models.ForeignKey("Neighborhood")
     time = models.IntegerField()
     temperature = models.FloatField()
@@ -43,16 +45,34 @@ class House(models.Model):
     house_name = models.CharField(max_length=200)
 
 
+class CalculatedConsumption(models.Model):
+    house = models.ForeignKey("House")
+    time = models.IntegerField()
+    total_consumption = models.FloatField()
+
+
 class FixedDemandProfile(models.Model):
     house = models.ForeignKey("House")
     time = models.IntegerField()
     consumption = models.FloatField()
 
 
+class ThermoMinProfile(models.Model):
+    house = models.ForeignKey("House")
+    time = models.IntegerField()
+    temp_min = models.FloatField()
+
+
+class ThermoMaxProfile(models.Model):
+    house = models.ForeignKey("House")
+    time = models.IntegerField()
+    temp_max = models.FloatField()
+
+
 class Car(models.Model):
     house = models.ForeignKey("House")
     car_name = models.CharField(max_length=200)
-    power_capacity = models.IntegerField()
+    total_power_capacity = models.IntegerField()
     load_capacity = models.IntegerField()
 
 
@@ -147,10 +167,12 @@ class Sensor(models.Model):
 
     sensor_name = models.CharField(max_length=200)
     house = models.ForeignKey("House")
+    value = models.FloatField()
     # type = models.TextField
 
-
+"""
 class Recording(models.Model):
     sensor = models.ForeignKey("Sensor")
     value = models.FloatField()
     timestamp = models.DateTimeField()
+"""

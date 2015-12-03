@@ -62,4 +62,4 @@ class Server():
     def send(self, msg):
         self.connections[msg[2:4]].send(msg)
 
-S=Server()
+#S=Server()

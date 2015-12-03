@@ -12,13 +12,14 @@ from django.core.context_processors import csrf
 import cgi
 
 from .models import *
+
 import utilities
 from demo import *
 
 
 # GAMS
 # import sqlite3 as sq
-# import gams
+import gams
 # import os
 
 
