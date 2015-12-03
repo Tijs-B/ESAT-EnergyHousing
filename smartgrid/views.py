@@ -6,6 +6,7 @@ from django.views import generic
 from django.template import RequestContext, loader
 from django.contrib import auth
 from itertools import chain
+from django.contrib.auth.decorators import login_required
 import os
 
 # Security:
@@ -16,6 +17,7 @@ from .models import *
 
 import utilities
 from demo import *
+from demo2 import *
 
 
 # GAMS
@@ -49,6 +51,26 @@ def vraagzijdesturing(request):
 
 def projectverdeling(request):
     return render(request, 'smartgrid/info/projectverdeling.html')
+
+
+def demo_encryptie(request):
+    gecodeerd = ''
+    tag1 = ''
+    hexa = ''
+    tag2 = ''
+    oorspronkelijk = ''
+
+    if (request.GET.get('dencryptbtn')):
+        hexa = request.GET.get("hexa")
+        tag2 = request.GET.get("tag2")
+        oorspronkelijk = decrypt(hexa, tag2)
+
+    if (request.GET.get('encryptbtn')):
+        gecodeerd, tag1 = demo((request.GET.get('mytextbox')))
+
+    return render(request, 'smartgrid/post_login/demo_encryptie.html', {'gecodeerd': gecodeerd,
+                                                                        'tag1': tag1,
+                                                                        'oorspronkelijk': oorspronkelijk})
 
 
 # Login
@@ -85,6 +107,9 @@ def logout(request):
 
 # Na login
 
+
+
+@login_required(redirect_field_name='next')
 def home(request):
     scenario = Scenario.objects.all()[0]
     current_neighborhood_name = scenario.current_neighborhood
@@ -99,12 +124,15 @@ def home(request):
                    'energy_price_data': energy_price_data})
 
 
+
+@login_required(redirect_field_name='next')
 def rooms(request):
     rooms_list = Room.objects.all()
     return render(request, 'smartgrid/post_login/rooms.html',
                   {'rooms_list': rooms_list})
 
 
+@login_required(redirect_field_name='next')
 def room_detail(request, room_id):
     room = get_object_or_404(Room, pk=room_id)
     return render(request, 'smartgrid/post_login/room_detail.html',
@@ -122,6 +150,7 @@ def fixed(request, appliance_id):
 '''
 
 
+@login_required(redirect_field_name='next')
 def shiftingloadcycle(request, appliance_id):
     appliance = get_object_or_404(ShiftingLoadCycle, pk=appliance_id)
 
@@ -132,6 +161,7 @@ def shiftingloadcycle(request, appliance_id):
                    'currently_on': appliance.currently_on})
 
 
+@login_required(redirect_field_name='next')
 def heatloadvariable(request, appliance_id):
     appliance = get_object_or_404(HeatLoadVariablePower, pk=appliance_id)
     return render(request, 'smartgrid/post_login/appliances/Heatloadvariable.html',
@@ -144,6 +174,7 @@ def heatloadvariable(request, appliance_id):
                    'power_consumed': appliance.power_consumed})
 
 
+@login_required(redirect_field_name='next')
 def heatloadinvariable(request, appliance_id):
     appliance = get_object_or_404(HeatLoadInvariablePower, pk=appliance_id)
     return render(request, 'smartgrid/post_login/appliances/Heatloadinvariable.html',
@@ -155,15 +186,7 @@ def heatloadinvariable(request, appliance_id):
                    'power_consumed': appliance.power_consumed})
 
 
-def demo_encryptie(request):
-    encryptie = ''
-
-    if (request.GET.get('encryptbtn')):
-        encryptie = demo((request.GET.get('mytextbox')))
-    print encryptie
-    return render(request, 'smartgrid/post_login/demo_encryptie.html', {'encryptie': encryptie})
-
-
+@login_required(redirect_field_name='next')
 # Apparaat toevoegen
 def add_appliance(request, room_id):
     room = get_object_or_404(Room, pk=room_id)
@@ -178,6 +201,7 @@ def add_appliance(request, room_id):
                   {'room': room, 'appliances': wanted_appliances})
 
 
+@login_required(redirect_field_name='next')
 def add(request, room_id):
     r = get_object_or_404(Room, pk=room_id)
     error_message = "Gelieve een apparaat te kiezen."
@@ -270,6 +294,7 @@ def delete(request, room_id):
             'appliances': appliances})
 
 
+@login_required(redirect_field_name='next')
 def scenario(request):
     scenario = Scenario.objects.all()[0]
     current_neighborhood_name = scenario.current_neighborhood
