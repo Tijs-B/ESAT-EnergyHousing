@@ -176,7 +176,7 @@ def trigger_gams():
             for x in job.out_db.get_variable('P_conv'):
                 house.calculatedconsumption_set.create(time=x.keys[0], total_consumption=x.level)
             # onoffprofile car
-            car_profile = OnOffProfile(car = car[0])
+            car_profile = OnOffProfile(car=car[0])
             car_profile.save()
             for x in job.out_db.get_variable('P_cat5'):
                 car_profile.onoffinfo_set.create(time=x.keys[0], Info=x.level, OnOff=1 if x.level > 0 else 0)
@@ -194,7 +194,8 @@ def trigger_gams():
             for x in job.out_db.get_variable('z_cat3'):
                 for index in range(0, len(category3)):
                     if x.keys[1] == category3[index].appliance_name:
-                        category3_profile[index].onoffinfo_set.create(time=x.keys[0], Info=category3[index].power_required if x.level > 0 else 0, OnOff=x.level)
+                        category3_profile[index].onoffinfo_set.create(time=x.keys[0], Info=category3[
+                            index].power_required if x.level > 0 else 0, OnOff=x.level)
             # onoffprofile shiftingload
             for x in job.out_db.get_variable('ti'):
                 if x.level == 1:
@@ -210,8 +211,10 @@ def trigger_gams():
                     list_of_times = []
                     for index in range(0, len(shiftingloadprofile)):
                         total_duration += 1
-                        shiftingload_consumption.onoffinfo_set.create(time=int(x.keys[0])+index, Info=shiftingloadprofile[index].consumption, OnOff=1)
-                        list_of_times += [int(x.keys[0])+index]
+                        shiftingload_consumption.onoffinfo_set.create(time=int(x.keys[0]) + index,
+                                                                      Info=shiftingloadprofile[index].consumption,
+                                                                      OnOff=1)
+                        list_of_times += [int(x.keys[0]) + index]
                     # fill the rest with 0
                     for i in range(1, 97):
                         if i not in list_of_times:
@@ -232,38 +235,38 @@ def get_consumption(house=None):
     current_neighborhood_name = scenario.current_neighborhood
     current_neighborhood = Neighborhood.objects.get(neighborhood_name=current_neighborhood_name)
 
-    consumption = [[i/4.0, 0] for i in range(96)]
+    consumption = [[i / 4.0, 0] for i in range(96)]
 
     if house is not None:
         calculated_consumption = CalculatedConsumption.objects.filter(house=house)
         for x in calculated_consumption:
-            consumption[x.time-1][1] = x.total_consumption
+            consumption[x.time - 1][1] = x.total_consumption
     else:
         calculated_consumption = CalculatedConsumption.objects.filter(house__neighborhood=current_neighborhood)
         for x in calculated_consumption:
-            consumption[x.time-1][1] += x.total_consumption
+            consumption[x.time - 1][1] += x.total_consumption
 
     return consumption
 
 
 def create_test_database():
-    n = Neighborhood(neighborhood_name="Goede buurt")
-    n.save()
+    n1 = Neighborhood(neighborhood_name="Goede buurt")
+    n1.save()
     print "created neighborhood!"
 
     for i in range(1, 97):
-        n.ambienttemp_set.create(time=i, temperature=2 * i)
+        n1.ambienttemp_set.create(time=i, temperature=2 * i)
         print "   created ambienttemp! i=" + str(i)
-        n.energyprice_set.create(time=i, price=i ** 2 - 3 * i)
+        n1.energyprice_set.create(time=i, price=i ** 2 - 3 * i)
         print "   created energyprice! i=" + str(i)
-        n.availableenergy_set.create(time=i, amount=100 * i ** 2 - 50 * i)
+        n1.availableenergy_set.create(time=i, amount=100 * i ** 2 - 50 * i)
         print "   created availableenergy! i=" + str(i)
 
     s = Scenario(scenario_name="Default scenario", current_neighborhood="Goede buurt", time=1, started=False)
     s.save()
     print "created scenario!"
 
-    h1 = House(neighborhood=n, house_name="Huis 1 in de goede buurt")
+    h1 = House(neighborhood=n1, house_name="Huis 1 in de goede buurt")
     h1.save()
     print "created house!"
     for i in range(1, 97):
@@ -277,9 +280,18 @@ def create_test_database():
     hlv = HeatLoadVariablePower(room=r, appliance_name="HLV", currently_on=False, power_required=100,
                                 isolation_coefficient=10, coefficient_of_performance=1.01, mass_of_air=1000,
                                 power_consumed=100, temperature_min_inside=20, temperature_max_inside=22)
-
+    hlv2 = HeatLoadVariablePower(room=r, appliance_name="HLV2", currently_on=False, power_required=100,
+                                 isolation_coefficient=10, coefficient_of_performance=1.01, mass_of_air=1000,
+                                 power_consumed=100, temperature_min_inside=20, temperature_max_inside=22)
+    hliv = HeatLoadInvariablePower(room=r, appliance_name="HLIV", currently_on=False, power_required=50,
+                                   isolation_coefficient=0.5, coefficient_of_performance=0.9, mass_of_air=1000,
+                                   power_consumed=20, temperature_min_inside=15, temperature_max_inside=21)
+    slc = ShiftingLoadCycle(room=r, appliance_name="SLC", flexibility_start=20,flexibility_end=21)
     hlv.save()
-    print "created HLV!"
+    hlv2.save()
+    hliv.save()
+    # slc.save()
+    print "created appliances in first room!"
 
     oop = OnOffProfile(heatloadvariablepower=hlv)
     oop.save()
@@ -288,7 +300,7 @@ def create_test_database():
         oop.onoffinfo_set.create(time=i, OnOff=1 if 30 < i < 60 else 0, Info=100)
         print "   created onoffinfo! i=" + str(i)
 
-    h2 = House(neighborhood=n, house_name="Huis 2 in de goede buurt")
+    h2 = House(neighborhood=n1, house_name="Huis 2 in de goede buurt")
     h2.save()
 
     for i in range(1, 97):
@@ -299,10 +311,10 @@ def create_test_database():
     n2.save()
     print "created other neighborhood!"
 
-    n3 = Neighborhood(neighborhood_name="Store")
-    n3.save()
+    ns = Neighborhood(neighborhood_name="Store")
+    ns.save()
 
-    hs = House(neighborhood=n3, house_name="Store")
+    hs = House(neighborhood=ns, house_name="Store")
     hs.save()
 
     rs = Room(house=hs, room_name="Store")
