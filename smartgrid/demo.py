@@ -1,7 +1,7 @@
 __author__ = 'Bert'
-from NORX import *
-from bitstring import *
 
+from bitstring import *
+from NORX import *
 def demo(string):
        hex_value = '0x' + string.encode('hex')
        message = BitArray(hex = hex_value).bin
