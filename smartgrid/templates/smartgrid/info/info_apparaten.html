@@ -1,8 +1,8 @@
 {% extends "smartgrid/base.html" %}
 
 {% block nav %}
-    <ul class="nav">
-        <li><a href="{% url 'smartgrid:prehomepage' %}">Start</a></li>
+        <ul class="nav">
+            <li><a href="{% url 'smartgrid:prehomepage' %}">Start</a></li>
         <li><a href="{% url 'smartgrid:vraagzijdesturing' %}">Vraagzijdesturing</a></li>
         <li><a class="active" href="{% url 'smartgrid:info_apparaten' %}">Apparaten</a></li>
         <li><a href="{% url 'smartgrid:projectverdeling' %}">Projectverdeling</a></li>
@@ -24,7 +24,7 @@
             moet liggen. In deze categorie maken we nog een extra onderscheid tussen:
         </li>
         <ul>
-            <li><u>Apparaten met een variabel vermogen:</u> hier kan het koel- of verwarmingselement een variabel
+            <li><u>Apparaten met een variabel vermogen:</u> Hier kan het koel- of verwarmingselement een variabel
                 vermogen leveren. Hieronder valt bijvoorbeeld de centrale verwarming van een huis.
             </li>
             <li><u>Apparaten met een invariabel vermogen:</u> hier kan het koel- of verwarmingselement enkel aan of uit
@@ -37,5 +37,6 @@
             worden. De bedoeling is dat de gebruikers deze apparaten aanzet en dan een deadline bepaald voor wanneer het
             apparaat klaar moet zijn. Voorbeelden zijn een afwasmachine, een wasmachine&#x2026;
         </li>
+        <li><strong>Battery load:</strong>Dit zijn apparaten met een batterij die energie kan opslaan, zoals een elektrische wagen. Deze kunnen binnen een bepaalde tijdspanne de batterij opladen maar ook energie uit de batterij gebruiken. Omdat een auto voor noodgevallen altijd een zekere afstand moet kunnen afleggen, zal de batterij eerst onmiddellijk opgeladen worden tot 20% van zijn capaciteit. Voor de andere 80% wordt een goed oplaadmoment gekozen wanneer er veel energie beschikbaar is.</li>
     </ul>
 {% endblock content %}

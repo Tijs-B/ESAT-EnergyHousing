@@ -43,18 +43,38 @@
     <div class="row">
         <div class="col-md-6">
             <div class="timer"></div>
+            <div id="update-status" class="scenario-no-update"></div>
         </div>
-        <div class="col-md-6" style="margin-top:10px;">
-            <button id="start" class="btn btn-default" aria-label="Left Align" onclick="start_simulation()">
-                <span class="glyphicon glyphicon-play" aria-hidden="true"></span>Start simulatie
-            </button>
-            <button id="pause" class="btn btn-default" onclick="pause_simulation()">
-                <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>Pauzeer simulatie
-            </button>
-            <button id="stop" class="btn btn-danger" onclick="stop_simulation()">Stop simulatie</button>
-            <div id="slider">
-                <input type="range" name="step" id="step" min="0.2" max="5" step="0.1" value="1">
+        <div class="col-md-6">
+            <div class="start-stop-buttons scenario-toggle">
+                <button id="start" class="btn btn-default" aria-label="Left Align" onclick="start_simulation()">
+                    <span class="glyphicon glyphicon-play" aria-hidden="true"></span>Start simulatie
+                </button>
+                <button id="pause" class="btn btn-default" onclick="pause_simulation()">
+                    <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>Pauzeer simulatie
+                </button>
+                <button id="stop" class="btn btn-danger" onclick="stop_simulation()">Stop simulatie</button>
+            </div>
+            <div class="step-changer scenario-toggle" data-toggle="buttons">
+                <span class="black">Update:</span>
+                <div id="step-change-group" style="display: inline-block" class="btn-group">
+                    <label class="btn btn-default active">
+                        <input type="radio" name="change-step" value="kwartier" id="kwartier" autocomplete="off" checked> Ieder kwartier
+                    </label>
+                    <label class="btn btn-default">
+                        <input type="radio" name="change-step" value="halfuur" id="halfuur" autocomplete="off"> Ieder half uur
+                    </label>
+                    <label class="btn btn-default">
+                        <input type="radio" name="change-step" value="uur" id="uur" autocomplete="off"> Ieder uur
+                    </label>
+                    <label class="btn btn-default">
+                        <input type="radio" name="change-step" value="tweeuur" id="tweeuur" autocomplete="off"> Iedere twee uur
+                    </label>
+                </div>
+            </div>
 
+            <div id="slider">
+                <input type="range" name="step" id="step" min="0.1" max="5" step="0.1" value="1">
                 <p class="black">Aantal seconden per gesimuleerd kwartier: <b><span id="step-amount"></span></b></p>
             </div>
         </div>
@@ -70,14 +90,19 @@
         var url = "{% url 'smartgrid:set_scenario_time' 1234567890 %}";
         i = 1;
         step = 1;
+        update_interval = 15;
 
         function update() {
             if (i == 1441) {
                 stop_simulation();
             }
-            if (i % 15 == 0) {
+            if (i % update_interval == 0) {
                 var newUrl = url.replace('1234567890', (Math.floor(i / 15)).toString());
                 $.ajax({url: newUrl});
+                $("#update-status").toggleClass("scenario-no-update").toggleClass("scenario-update");
+                setTimeout(function() {
+                    $("#update-status").toggleClass("scenario-no-update").toggleClass("scenario-update");
+                }, 200);
             }
             $(".timer").html(twodigits(Math.floor(i / 60)) + "u" + twodigits(i % 60));
             i++;
@@ -99,10 +124,10 @@
 
         function stop_simulation() {
             started = false;
+            clearInterval(timer);
             $("#start").removeClass("active");
             $("#pause").removeClass("active");
             $(".timer").html("00u00").removeClass("running").removeClass("paused");
-            clearInterval(timer);
             i = 1;
         }
 
@@ -128,6 +153,17 @@
                 step = $("#step").val();
                 if (did_start) {
                     start_simulation();
+                }
+            });
+            $("input[name='change-step']").change(function() {
+                if ($("#step-change-group input:radio:checked").val() == "kwartier") {
+                    update_interval = 15;
+                } else if ($("#step-change-group input:radio:checked").val() == "halfuur") {
+                    update_interval = 30;
+                } else if ($("#step-change-group input:radio:checked").val() == "uur") {
+                    update_interval = 60;
+                } else if ($("#step-change-group input:radio:checked").val() == "tweeuur") {
+                    update_interval = 120;
                 }
             });
         })
