@@ -57,15 +57,10 @@ class FixedDemandProfile(models.Model):
     consumption = models.FloatField()
 
 
-class ThermoMinProfile(models.Model):
+class ThermoProfile(models.Model):
     house = models.ForeignKey("House")
     time = models.IntegerField()
     temp_min = models.FloatField()
-
-
-class ThermoMaxProfile(models.Model):
-    house = models.ForeignKey("House")
-    time = models.IntegerField()
     temp_max = models.FloatField()
 
 
@@ -100,8 +95,7 @@ class Appliance(models.Model):
 
 
 class ShiftingLoadCycle(Appliance):
-    flexibility_start = models.TimeField()
-    flexibility_end = models.TimeField()
+    because_there_has_to_be_something = models.FloatField(default=0)
 
 
 class ShiftingLoadProfile(models.Model):
@@ -115,9 +109,6 @@ class HeatLoadVariablePower(Appliance):
     isolation_coefficient = models.FloatField()         # UA_HOUSE
     coefficient_of_performance = models.FloatField()    # COP_HOUSE
     mass_of_air = models.FloatField()                   # MASS_HOUSE
-    power_consumed = models.FloatField()                # dfr_house
-    temperature_min_inside = models.FloatField()            # temp_house
-    temperature_max_inside = models.FloatField()
 
 
 class HeatLoadInvariablePower(Appliance):
@@ -125,7 +116,6 @@ class HeatLoadInvariablePower(Appliance):
     isolation_coefficient = models.FloatField()         # UA_(REF/FREZ)
     coefficient_of_performance = models.FloatField()    # COP_(REF/FREZ)
     mass_of_air = models.FloatField()                   # MASS_(REF/FREZ)
-    power_consumed = models.FloatField()                # dfr_(ref/frez)
     temperature_min_inside = models.FloatField()            # temp_house
     temperature_max_inside = models.FloatField()
 
@@ -140,8 +130,8 @@ class OnOffProfile(models.Model):
 class OnOffInfo(models.Model):
     onoffprofile = models.ForeignKey("OnOffProfile")
     time = models.IntegerField()
-    OnOff = models.IntegerField(default=0)
-    Info = models.IntegerField(default=0)
+    on_off = models.IntegerField(default=0)
+    info = models.IntegerField(default=0)
 
     @property
     def house(self):

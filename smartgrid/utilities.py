@@ -13,8 +13,9 @@ def send_to_pi(time):
     list_to_send = []
     for onoff in onoffinfo:
         if onoff.house.neighborhood_name == scenario.current_neighborhood:
+            # TODO: huis naam moet 1 of 0 zijn
             house = onoff.house.house_name
-            status = onoff.Info
+            status = onoff.info
             appliance_name = onoff.appliance_name
             # appliance_id = fixed_appliance_list[appliance_name]
             list_to_send += [[house, status, appliance_name]]
@@ -130,12 +131,10 @@ def trigger_gams():
             opt.defines["COP"] = str(category4.coefficient_of_performance)
             opt.defines["PHEAT"] = str(category4.power_required)
             opt.defines["MASS"] = str(category4.mass_of_air)
-            # todo: load from database ThermoMinProfile, Thermoplusprofile
-            thermo_min_profile = ThermoMinProfile.objects.filter(house=house)
-            for x in thermo_min_profile:
+
+            thermo_profile = ThermoProfile.objects.filter(house=house)
+            for x in thermo_profile:
                 param_t_min_cat4.add_record(str(x.time)).value = x.temp_min
-            thermo_max_profile = ThermoMaxProfile.objects.filter(house=house)
-            for x in thermo_max_profile:
                 param_t_max_cat4.add_record(str(x.time)).value = x.temp_max
             """
             for time in range(1, 25):
@@ -179,12 +178,12 @@ def trigger_gams():
             car_profile = OnOffProfile(car = car[0])
             car_profile.save()
             for x in job.out_db.get_variable('P_cat5'):
-                car_profile.onoffinfo_set.create(time=x.keys[0], Info=x.level, OnOff=1 if x.level > 0 else 0)
+                car_profile.onoffinfo_set.create(time=x.keys[0], info=x.level, on_off=1 if x.level > 0 else 0)
             # onoffprofile verwarming (category4)
             category4_profile = OnOffProfile(heatloadvariablepower=category4)
             category4_profile.save()
             for x in job.out_db.get_variable('P_cat4'):
-                category4_profile.onoffinfo_set.create(time=x.keys[0], Info=x.level, OnOff=1 if x.level > 0 else 0)
+                category4_profile.onoffinfo_set.create(time=x.keys[0], info=x.level, on_off=1 if x.level > 0 else 0)
             # onoffprofile invariablepower
             category3_profile = []
             for index in range(0, len(category3)):
@@ -194,7 +193,7 @@ def trigger_gams():
             for x in job.out_db.get_variable('z_cat3'):
                 for index in range(0, len(category3)):
                     if x.keys[1] == category3[index].appliance_name:
-                        category3_profile[index].onoffinfo_set.create(time=x.keys[0], Info=category3[index].power_required if x.level > 0 else 0, OnOff=x.level)
+                        category3_profile[index].onoffinfo_set.create(time=x.keys[0], info=category3[index].power_required if x.level > 0 else 0, on_off=x.level)
             # onoffprofile shiftingload
             for x in job.out_db.get_variable('ti'):
                 if x.level == 1:
@@ -210,12 +209,12 @@ def trigger_gams():
                     list_of_times = []
                     for index in range(0, len(shiftingloadprofile)):
                         total_duration += 1
-                        shiftingload_consumption.onoffinfo_set.create(time=int(x.keys[0])+index, Info=shiftingloadprofile[index].consumption, OnOff=1)
+                        shiftingload_consumption.onoffinfo_set.create(time=int(x.keys[0])+index, info=shiftingloadprofile[index].consumption, on_off=1)
                         list_of_times += [int(x.keys[0])+index]
                     # fill the rest with 0
                     for i in range(1, 97):
                         if i not in list_of_times:
-                            shiftingload_consumption.onoffinfo_set.create(time=i, Info=0, OnOff=0)
+                            shiftingload_consumption.onoffinfo_set.create(time=i, info=0, on_off=0)
 
             print 'test'
             for f in glob.glob('_gams_py_*'):
@@ -285,7 +284,7 @@ def create_test_database():
     oop.save()
 
     for i in range(1, 97):
-        oop.onoffinfo_set.create(time=i, OnOff=1 if 30 < i < 60 else 0, Info=100)
+        oop.onoffinfo_set.create(time=i, on_off=1 if 30 < i < 60 else 0, info=100)
         print "   created onoffinfo! i=" + str(i)
 
     h2 = House(neighborhood=n, house_name="Huis 2 in de goede buurt")

@@ -27,11 +27,19 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
+            name='CalculatedConsumption',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('time', models.IntegerField()),
+                ('total_consumption', models.FloatField()),
+            ],
+        ),
+        migrations.CreateModel(
             name='Car',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('car_name', models.CharField(max_length=200)),
-                ('power_capacity', models.IntegerField()),
+                ('total_power_capacity', models.IntegerField()),
                 ('load_capacity', models.IntegerField()),
             ],
         ),
@@ -48,6 +56,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('time', models.IntegerField()),
+                ('consumption', models.FloatField()),
             ],
         ),
         migrations.CreateModel(
@@ -60,7 +69,6 @@ class Migration(migrations.Migration):
                 ('isolation_coefficient', models.FloatField()),
                 ('coefficient_of_performance', models.FloatField()),
                 ('mass_of_air', models.FloatField()),
-                ('power_consumed', models.FloatField()),
                 ('temperature_min_inside', models.FloatField()),
                 ('temperature_max_inside', models.FloatField()),
             ],
@@ -78,9 +86,6 @@ class Migration(migrations.Migration):
                 ('isolation_coefficient', models.FloatField()),
                 ('coefficient_of_performance', models.FloatField()),
                 ('mass_of_air', models.FloatField()),
-                ('power_consumed', models.FloatField()),
-                ('temperature_min_inside', models.FloatField()),
-                ('temperature_max_inside', models.FloatField()),
             ],
             options={
                 'abstract': False,
@@ -98,7 +103,6 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('neighborhood_name', models.CharField(max_length=200)),
-                ('power_consumed', models.FloatField()),
             ],
         ),
         migrations.CreateModel(
@@ -106,8 +110,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('time', models.IntegerField()),
-                ('OnOff', models.IntegerField(default=0)),
-                ('Info', models.IntegerField(default=0)),
+                ('on_off', models.IntegerField(default=0)),
+                ('info', models.IntegerField(default=0)),
             ],
         ),
         migrations.CreateModel(
@@ -117,14 +121,6 @@ class Migration(migrations.Migration):
                 ('car', models.ForeignKey(blank=True, to='smartgrid.Car', null=True)),
                 ('heatloadinvariablepower', models.ForeignKey(blank=True, to='smartgrid.HeatLoadInvariablePower', null=True)),
                 ('heatloadvariablepower', models.ForeignKey(blank=True, to='smartgrid.HeatLoadVariablePower', null=True)),
-            ],
-        ),
-        migrations.CreateModel(
-            name='Recording',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('value', models.FloatField()),
-                ('timestamp', models.DateTimeField()),
             ],
         ),
         migrations.CreateModel(
@@ -150,6 +146,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('sensor_name', models.CharField(max_length=200)),
+                ('value', models.FloatField()),
                 ('house', models.ForeignKey(to='smartgrid.House')),
             ],
         ),
@@ -159,8 +156,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('appliance_name', models.CharField(max_length=200)),
                 ('currently_on', models.BooleanField(default=False)),
-                ('flexibility_start', models.TimeField()),
-                ('flexibility_end', models.TimeField()),
+                ('because_there_has_to_be_something', models.FloatField(default=0)),
                 ('room', models.ForeignKey(to='smartgrid.Room')),
             ],
             options={
@@ -176,10 +172,15 @@ class Migration(migrations.Migration):
                 ('shiftingloadcycle', models.ForeignKey(to='smartgrid.ShiftingLoadCycle')),
             ],
         ),
-        migrations.AddField(
-            model_name='recording',
-            name='sensor',
-            field=models.ForeignKey(to='smartgrid.Sensor'),
+        migrations.CreateModel(
+            name='ThermoProfile',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('time', models.IntegerField()),
+                ('temp_min', models.FloatField()),
+                ('temp_max', models.FloatField()),
+                ('house', models.ForeignKey(to='smartgrid.House')),
+            ],
         ),
         migrations.AddField(
             model_name='onoffprofile',
@@ -193,7 +194,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='house',
-            name='neighbourhood',
+            name='neighborhood',
             field=models.ForeignKey(to='smartgrid.Neighborhood'),
         ),
         migrations.AddField(
@@ -218,6 +219,11 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='car',
+            name='house',
+            field=models.ForeignKey(to='smartgrid.House'),
+        ),
+        migrations.AddField(
+            model_name='calculatedconsumption',
             name='house',
             field=models.ForeignKey(to='smartgrid.House'),
         ),
