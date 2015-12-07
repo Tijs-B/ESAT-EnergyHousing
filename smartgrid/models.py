@@ -14,7 +14,6 @@ class Neighborhood(models.Model):
         return self.neighborhood_name
 
     neighborhood_name = models.CharField(max_length=200)
-    # power_consumed = models.FloatField()  # dfr_totaal
 
 
 class AmbientTemp(models.Model):
@@ -158,7 +157,6 @@ class Sensor(models.Model):
     sensor_name = models.CharField(max_length=200)
     house = models.ForeignKey("House")
     value = models.FloatField()
-    # type = models.TextField
 
 """
 class Recording(models.Model):
