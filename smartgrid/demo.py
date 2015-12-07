@@ -25,10 +25,3 @@ def string_generator(item, length):
 
         trans=str(format(int(item), format_value)[2:])
         return trans
-# a = time.time()
-# print demo('Lukas s een zieke kasser')
-#
-#
-# b = time.time()
-# print a
-# print b-a
