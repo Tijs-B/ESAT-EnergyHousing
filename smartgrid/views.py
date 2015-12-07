@@ -59,19 +59,18 @@ def demo_encryptie(request):
     hexa = ''
     tag2 = ''
     oorspronkelijk = ''
-    test = ''
+    nonce = ''
     if (request.GET.get('dencryptbtn')):
-        print "DEENCRYPTION"
         hexa = request.GET.get("hexa")
         tag2 = request.GET.get("tag2")
-        oorspronkelijk = decrypt(hexa, tag2)
-        print "DECRYPTED" + oorspronkelijk
+        nonce = request.GET.get("nonce")
+        oorspronkelijk = decrypt(hexa, tag2, nonce)
 
     if (request.GET.get('encryptbtn')):
-        gecodeerd, tag1 = demo((request.GET.get('mytextbox')))
+        gecodeerd, tag1, nonce = demo((request.GET.get('mytextbox')))
 
     return render(request, 'smartgrid/post_login/demo_encryptie.html', {'gecodeerd': gecodeerd,
-                                                                        'tag1': tag1,
+                                                                        'tag1': tag1, 'nonce': nonce,
                                                                         'oorspronkelijk': oorspronkelijk})
 
 
