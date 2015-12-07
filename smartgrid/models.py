@@ -130,8 +130,8 @@ class OnOffProfile(models.Model):
 class OnOffInfo(models.Model):
     onoffprofile = models.ForeignKey("OnOffProfile")
     time = models.IntegerField()
-    OnOff = models.IntegerField(default=0)
-    Info = models.IntegerField(default=0)
+    on_off = models.IntegerField(default=0)
+    info = models.IntegerField(default=0)
 
     @property
     def house(self):
