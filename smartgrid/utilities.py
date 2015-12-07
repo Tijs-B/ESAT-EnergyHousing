@@ -274,8 +274,8 @@ def create_test_database():
     print "created room!"
 
     hlv = HeatLoadVariablePower(room=r, appliance_name="HLV", currently_on=False, power_required=100,
-                                isolation_coefficient=10, coefficient_of_performance=1.01, mass_of_air=1000,
-                                power_consumed=100, temperature_min_inside=20, temperature_max_inside=22)
+                                isolation_coefficient=10, coefficient_of_performance=1.01, mass_of_air=1000
+                                )
 
     hlv.save()
     print "created HLV!"
