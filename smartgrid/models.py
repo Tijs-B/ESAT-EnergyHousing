@@ -72,7 +72,7 @@ class Car(models.Model):
 
 class Room(models.Model):
     def __str__(self):
-        return self.room_name + " " + self.house.house_name
+        return self.room_name + " in " + self.house.house_name
 
     house = models.ForeignKey("House")
     room_name = models.CharField(max_length=200)

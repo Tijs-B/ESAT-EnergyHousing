@@ -33,7 +33,7 @@ def trigger_gams():
             # gams workshop initialisatie
             ws = gams.GamsWorkspace(working_directory=os.getcwd(), debug=gams.DebugLevel.ShowLog)
 
-            job = ws.add_job_from_file('SEH_volledige_code_met_database1.gms')
+            job = ws.add_job_from_file('SEH_volledige_code_met_database_7december.gms')
 
             opt = ws.add_options()
 
@@ -173,7 +173,7 @@ def trigger_gams():
             print 'test'
 
             # CalculatedConsumption
-            for x in job.out_db.get_variable('P_conv'):
+            for x in job.out_db.get_variable('total_load'):
                 house.calculatedconsumption_set.create(time=x.keys[0], total_consumption=x.level)
             # onoffprofile car
             car_profile = OnOffProfile(car = car[0])
@@ -316,51 +316,65 @@ def add_csv_to_database(filename, object, type=None):
     Parameters:
     - filename: name of the file
     - object: Neighbourhood, House or OnOffProfile
-    - type: (only for Neighborhood): "ambienttemp", "energyprice" or "availableenergy"
+    - type: (for Neighborhood): "ambienttemp", "energyprice" or "availableenergy"
+    - type: (for House): "fixeddemand", "thermoprofile"
     Note that all the values must be integers or floating point objects with . instead of , and there must be 1 column.
     """
 
-    with open(os.path.join("csv", filename), 'rU') as file: # Exception handling
+    file = open(os.path.join("csv", filename), 'rU') # Exception handling
 
-        reader = csv.reader(file) # Open csv reader
-        row_count = sum(1 for row in reader) # Count rows
+    # if row_count != 96:
+    #     print "ERROR: Not enough rows! There are " + str(row_count) + " rows in the file."
 
-        if row_count != 96:
-            print "ERROR: Not enough rows! There are " + str(row_count) + " rows in the file."
-
-        if isinstance(object, Neighborhood):
-            if type == "ambienttemp":
-                i = 1
-                for row in reader:
-                    object.ambienttemp_set.create(time=i, temperature=row)
-                    i += 1
-            elif type == "energyprice":
-                i = 1
-                for row in reader:
-                    object.energyprice_set.create(time=i, price=float(row))
-                    i += 1
-            elif type == "availableenergy":
-                i = 1
-                for row in reader:
-                    object.availableenergy_set.create(time=i, amount=float(row))
-                    i += 1
-            else:
-                print 'ERROR: Wrong type "' + str(type) + '".'
-
-        elif isinstance(object, House):
+    if isinstance(object, Neighborhood):
+        reader = csv.reader(file)
+        if type == "ambienttemp":
             i = 1
             for row in reader:
-                object.fixeddemandprofile_set.create(time=i, consumption=float(row))
+                object.ambienttemp_set.create(time=i, temperature=row[0])
                 i += 1
-        elif isinstance(object, OnOffProfile):
+        elif type == "energyprice":
             i = 1
             for row in reader:
-                if float(row) == 0:
-                    object.onoffinfo_set.create(time=i, on_off=0, info=1)
-                else:
-                    object.onoffinfo_set.create(time=i, on_off=1, info=float(row))
+                object.energyprice_set.create(time=i, price=float(row[0]))
+                i += 1
+        elif type == "availableenergy":
+            i = 1
+            for row in reader:
+                object.availableenergy_set.create(time=i, amount=float(row[0]))
                 i += 1
         else:
-            print 'ERROR: Wrong object, class "' + object.__class__.__name__ + '" not expected.'
+            print 'ERROR: Wrong type "' + str(type) + '".'
 
-        print "FINISHED!"
+    elif isinstance(object, House):
+        if type == "fixeddemand":
+            i = 1
+            reader = csv.reader(file) # Open csv reader
+            for row in reader:
+                print 'test'
+                object.fixeddemandprofile_set.create(time=i, consumption=float(row[0]))
+                i += 1
+        """
+        elif type == "thermoprofile":
+            i = 1
+            reader = csv.reader(file) # Open csv reader
+            for row in reader:
+                object.thermoprofile_set.create(time=i, temp_min=float(row[0]), temp_max=float(row[1]))
+                """
+    elif isinstance(object, OnOffProfile):
+        i = 1
+        reader = csv.reader(file)
+        for row in reader:
+            if float(row) == 0:
+                object.onoffinfo_set.create(time=i, on_off=0, info=1)
+            else:
+                object.onoffinfo_set.create(time=i, on_off=1, info=float(row[0]))
+            i += 1
+
+
+    else:
+        print 'ERROR: Wrong object, class "' + object.__class__.__name__ + '" not expected.'
+
+    print "FINISHED!"
+
+
