@@ -72,7 +72,7 @@ class Car(models.Model):
 
 class Room(models.Model):
     def __str__(self):
-        return self.room_name + " " + self.house.house_name
+        return self.room_name + " in " + self.house.house_name
 
     house = models.ForeignKey("House")
     room_name = models.CharField(max_length=200)
@@ -85,7 +85,6 @@ class Appliance(models.Model):
 
     room = models.ForeignKey("Room")
     appliance_name = models.CharField(max_length=200)
-    currently_on = models.BooleanField(default=False)
 
     # with 'abstract = True', there is no database entry for Appliance, but there will be database entries for classes
     #   that inherit from this class (such as FixedDemand)

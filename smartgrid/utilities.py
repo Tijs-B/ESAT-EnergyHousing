@@ -42,7 +42,7 @@ def trigger_gams():
             # gams workshop initialisatie
             ws = gams.GamsWorkspace(working_directory=os.getcwd(), debug=gams.DebugLevel.ShowLog)
 
-            job = ws.add_job_from_file('SEH_volledige_code_met_database1.gms')
+            job = ws.add_job_from_file('SEH_volledige_code_met_database_7december.gms')
 
             opt = ws.add_options()
 
@@ -182,7 +182,7 @@ def trigger_gams():
             print 'test'
 
             # CalculatedConsumption
-            for x in job.out_db.get_variable('P_conv'):
+            for x in job.out_db.get_variable('total_load'):
                 house.calculatedconsumption_set.create(time=x.keys[0], total_consumption=x.level)
             # onoffprofile car
             car_profile = OnOffProfile(car = car[0])
@@ -317,6 +317,7 @@ def create_test_database():
     rs = Room(house=hs, room_name="Store")
     rs.save()
     print "created the store! $.$"
+
 
 
 def add_csv_to_database(filename, object, type=None):
