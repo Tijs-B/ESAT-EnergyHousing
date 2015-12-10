@@ -346,7 +346,7 @@ def add_csv_to_database(filename, object, type=None):
                 i = 1
                 reader = csv.reader(file) # Open csv reader
                 for row in reader:
-                    e = AvailableEnergy(neighborhood=i, time=i, amount=float(row[0]))
+                    e = AvailableEnergy(neighborhood=object, time=i, amount=float(row[0]))
                     e.save()
                     print "Time:", i
                     print "Amount:", float(row[0])
