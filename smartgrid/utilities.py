@@ -27,7 +27,7 @@ def send_to_pi(time):
             status = onoff.info
             appliance_name = onoff.appliance_name
             appliance_id = appliance_dictionary[appliance_name]
-            list_to_send += [[house, status, appliance_id]]
+            list_to_send += [[0, status, appliance_id]]
 
     verstuur(list_to_send)
 
