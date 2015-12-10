@@ -312,12 +312,13 @@ def create_test_database():
 
 def add_csv_to_database(filename, object, type=None):
     """
-    Adds the given csv file (under /smartgrid/csv) to the database as the given entry.
+    Voegt een csv (onder /smartgrid/csv) toe aan de database.
     Parameters:
-    - filename: name of the file
-    - object: Neighbourhood, House or OnOffProfile
-    - type: (only for Neighborhood): "ambienttemp", "energyprice" or "availableenergy"
-    Note that all the values must be integers or floating point objects with . instead of , and there must be 1 column.
+    - filename: de naam van het bestand
+    - object: Neighborhood, House or OnOffProfile
+    - type: (alleen voor een Neighborhood): "ambienttemp", "energyprice" of "availableenergy"
+    Alle waarden moeten ints of floats zijn met een . ipv een ,.
+    Er moet 1 kolom zijn in het csv bestand.
     """
 
     with open(os.path.join("csv", filename), 'rU') as file: # Exception handling
