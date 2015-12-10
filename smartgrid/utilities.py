@@ -310,71 +310,87 @@ def create_test_database():
     print "created the store! $.$"
 
 
+
 def add_csv_to_database(filename, object, type=None):
     """
-    Adds the given csv file (under /smartgrid/csv) to the database as the given entry.
+    Voegt een csv (onder /smartgrid/csv) toe aan de database.
     Parameters:
-    - filename: name of the file
-    - object: Neighbourhood, House or OnOffProfile
-    - type: (for Neighborhood): "ambienttemp", "energyprice" or "availableenergy"
-    - type: (for House): "fixeddemand", "thermoprofile"
-    Note that all the values must be integers or floating point objects with . instead of , and there must be 1 column.
+    - filename: de naam van het bestand
+    - object: Neighborhood, House or OnOffProfile
+    - type: (alleen voor een Neighborhood): "ambienttemp", "energyprice" of "availableenergy"
+    Alle waarden moeten ints of floats zijn met een . ipv een ,.
+    Er moet 1 kolom zijn in het csv bestand.
     """
 
-    file = open(os.path.join("csv", filename), 'rU') # Exception handling
+    with open(os.path.join("csv", filename), 'rU') as file: # Exception handling
 
-    # if row_count != 96:
-    #     print "ERROR: Not enough rows! There are " + str(row_count) + " rows in the file."
+        if isinstance(object, Neighborhood):
+            if type == "ambienttemp":
+                i = 1
+                reader = csv.reader(file) # Open csv reader
+                for row in reader:
+                    a = AmbientTemp(neighborhood=object, time=i, temperature=float(row[0]))
+                    a.save()
+                    print "Time:", i
+                    print "Amount:", float(row[0])
+                    i += 1
+            elif type == "energyprice":
+                i = 1
+                reader = csv.reader(file) # Open csv reader
+                for row in reader:
+                    e = EnergyPrice(neighborhood=object, time=i, price=float(row[0]))
+                    e.save()
+                    print "Time:", i
+                    print "Amount:", float(row[0])
+                    i += 1
+            elif type == "availableenergy":
+                i = 1
+                reader = csv.reader(file) # Open csv reader
+                for row in reader:
+                    e = AvailableEnergy(neighborhood=i, time=i, amount=float(row[0]))
+                    e.save()
+                    print "Time:", i
+                    print "Amount:", float(row[0])
+                    i += 1
+            else:
+                print 'ERROR: Wrong type "' + str(type) + '".'
 
-    if isinstance(object, Neighborhood):
-        reader = csv.reader(file)
-        if type == "ambienttemp":
+        elif isinstance(object, House):
+            if type == "thermo":
+                i = 1
+                reader = csv.reader(file) # Open csv reader
+                for row in reader:
+                    string = row[0]
+                    data = string.split(';')
+                    t = ThermoProfile(house=object, time=i, temp_min=float(data[0]), temp_max=float(data[1]))
+                    t.save()
+                    print "Time:", i
+                    print "Amount:", float(data[0]), float(data[1])
+                    i += 1
+            elif type == "fixeddemand":
+                i = 1
+                reader = csv.reader(file) # Open csv reader
+                for row in reader:
+                    f = FixedDemandProfile(house=object, time=i, consumption=float(row[0]))
+                    f.save()
+                    print "Time:", i
+                    print "Amount:", float(row[0])
+                    i += 1
+
+        elif isinstance(object, OnOffProfile):
             i = 1
+            reader = csv.reader(file) # Open csv reader
             for row in reader:
-                object.ambienttemp_set.create(time=i, temperature=row[0])
-                i += 1
-        elif type == "energyprice":
-            i = 1
-            for row in reader:
-                object.energyprice_set.create(time=i, price=float(row[0]))
-                i += 1
-        elif type == "availableenergy":
-            i = 1
-            for row in reader:
-                object.availableenergy_set.create(time=i, amount=float(row[0]))
+                if float(row[0]) == 0:
+                    o = OnOffInfo(onoffprofile=object, time=i, on_off=0, info=1.0)
+                    o.save()
+                else:
+                    o = OnOffInfo(onoffprofile=object, time=i, on_off=1, info=float(row[0]))
+                    o.save()
+                print "Time:", i
+                print "Amount:", float(row[0])
                 i += 1
         else:
-            print 'ERROR: Wrong type "' + str(type) + '".'
+            print 'ERROR: Wrong object, class "' + object.__class__.__name__ + '" not expected.'
 
-    elif isinstance(object, House):
-        if type == "fixeddemand":
-            i = 1
-            reader = csv.reader(file) # Open csv reader
-            for row in reader:
-                print 'test'
-                object.fixeddemandprofile_set.create(time=i, consumption=float(row[0]))
-                i += 1
-        """
-        elif type == "thermoprofile":
-            i = 1
-            reader = csv.reader(file) # Open csv reader
-            for row in reader:
-                object.thermoprofile_set.create(time=i, temp_min=float(row[0]), temp_max=float(row[1]))
-                """
-    elif isinstance(object, OnOffProfile):
-        i = 1
-        reader = csv.reader(file)
-        for row in reader:
-            if float(row) == 0:
-                object.onoffinfo_set.create(time=i, on_off=0, info=1)
-            else:
-                object.onoffinfo_set.create(time=i, on_off=1, info=float(row[0]))
-            i += 1
-
-
-    else:
-        print 'ERROR: Wrong object, class "' + object.__class__.__name__ + '" not expected.'
-
-    print "FINISHED!"
-
-
+        print "FINISHED!"
