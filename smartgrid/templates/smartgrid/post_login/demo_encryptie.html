@@ -35,7 +35,7 @@
 
 <form action="#" method="get">
     <div class="form-group">
-        <label for="hexa">Hexa-Decimale:</label>
+        <label for="hexa">Versleutelde boodschap:</label>
         <input type="text" class="form-control" placeholder="Hexa-decimale" id="hexa" name="hexa" size="100">
     </div>
     <div class="form-group">
@@ -50,7 +50,7 @@
     <input type="submit" class="btn btn-default" name="dencryptbtn" value="Decrypteer">
 </form>
 {% if oorspronkelijk %}
-<p>Boodschap: <code>{{ oorspronkelijk }}</code></p>
+    <p>Boodschap: <code>{{ oorspronkelijk }}</code></p>
 
 {% endif %}
 
