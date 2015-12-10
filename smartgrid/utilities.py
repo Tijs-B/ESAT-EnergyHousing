@@ -10,7 +10,15 @@ def send_to_pi(time):
     scenario = Scenario.objects.all()[0]
     onoffinfo = OnOffInfo.objects.filter(time=time)
     # om vaste id's te geven: bv: {diepvries_huis_A: 1, diepvries_huis_B: 2,...}
-    fixed_appliance_dictionary = {}
+    appliance_dictionary = {'koelkast 0': 2,
+                            'diepvries 0': 4,
+                            'afwasmachine 0': 10,
+                            'auto_groen 0': 16,
+                            'droogkast 0': 17,
+                            'licht 0': 21,
+                            'ventilator 0': 22,
+                            'fornuis 0': 24,
+                            'wasmachine 0': 26}
     list_to_send = []
     for onoff in onoffinfo:
         if onoff.house.neighborhood_name == scenario.current_neighborhood:
@@ -18,8 +26,9 @@ def send_to_pi(time):
             house = onoff.house.house_name
             status = onoff.info
             appliance_name = onoff.appliance_name
-            # appliance_id = fixed_appliance_list[appliance_name]
-            list_to_send += [[house, status, appliance_name]]
+            appliance_id = appliance_dictionary[appliance_name]
+            list_to_send += [[house, status, appliance_id]]
+
     verstuur(list_to_send)
 
 
@@ -223,14 +232,18 @@ def trigger_gams():
                     os.remove(f)
 
 
-def get_consumption(house=None):
+def get_consumption(house=None, neighborhood=None):
     """
     Returns a list of consumption data for the given house, or for all the houses in the current neighborhood together.
     e.g. [[1, 25.4], [2, 27.3], ..., [96, 12.5]]
     """
     scenario = Scenario.objects.all()[0]
-    current_neighborhood_name = scenario.current_neighborhood
-    current_neighborhood = Neighborhood.objects.get(neighborhood_name=current_neighborhood_name)
+    if neighborhood is None:
+        current_neighborhood_name = scenario.current_neighborhood
+        current_neighborhood = Neighborhood.objects.get(neighborhood_name=current_neighborhood_name)
+    else:
+        current_neighborhood = neighborhood
+        current_neighborhood_name = current_neighborhood.neighborhood_name
 
     consumption = [[i/4.0, 0] for i in range(96)]
 

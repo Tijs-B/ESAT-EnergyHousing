@@ -316,6 +316,10 @@ def scenario(request):
         consumption_list.append({"name": name, "data": data})
 
     consumption_list.append({"name": "Volledige buurt", "data": utilities.get_consumption(), "linewidth": 5})
+    
+    neighborhood_geen_sturing = Neighborhood.objects.get(neighborhood_name="Buurt 2")
+    consumption_list.append({"name": "Zonder vraagzijdesturing",
+                             "data": utilities.get_consumption(neighborhood=neighborhood_geen_sturing)})
 
     neighborhood_list = Neighborhood.objects.all()
     neighborhood_list.filter(neighborhood_name='Store').delete()
