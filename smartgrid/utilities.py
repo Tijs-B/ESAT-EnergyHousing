@@ -232,14 +232,18 @@ def trigger_gams():
                     os.remove(f)
 
 
-def get_consumption(house=None):
+def get_consumption(house=None, neighborhood=None):
     """
     Returns a list of consumption data for the given house, or for all the houses in the current neighborhood together.
     e.g. [[1, 25.4], [2, 27.3], ..., [96, 12.5]]
     """
     scenario = Scenario.objects.all()[0]
-    current_neighborhood_name = scenario.current_neighborhood
-    current_neighborhood = Neighborhood.objects.get(neighborhood_name=current_neighborhood_name)
+    if neighborhood is None:
+        current_neighborhood_name = scenario.current_neighborhood
+        current_neighborhood = Neighborhood.objects.get(neighborhood_name=current_neighborhood_name)
+    else:
+        current_neighborhood = neighborhood
+        current_neighborhood_name = current_neighborhood.neighborhood_name
 
     consumption = [[i/4.0, 0] for i in range(96)]
 
