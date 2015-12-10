@@ -318,6 +318,7 @@ def scenario(request):
     consumption_list.append({"name": "Volledige buurt", "data": utilities.get_consumption(), "linewidth": 5})
 
     neighborhood_list = Neighborhood.objects.all()
+    neighborhood_list.filter(neighborhood_name='Store').delete()
 
     return render(request, 'smartgrid/post_login/scenario.html',
                   {'current_neighborhood_name': current_neighborhood_name,

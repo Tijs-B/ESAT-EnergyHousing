@@ -15,32 +15,34 @@
     <h1>Informatie over apparaten</h1>
     <p>In ons demomodel is er een onderscheid gemaakt tussen vier soorten apparaten:</p>
     <ul>
-        <li><strong>Fixed demand:</strong> Dit zijn apparaten die continue en op een vast moment moeten kunnen werken en
+        <li><strong>Fixed demand:</strong> Dit zijn apparaten die continu en op een vast moment moeten kunnen werken en
             waar het systeem vrij weinig controle over heeft. Het verbruik hiervan sturen zou leiden tot een
             comfortsverlies, wat niet de bedoeling is. Voorbeelden zijn een tv, verlichting&#x2026;
         </li>
+        <p></p>
         <li><strong>Heat load:</strong> De apparaten in deze categorie hebben alles te maken met temperaturen. De
-            apparaten moeten dus niet altijd opstaan maar hebben wel een bepaald interval waarbinnen hun temperatuur
-            moet liggen. In deze categorie maken we nog een extra onderscheid tussen:
+            apparaten moeten dus niet altijd aanstaan maar hebben wel een bepaald interval waarbinnen hun temperatuur
+            moet liggen. In deze categorie maken we nog een extra onderscheid tussen een variabel vermogen en een invariabel vermogen:
         </li>
         <ul>
             <li><u>Apparaten met een variabel vermogen:</u> Hier kan het koel- of verwarmingselement een variabel
                 vermogen leveren. Hieronder valt bijvoorbeeld de centrale verwarming van een huis.
             </li>
-            <li><u>Apparaten met een invariabel vermogen:</u> hier kan het koel- of verwarmingselement enkel aan of uit
-                staan. Voorbeelden hiervan zijn een frigo of een diepvries.
+            <li><u>Apparaten met een invariabel vermogen:</u> Hier kan het koel- of verwarmingselement enkel aan of uit
+                staan. Voorbeelden hiervan zijn een koelkast of een diepvries.
             </li>
         </ul>
-
+        <p></p>
         <li><strong>Shifting load cycle:</strong> Deze apparaten zijn degene waar het systeem veel controle over heeft.
             Ze moeten namelijk niet continue aanstaan maar hebben een cyclus die maar op bepaalde momenten gestart moet
-            worden. De bedoeling is dat de gebruikers deze apparaten aanzet en dan een deadline bepaald voor wanneer het
+            worden. De bedoeling is dat de gebruiker deze apparaten aanzet en dan een deadline bepaald wanneer het
             apparaat klaar moet zijn. Voorbeelden zijn een afwasmachine, een wasmachine&#x2026;
         </li>
-        <li><strong>Battery load:</strong>Dit zijn apparaten met een batterij die energie kan opslaan, zoals een
+        <p></p>
+        <li><strong>Battery load:</strong> Dit zijn apparaten met een batterij die energie kan opslaan, zoals een
             elektrische wagen. Deze kunnen binnen een bepaalde tijdspanne de batterij opladen maar ook energie uit de
             batterij gebruiken. Omdat een auto voor noodgevallen altijd een zekere afstand moet kunnen afleggen, zal de
-            batterij eerst onmiddellijk opgeladen worden tot 20% van zijn capaciteit. Voor de andere 80% wordt een goed
+            batterij eerst onmiddellijk opgeladen worden tot 20% van zijn capaciteit. Voor de andere 80% wordt een slim
             oplaadmoment gekozen wanneer er veel energie beschikbaar is.</li>
     </ul>
 {% endblock content %}
