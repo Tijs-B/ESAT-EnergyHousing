@@ -251,11 +251,17 @@
                 tooltip: {
                     valueSuffix: ' W'
                 },
-                series: [{
-                    name: 'Beschikbare energie',
-                    color: '#006838',
-                    data: {{ available_energy_data }}
-                }]
+                series: [
+                    {% for available_energy in available_energy_list %}
+                        {
+                            name: "{{ available_energy.name }}",
+                            data: {{ available_energy.data }},
+                            {% if available_energy.linewidth %}
+                                lineWidth: {{ available_energy.linewidth }}
+                            {% endif %}
+                        },
+                    {% endfor %}
+                ]
             });
             $("#consumption_chart").highcharts({
 
