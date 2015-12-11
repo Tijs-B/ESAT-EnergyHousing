@@ -29,17 +29,5 @@
     <td>Massa van de lucht</td>
     <td>{{mass_of_air}}</td>
   </tr>
-  <tr>
-    <td>Verbruikt vermogen</td>
-    <td>{{power_consumed}}</td>
-  </tr>
-  <tr>
-    <td>Momenteel actief</td>
-      {% if currently_on %}
-        <td><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
-      {% else %}
-        <td><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></td>
-      {% endif %}
-  </tr>
 </table>
 {% endblock content %}
