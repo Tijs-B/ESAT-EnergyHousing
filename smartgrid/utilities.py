@@ -368,7 +368,6 @@ def add_csv_to_database(filename, object, type=None):
                     e = AvailableEnergy(neighborhood=object, time=i, amount=float(data[0]), wind=float(data[1]))
                     e.save()
                     print "Time:", i
-                    print "Amount:", float(row[0])
                     i += 1
             else:
                 print 'ERROR: Wrong type "' + str(type) + '".'
