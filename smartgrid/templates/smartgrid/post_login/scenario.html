@@ -237,7 +237,7 @@
                     },
                     labels: {
                         formatter: function () {
-                            return this.value + " kW"
+                            return this.value + " W"
                         }
                     }
                 },
@@ -249,7 +249,7 @@
                     }
                 },
                 tooltip: {
-                    valueSuffix: ' kW'
+                    valueSuffix: ' W'
                 },
                 series: [{
                     name: 'Beschikbare energie',
@@ -281,7 +281,7 @@
                     },
                     labels: {
                         formatter: function () {
-                            return this.value + " kW"
+                            return this.value + " W"
                         }
                     }
                 },
@@ -293,7 +293,7 @@
                     }
                 },
                 tooltip: {
-                    valueSuffix: ' kW'
+                    valueSuffix: ' W'
                 },
                 series: [
                     {% for consumption in consumption_list %}

@@ -34,6 +34,7 @@ class AvailableEnergy(models.Model):
     neighborhood = models.ForeignKey("Neighborhood")
     time = models.IntegerField()
     amount = models.FloatField()
+    wind = models.FloatField()
 
 
 class House(models.Model):
@@ -93,7 +94,7 @@ class Appliance(models.Model):
 
 
 class ShiftingLoadCycle(Appliance):
-    because_there_has_to_be_something = models.FloatField(default=0)
+    latest_end_time = models.IntegerField()
 
 
 class ShiftingLoadProfile(models.Model):
