@@ -14,20 +14,8 @@
 <h2> {{ appliance }} </h2>
 <table class="table">
   <tr>
-    <td>Start interval</td>
-    <td>{{flexstart}}</td>
-  </tr>
-  <tr>
-    <td>Einde interval</td>
-    <td>{{flexend}}</td>
-  </tr>
-  <tr>
-    <td>Momenteel actief</td>
-      {% if currently_on %}
-        <td><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
-      {% else %}
-        <td><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></td>
-      {% endif %}
+    <td>Eindtijd</td>
+    <td>{{latest_end_time}}</td>
   </tr>
 </table>
 {% endblock content %}

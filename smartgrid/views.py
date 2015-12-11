@@ -125,7 +125,6 @@ def home(request):
                    'energy_price_data': energy_price_data})
 
 
-
 @login_required(redirect_field_name='next')
 def rooms(request):
     rooms_list = Room.objects.all()
@@ -141,25 +140,17 @@ def room_detail(request, room_id):
 
 
 ## Appliances
-'''
-def fixed(request, appliance_id):
-    appliance = get_object_or_404(FixedDemand, pk=appliance_id)
-    return render(request, 'smartgrid/post_login/appliances/Fixed.html',
-                  {'appliance': appliance,
-                   'consumption': appliance.consumption,
-                   'currently_on':appliance.currently_on})
-'''
-
 
 @login_required(redirect_field_name='next')
 def shiftingloadcycle(request, appliance_id):
     appliance = get_object_or_404(ShiftingLoadCycle, pk=appliance_id)
-
+    latest_end = appliance.latest_end_time * 15
+    hours = latest_end / 60
+    minutes = latest_end % 60
+    latest_end_time = "%02d" % hours + ':' + "%02d" % minutes
     return render(request, 'smartgrid/post_login/appliances/Shiftingloadcycle.html',
                   {'appliance': appliance,
-                   'flexstart': appliance.flexibility_start,
-                   'flexend': appliance.flexibility_end,
-                   'currently_on': appliance.currently_on})
+                   'latest_end_time': latest_end_time})
 
 
 @login_required(redirect_field_name='next')
@@ -167,24 +158,25 @@ def heatloadvariable(request, appliance_id):
     appliance = get_object_or_404(HeatLoadVariablePower, pk=appliance_id)
     return render(request, 'smartgrid/post_login/appliances/Heatloadvariable.html',
                   {'appliance': appliance,
-                   'currently_on': appliance.currently_on,
                    'power_required': appliance.power_required,
                    'isolation_coefficient': appliance.isolation_coefficient,
                    'cop': appliance.coefficient_of_performance,
-                   'mass_of_air': appliance.mass_of_air,
-                   'power_consumed': appliance.power_consumed})
+                   'mass_of_air': appliance.mass_of_air})
 
 
 @login_required(redirect_field_name='next')
 def heatloadinvariable(request, appliance_id):
     appliance = get_object_or_404(HeatLoadInvariablePower, pk=appliance_id)
+    temperature_min = appliance.temperature_min_inside - 273
+    temperature_max = appliance.temperature_max_inside - 273
     return render(request, 'smartgrid/post_login/appliances/Heatloadinvariable.html',
                   {'appliance': appliance,
                    'power_required': appliance.power_required,
                    'isolation_coefficient': appliance.isolation_coefficient,
                    'cop': appliance.coefficient_of_performance,
                    'mass_of_air': appliance.mass_of_air,
-                   'power_consumed': appliance.power_consumed})
+                   'temperature_min': temperature_min,
+                   'temperature_max': temperature_max})
 
 
 @login_required(redirect_field_name='next')
@@ -318,10 +310,10 @@ def scenario(request):
         name = house.house_name
         data = utilities.get_consumption(house)
         consumption_list.append({"name": name, "data": data})
-
     consumption_list.append({"name": "Volledige buurt", "data": utilities.get_consumption()})
     
     neighborhood_geen_sturing = Neighborhood.objects.get(neighborhood_name=current_neighborhood_name + " zonder vraagzijdesturing")
+
     consumption_list.append({"name": "Zonder vraagzijdesturing",
                              "data": utilities.get_consumption(neighborhood=neighborhood_geen_sturing)})
 
@@ -349,5 +341,3 @@ def set_scenario_time(request, i):
     scenario.time = i
     utilities.send_to_pi(i)
     return HttpResponse("OK")
-
-
