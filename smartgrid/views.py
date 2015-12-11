@@ -183,13 +183,13 @@ def heatloadinvariable(request, appliance_id):
 # Apparaat toevoegen
 def add_appliance(request, room_id):
     room = get_object_or_404(Room, pk=room_id)
-    all_appliances = list(chain(HeatLoadInvariablePower.objects.all(),
-                                HeatLoadVariablePower.objects.all(),
-                                ShiftingLoadCycle.objects.all()))
-    unwanted_appliances = list(chain(HeatLoadInvariablePower.objects.filter(room_id=room_id),
-                                     HeatLoadVariablePower.objects.filter(room_id=room_id),
-                                     ShiftingLoadCycle.objects.filter(room_id=room_id)))
-    wanted_appliances = [x for x in all_appliances if x not in unwanted_appliances]
+
+    store = get_object_or_404(Room, room_name='Store')
+    all_appliances = list(chain(HeatLoadInvariablePower.objects.filter(room_id=store.id),
+                                HeatLoadVariablePower.objects.filter(room_id=store.id),
+                                ShiftingLoadCycle.objects.filter(room_id=store.id)))
+
+    wanted_appliances = all_appliances
     return render(request, 'smartgrid/post_login/appliances/add_appliance.html',
                   {'room': room, 'appliances': wanted_appliances})
 
@@ -198,14 +198,13 @@ def add_appliance(request, room_id):
 def add(request, room_id):
     r = get_object_or_404(Room, pk=room_id)
     error_message = "Gelieve een apparaat te kiezen."
-
-    all_appliances = list(chain(HeatLoadInvariablePower.objects.all(),
-                                HeatLoadVariablePower.objects.all(),
-                                ShiftingLoadCycle.objects.all()))
-    unwanted_appliances = list(chain(HeatLoadInvariablePower.objects.filter(room_id=room_id),
-                                     HeatLoadVariablePower.objects.filter(room_id=room_id),
-                                     ShiftingLoadCycle.objects.filter(room_id=room_id)))
-    wanted_appliances = [x for x in all_appliances if x not in unwanted_appliances]
+    store = get_object_or_404(Room, room_name='Store')
+    print store
+    all_appliances = list(chain(HeatLoadInvariablePower.objects.filter(room_id=store.id),
+                                HeatLoadVariablePower.objects.filter(room_id=store.id),
+                                ShiftingLoadCycle.objects.filter(room_id=store.id)))
+    
+    wanted_appliances = all_appliances
 
     try:
         selected_choice = request.POST['appliance']
