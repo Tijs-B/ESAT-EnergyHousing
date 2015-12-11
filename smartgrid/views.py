@@ -297,19 +297,23 @@ def scenario(request):
     for energy_price in current_neighborhood.energyprice_set.all():
         energy_price_data.append([(float(energy_price.time) - 1.0) / 4.0, float(energy_price.price)])
 
-    available_energy_data = []
+    solar_data = []
+    wind_data = []
     for available_energy in current_neighborhood.availableenergy_set.all():
-        available_energy_data.append([(float(available_energy.time) - 1.0) / 4.0, float(available_energy.amount)])
+        solar_data.append([(float(available_energy.time) - 1.0) / 4.0, float(available_energy.amount)])
+        wind_data.append([(float(available_energy.time) - 1.0) / 4.0, float(available_energy.wind)])
+    available_energy_list = [{"name": "Verwachte zonne-energie", "data": solar_data},
+                             {"name": "Verwachte wind-energie", "data": wind_data}]
 
     consumption_list = []
     for house in current_neighborhood.house_set.all():
         name = house.house_name
         data = utilities.get_consumption(house)
         consumption_list.append({"name": name, "data": data})
+    consumption_list.append({"name": "Volledige buurt", "data": utilities.get_consumption()})
+    
+    neighborhood_geen_sturing = Neighborhood.objects.get(neighborhood_name=current_neighborhood_name + " zonder vraagzijdesturing")
 
-    consumption_list.append({"name": "Volledige buurt", "data": utilities.get_consumption(), "linewidth": 5})
-
-    neighborhood_geen_sturing = Neighborhood.objects.get(neighborhood_name="Buurt 2")
     consumption_list.append({"name": "Zonder vraagzijdesturing",
                              "data": utilities.get_consumption(neighborhood=neighborhood_geen_sturing)})
 
@@ -319,7 +323,7 @@ def scenario(request):
     return render(request, 'smartgrid/post_login/scenario.html',
                   {'current_neighborhood_name': current_neighborhood_name,
                    'energy_price_data': energy_price_data,
-                   'available_energy_data': available_energy_data,
+                   'available_energy_list': available_energy_list,
                    'consumption_list': consumption_list,
                    'neighborhood_list': neighborhood_list})
 
