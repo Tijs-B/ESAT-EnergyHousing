@@ -303,7 +303,7 @@ def scenario(request):
         solar_data.append([(float(available_energy.time) - 1.0) / 4.0, float(available_energy.amount)])
         wind_data.append([(float(available_energy.time) - 1.0) / 4.0, float(available_energy.wind)])
     available_energy_list = [{"name": "Verwachte zonne-energie", "data": solar_data},
-                             {"name": "Verwachte wind-energie", "data": wind_data}]
+                             {"name": "Verwachte windenergie", "data": wind_data}]
 
     consumption_list = []
     for house in current_neighborhood.house_set.all():
@@ -311,10 +311,9 @@ def scenario(request):
         data = utilities.get_consumption(house)
         consumption_list.append({"name": name, "data": data})
 
-    consumption_list.append({"name": "Volledige buurt", "data": utilities.get_consumption()})
-    
-    neighborhood_geen_sturing = Neighborhood.objects.get(neighborhood_name=current_neighborhood_name + " zonder vraagzijdesturing")
+    consumption_list.append({"name": "Volledige buurt", "data": utilities.get_consumption(), "linewidth": 5})
 
+    neighborhood_geen_sturing = Neighborhood.objects.get(neighborhood_name="Buurt 2")
     consumption_list.append({"name": "Zonder vraagzijdesturing",
                              "data": utilities.get_consumption(neighborhood=neighborhood_geen_sturing)})
 
