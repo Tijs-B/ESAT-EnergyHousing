@@ -311,7 +311,6 @@ def scenario(request):
         data = utilities.get_consumption(house)
         consumption_list.append({"name": name, "data": data})
 
-
     consumption_list.append({"name": "Volledige buurt", "data": utilities.get_consumption()})
     
     neighborhood_geen_sturing = Neighborhood.objects.get(neighborhood_name=current_neighborhood_name + " zonder vraagzijdesturing")
