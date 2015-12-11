@@ -38,7 +38,22 @@ def prehomepage(request):
 
 
 def resultaat(request):
-    return render(request, 'smartgrid/info/resultaat.html')
+    consumption_list_1 = []
+    consumption_list_1.append({"name": "Met vraagzijdesturing",
+                               "data": utilities.get_consumption(neighborhood=Neighborhood.objects.get(neighborhood_name="Buurt 1"))})
+    consumption_list_1.append({"name": "Zonder vraagzijdesturing",
+                               "data": utilities.get_consumption(neighborhood=Neighborhood.objects.get(neighborhood_name="Buurt 1 zonder vraagzijdesturing"))})
+
+    consumption_list_2 = []
+    consumption_list_2.append({"name": "Met vraagzijdesturing",
+                               "data": utilities.get_consumption(neighborhood=Neighborhood.objects.get(neighborhood_name="Buurt 2"))})
+    consumption_list_2.append({"name": "Zonder vraagzijdesturing",
+                               "data": utilities.get_consumption(neighborhood=Neighborhood.objects.get(neighborhood_name="Buurt 2 zonder vraagzijdesturing"))})
+
+
+    return render(request, 'smartgrid/info/resultaat.html',
+                  {'consumption_list_1': consumption_list_1,
+                   'consumption_list_2': consumption_list_2})
 
 
 def info_apparaten(request):

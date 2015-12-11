@@ -1,17 +1,141 @@
 {% extends "smartgrid/base.html" %}
+{% load staticfiles %}
 
 {% block nav %}
-<ul class="nav">
-    <li><a href="{% url 'smartgrid:prehomepage' %}">Start</a></li>
-    <li><a href="{% url 'smartgrid:vraagzijdesturing' %}">Vraagzijdesturing</a></li>
-    <li><a href="{% url 'smartgrid:info_apparaten' %}">Apparaten</a></li>
-    <li><a href="{% url 'smartgrid:projectverdeling' %}">Projectverdeling</a></li>
-    <li><a class="active" href="{% url 'smartgrid:resultaat' %}">Resultaat</a></li>
-    <li><a href="{% url 'smartgrid:login' %}">Log in</a></li>
-</ul>
+    <ul class="nav">
+        <li><a href="{% url 'smartgrid:prehomepage' %}">Start</a></li>
+        <li><a href="{% url 'smartgrid:vraagzijdesturing' %}">Vraagzijdesturing</a></li>
+        <li><a href="{% url 'smartgrid:info_apparaten' %}">Apparaten</a></li>
+        <li><a href="{% url 'smartgrid:projectverdeling' %}">Projectverdeling</a></li>
+        <li><a class="active" href="{% url 'smartgrid:resultaat' %}">Resultaat</a></li>
+        <li><a href="{% url 'smartgrid:login' %}">Log in</a></li>
+    </ul>
 {% endblock nav %}
 
 {% block content %}
-<h1>Onder constructie...</h1>
-<p>Deze pagina is nog onder constructie.</p>
+    <h1>Resultaat</h1>
+    <p>
+    De verbruiksgrafiek laat toe enkele conclusies te trekken. Als eerste toont het duidelijk hoe er met vraagsturing
+    (de blauwe lijn) een hoger verbruik is wanneer er veel hernieuwbare energie beschikbaar is. Op deze momenten springt
+    de oplader van de autobatterij aan, net als de koelkast en de vriezer. Als tweede is zichtbaar dat er nog steeds
+    grote pieklasten zijn in de ochtend en in de avond, omdat mensen juist op die momenten veel verbruiken. De
+    verwarming van een huis moet in de morgen frequenter opstaan om het huis terug op temperatuur te krijgen en het
+    fornuis trekt veel stroom wanneer er gegeten wordt. Wegens de eis van comfortbehoud te respecteren zullen deze
+    pieken altijd aanwezig blijven. Een tegemoetkoming hieraan zou een display zijn waar de gebruiker thuis kan aflezen
+    als de stroomprijs hoog is, om hem zo aan te moedigen vrijwillig zijn verbruik te minderen op piekmomenten. Het
+    totaal verbruik van de vraagsturing is hoger, maar dit is niet noodzakelijk een probleem voor de kostprijs. Het
+    verhoogd verbruik valt op momenten dat de zonnepanelen gratis energie produceren of als de energieprijs lager dan
+    normaal is.
+    </p>
+    <div class="graph" id="consumption_chart_1"></div>
+    <div class="graph" id="consumption_chart_2"></div>
+
 {% endblock content %}
+
+{% block script %}
+    <script src="{% static 'smartgrid/js/highcharts.js' %}"></script>
+    <script>
+        $(function () {
+            $("#consumption_chart_1").highcharts({
+
+                title: {
+                    text: 'Verbruik bij een efficiente buurt'
+                },
+                xAxis: {
+                    title: {
+                        enabled: true,
+                        text: 'Tijd'
+                    },
+                    labels: {
+                        formatter: function () {
+                            return this.value + " u"
+                        }
+                    },
+                    {#                    tickPositions: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]#}
+                },
+                yAxis: {
+                    title: {
+                        enabled: true,
+                        text: 'Verbruik'
+                    },
+                    labels: {
+                        formatter: function () {
+                            return this.value + " W"
+                        }
+                    }
+                },
+                plotOptions: {
+                    line: {
+                        marker: {
+                            enabled: false
+                        }
+                    }
+                },
+                tooltip: {
+                    valueSuffix: ' W'
+                },
+                series: [
+                    {% for consumption in consumption_list_1 %}
+                        {
+                            name: "{{ consumption.name }}",
+                            data: {{ consumption.data }},
+                            {% if consumption.linewidth %}
+                                lineWidth: {{ consumption.linewidth }}
+                            {% endif %}
+                        },
+                    {% endfor %}
+                ]
+            });
+            $("#consumption_chart_2").highcharts({
+
+                title: {
+                    text: 'Verbruik bij een inefficiente buurt'
+                },
+                xAxis: {
+                    title: {
+                        enabled: true,
+                        text: 'Tijd'
+                    },
+                    labels: {
+                        formatter: function () {
+                            return this.value + " u"
+                        }
+                    },
+                    {#                    tickPositions: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]#}
+                },
+                yAxis: {
+                    title: {
+                        enabled: true,
+                        text: 'Verbruik'
+                    },
+                    labels: {
+                        formatter: function () {
+                            return this.value + " W"
+                        }
+                    }
+                },
+                plotOptions: {
+                    line: {
+                        marker: {
+                            enabled: false
+                        }
+                    }
+                },
+                tooltip: {
+                    valueSuffix: ' W'
+                },
+                series: [
+                    {% for consumption in consumption_list_2 %}
+                        {
+                            name: "{{ consumption.name }}",
+                            data: {{ consumption.data }},
+                            {% if consumption.linewidth %}
+                                lineWidth: {{ consumption.linewidth }}
+                            {% endif %}
+                        },
+                    {% endfor %}
+                ]
+            });
+        })
+    </script>
+{% endblock script %}
