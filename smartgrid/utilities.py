@@ -67,6 +67,7 @@ def trigger_gams():
             param_d_cycle_cat2 = db.add_parameter_dc('D_CYCLE_CAT2', [set_cat2, set_t], 'demand cycle')
             param_n_cycles_cat2 = db.add_parameter_dc('N_CYCLES_CAT2', [set_cat2], 'number of cycles')
             param_dur_cat2 = db.add_parameter_dc('DUR_CAT2', [set_cat2], 'duration of cycle')
+            param_deadline_cat2 = db.add_parameter_dc('DEADLINE_CAT2', [set_cat2], 'latest allowed moment for finish')
 
             param_ua_cat3 = db.add_parameter_dc('UA_CAT3', [set_cat3], 'isolation constant')
             param_cop_cat3 = db.add_parameter_dc('COP_CAT3', [set_cat3], 'coefficient of performance ')
@@ -102,6 +103,7 @@ def trigger_gams():
                 set_cat2.add_record(str(i.appliance_name))
 
                 param_n_cycles_cat2.add_record(str(i.appliance_name)).value = 1
+                param_deadline_cat2.add_record(str(i.appliance_name)).value = i.latest_end_time
                 total_duration = 0
                 shiftingloadprofile = ShiftingLoadProfile.objects.filter(shiftingloadcycle=i)
                 for profile in shiftingloadprofile:
@@ -211,6 +213,7 @@ def trigger_gams():
                     # get shiftingloadprofile
                     shiftingloadcycle = ShiftingLoadCycle.objects.filter(room__house=house, appliance_name=appl_name)[0]
                     # make onoffprofile
+
                     shiftingload_consumption = OnOffProfile(shiftingloadcycle=shiftingloadcycle)
                     shiftingload_consumption.save()
                     # make onoffinfo
@@ -230,7 +233,7 @@ def trigger_gams():
             for f in glob.glob('_gams_py_*'):
                 if str(f) != '_gams_py_gdb1.gdx':
                     os.remove(f)
-
+            print "all done"
 
 def get_consumption(house=None, neighborhood=None):
     """
