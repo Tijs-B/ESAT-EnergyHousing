@@ -24,7 +24,7 @@ Parameters
          D_CYCLE_CAT2(cat2, ta)   demand cycle per cat2 appliance [W]
          N_CYCLES_CAT2(cat2)      number of cycles per day        [-]
          DUR_CAT2(cat2)           duration of wm cycle            [kwartier]
-         DEADLINE_CAT2(cat2) latest allowed moment for the appliance to be finished
+
 
 
 *        Cat3
@@ -43,7 +43,7 @@ Parameters
 ;
 $LOAD TEMP_AMB, PRICE, RESLOC,
 $LOAD D_TOT_CAT1,
-$LOAD D_CYCLE_CAT2, N_CYCLES_CAT2, DUR_CAT2, DEADLINE_CAT2
+$LOAD D_CYCLE_CAT2, N_CYCLES_CAT2, DUR_CAT2,
 $LOAD UA_CAT3, COP_CAT3, PCOOL_CAT3, MASS_CAT3, T_MIN_CAT3, T_MAX_CAT3,
 $LOAD T_MIN_CAT4, T_MAX_CAT4
 
@@ -143,8 +143,7 @@ Equations
 
 *CAT2
          q_n_cycles_cat2(cat2)           Ensure the dishwasher works the needed amount of cycles
-         q_deadline_cat2(cat2) Ensure the appliance works the needed amount of cycles before the deadline
-         q_no_overlap(t,cat2) Ensure cycles of one appliance don't overlap and don't follow each other immediately.
+         q_no_overlap(t,cat2)            Ensure cycles of one appliance don't overlap and don't follow each other immediately. (Have to be able to put in clothes)
 *CAT3
          q_temp_equ_cat3(t,cat3)      links heat difference and temperature difference for the cat3 appliance
          q_heat_loss_cat3(t,cat3)     loss of heat for the cat3 appliance
@@ -217,7 +216,7 @@ q_cat5(t)..
 q_energy_load(t)..
          total_load(t)
                  =e=
-                         P_cat1(t) + P_cat2(t) + P_cat3(t) + P_cat4(t)+ P_cat5(t);
+                         P_cat1(t) + P_cat2(t) + P_cat3(t) + P_cat4(t)+ P_cat5(t);                         
 
 
 
@@ -227,16 +226,14 @@ q_energy_load(t)..
 q_n_cycles_cat2(cat2)..
          N_CYCLES_CAT2(cat2)
                  =e=
-                         sum(t$(ord(t)<=card(t)),ti(t,cat2));
+                         sum(t$(ord(t)<card(t)-(DUR_CAT2(cat2)-2)),ti(t,cat2));
 
-q_deadline_cat2(cat2)..
-         N_CYCLES_CAT2(cat2)
-                 =e=
-                         sum(t$(ord(t)<DEADLINE_CAT2(cat2)-(DUR_CAT2(cat2)-2)),ti(t,cat2));
 q_no_overlap(t,cat2)..
          sum(ta$(ord(ta)<=DUR_CAT2(cat2)), ti(t-(ord(ta)-1),cat2))
                  =l=
                          1;
+
+
 
 ************
 ****cat3****
