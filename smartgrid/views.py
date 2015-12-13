@@ -50,8 +50,8 @@ def resultaat(request):
     solar_data_1 = []
     wind_data_1 = []
     for available_energy in eff_buurt.availableenergy_set.all():
-        solar_data_1.append([(float(available_energy.time) - 1.0) / 4.0, float(available_energy.amount)])
-        wind_data_1.append([(float(available_energy.time) - 1.0) / 4.0, float(available_energy.wind)])
+        solar_data_1.append([(float(available_energy.time) - 1.0) / 4.0, float(available_energy.amount)/1000.0])
+        wind_data_1.append([(float(available_energy.time) - 1.0) / 4.0, float(available_energy.wind)/1000.0])
     available_energy_list_1 = [{"name": "Beschikbare zonne-energie", "data": solar_data_1, "color": "#8A3528"},
                                {"name": "Beschikbare windenergie", "data": wind_data_1, "color": "#C54C3A"}]
 
