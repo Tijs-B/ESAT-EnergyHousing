@@ -194,7 +194,7 @@
                     },
                     labels: {
                         formatter: function () {
-                            return this.value + " EUR"
+                            return this.value + " EUR/kW"
                         }
                     }
                 },
@@ -237,7 +237,7 @@
                     },
                     labels: {
                         formatter: function () {
-                            return this.value + " W"
+                            return this.value + " kW"
                         }
                     }
                 },
@@ -249,7 +249,7 @@
                     }
                 },
                 tooltip: {
-                    valueSuffix: ' W'
+                    valueSuffix: ' kW'
                 },
                 series: [
                     {% for available_energy in available_energy_list %}
@@ -287,7 +287,7 @@
                     },
                     labels: {
                         formatter: function () {
-                            return this.value + " W"
+                            return this.value + " kW"
                         }
                     }
                 },
@@ -299,7 +299,7 @@
                     }
                 },
                 tooltip: {
-                    valueSuffix: ' W'
+                    valueSuffix: ' kW'
                 },
                 series: [
                     {% for consumption in consumption_list %}

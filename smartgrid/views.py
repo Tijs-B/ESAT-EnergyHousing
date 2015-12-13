@@ -38,22 +38,58 @@ def prehomepage(request):
 
 
 def resultaat(request):
+    eff_buurt = Neighborhood.objects.get(neighborhood_name="Buurt 1")
+    eff_buurt_zonder = Neighborhood.objects.get(neighborhood_name="Buurt 1 zonder vraagzijdesturing")
+    ineff_buurt = Neighborhood.objects.get(neighborhood_name="Buurt 2")
+    ineff_buurt_zonder = Neighborhood.objects.get(neighborhood_name="Buurt 2 zonder vraagzijdesturing")
+
+    energy_price_data_1 = []
+    for energy_price in eff_buurt.energyprice_set.all():
+        energy_price_data_1.append([(float(energy_price.time) - 1.0) / 4.0, float(energy_price.price) * 1000])
+
+    solar_data_1 = []
+    wind_data_1 = []
+    for available_energy in eff_buurt.availableenergy_set.all():
+        solar_data_1.append([(float(available_energy.time) - 1.0) / 4.0, float(available_energy.amount)])
+        wind_data_1.append([(float(available_energy.time) - 1.0) / 4.0, float(available_energy.wind)])
+    available_energy_list_1 = [{"name": "Beschikbare zonne-energie", "data": solar_data_1, "color": "#8A3528"},
+                               {"name": "Beschikbare windenergie", "data": wind_data_1, "color": "#C54C3A"}]
+
+    energy_price_data_2 = []
+    for energy_price in eff_buurt.energyprice_set.all():
+        energy_price_data_2.append([(float(energy_price.time) - 1.0) / 4.0, float(energy_price.price)])
+
+    solar_data_2 = []
+    wind_data_2 = []
+    for available_energy in ineff_buurt.availableenergy_set.all():
+        solar_data_2.append([(float(available_energy.time) - 1.0) / 4.0, float(available_energy.amount)])
+        wind_data_2.append([(float(available_energy.time) - 1.0) / 4.0, float(available_energy.wind)])
+    available_energy_list_2 = [{"name": "Beschikbare zonne-energie", "data": solar_data_2, "color": "#8A3528"},
+                               {"name": "Beschikbare windenergie", "data": wind_data_2, "color": "#C54C3A"}]
+
     consumption_list_1 = []
     consumption_list_1.append({"name": "Met vraagzijdesturing",
-                               "data": utilities.get_consumption(neighborhood=Neighborhood.objects.get(neighborhood_name="Buurt 1"))})
+                               "data": map(lambda x: [x[0], x[1] / 1000.0],
+                                           utilities.get_consumption(neighborhood=eff_buurt))})
     consumption_list_1.append({"name": "Zonder vraagzijdesturing",
-                               "data": utilities.get_consumption(neighborhood=Neighborhood.objects.get(neighborhood_name="Buurt 1 zonder vraagzijdesturing"))})
+                               "data": map(lambda x: [x[0], x[1] / 1000.0],
+                                           utilities.get_consumption(neighborhood=eff_buurt_zonder))})
 
     consumption_list_2 = []
     consumption_list_2.append({"name": "Met vraagzijdesturing",
-                               "data": utilities.get_consumption(neighborhood=Neighborhood.objects.get(neighborhood_name="Buurt 2"))})
+                               "data": map(lambda x: [x[0], x[1] / 1000.0],
+                                           utilities.get_consumption(neighborhood=ineff_buurt))})
     consumption_list_2.append({"name": "Zonder vraagzijdesturing",
-                               "data": utilities.get_consumption(neighborhood=Neighborhood.objects.get(neighborhood_name="Buurt 2 zonder vraagzijdesturing"))})
-
+                               "data": map(lambda x: [x[0], x[1] / 1000.0],
+                                           utilities.get_consumption(neighborhood=ineff_buurt_zonder))})
 
     return render(request, 'smartgrid/info/resultaat.html',
                   {'consumption_list_1': consumption_list_1,
-                   'consumption_list_2': consumption_list_2})
+                   'consumption_list_2': consumption_list_2,
+                   'available_energy_list_1': available_energy_list_1,
+                   'available_energy_list_2': available_energy_list_2,
+                   'energy_price_data_1': energy_price_data_1,
+                   'energy_price_data_2': energy_price_data_2})
 
 
 def info_apparaten(request):
@@ -133,7 +169,7 @@ def home(request):
 
     energy_price_data = []
     for energy_price in current_neighborhood.energyprice_set.all():
-        energy_price_data.append([(float(energy_price.time) - 1.0) / 4.0, float(energy_price.price)])
+        energy_price_data.append([(float(energy_price.time) - 1.0) / 4.0, float(energy_price.price)*1000.0])
 
     return render(request, 'smartgrid/post_login/homepage.html',
                   {'full_name': request.user.username,
@@ -310,34 +346,34 @@ def scenario(request):
 
     energy_price_data = []
     for energy_price in current_neighborhood.energyprice_set.all():
-        energy_price_data.append([(float(energy_price.time) - 1.0) / 4.0, float(energy_price.price)])
+        energy_price_data.append([(float(energy_price.time) - 1.0) / 4.0, float(energy_price.price)*1000.0])
 
     solar_data = []
     wind_data = []
     for available_energy in current_neighborhood.availableenergy_set.all():
-        solar_data.append([(float(available_energy.time) - 1.0) / 4.0, float(available_energy.amount)])
-        wind_data.append([(float(available_energy.time) - 1.0) / 4.0, float(available_energy.wind)])
+        solar_data.append([(float(available_energy.time) - 1.0) / 4.0, float(available_energy.amount)/1000.0])
+        wind_data.append([(float(available_energy.time) - 1.0) / 4.0, float(available_energy.wind)/1000.0])
     available_energy_list = [{"name": "Verwachte zonne-energie", "data": solar_data},
                              {"name": "Verwachte windenergie", "data": wind_data}]
 
     consumption_list = []
     for house in current_neighborhood.house_set.all():
         name = house.house_name
-        data = utilities.get_consumption(house)
+        data = map(lambda x: [x[0], x[1]/1000.0], utilities.get_consumption(house))
         consumption_list.append({"name": name, "data": data})
 
     # consumption_list.append({"name": "Volledige buurt", "data": utilities.get_consumption(), "linewidth": 5})
 
 
     if not current_neighborhood_name.endswith("zonder vraagzijdesturing"):
-        neighborhood_geen_sturing = Neighborhood.objects.get(neighborhood_name=current_neighborhood_name + " zonder vraagzijdesturing")
+        neighborhood_geen_sturing = Neighborhood.objects.get(
+            neighborhood_name=current_neighborhood_name + " zonder vraagzijdesturing")
         consumption_list.append({"name": "Zonder vraagzijdesturing",
-                                 "data": utilities.get_consumption(neighborhood=neighborhood_geen_sturing)})
+                                 "data": map(lambda x: [x[0], x[1]/1000.0], utilities.get_consumption(neighborhood=neighborhood_geen_sturing))})
     else:
         neighborhood_met_sturing = Neighborhood.objects.get(neighborhood_name=current_neighborhood_name[0:7])
         consumption_list.append({"name": "Met vraagzijdesturing",
-                                 "data": utilities.get_consumption(neighborhood=neighborhood_met_sturing)})
-
+                                 "data": map(lambda x: [x[0], x[1]/1000.0], utilities.get_consumption(neighborhood=neighborhood_met_sturing))})
 
     neighborhood_list = Neighborhood.objects.all()
     neighborhood_list.filter(neighborhood_name='Store').delete()
