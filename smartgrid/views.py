@@ -374,8 +374,15 @@ def scenario(request):
         consumption_list.append({"name": "Met vraagzijdesturing",
                                  "data": map(lambda x: [x[0], x[1]/1000.0], utilities.get_consumption(neighborhood=neighborhood_met_sturing))})
 
-    neighborhood_list = Neighborhood.objects.all()
-    neighborhood_list.filter(neighborhood_name='Store').delete()
+    wrong_neighborhood_list = Neighborhood.objects.all()
+    store = wrong_neighborhood_list.filter(neighborhood_name='Store')[0]
+    een_zonder = wrong_neighborhood_list.filter(neighborhood_name='Buurt 1 zonder vraagsturing')
+    twee_zonder = wrong_neighborhood_list.filter(neighborhood_name='Buurt 2 zonder vraagsturing')
+    neighborhood_list = []
+    for x in wrong_neighborhood_list:
+        if x.neighborhood_name != store.neighborhood_name:
+            neighborhood_list += [x]
+    print neighborhood_list
 
     return render(request, 'smartgrid/post_login/scenario.html',
                   {'current_neighborhood_name': current_neighborhood_name,

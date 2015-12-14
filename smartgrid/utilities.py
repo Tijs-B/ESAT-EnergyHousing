@@ -2,31 +2,41 @@ import gams
 import os, glob
 import csv
 from models import *
-from communicatie.planning_verstuurder import *
+
+# from communicatie.planning_verstuurder import *
 
 
 def send_to_pi(time):
     scenario = Scenario.objects.all()[0]
     onoffinfo = OnOffInfo.objects.filter(time=time)
     # om vaste id's te geven: bv: {diepvries_huis_A: 1, diepvries_huis_B: 2,...}
-    appliance_dictionary = {'koelkast 0': 2,
-                            'diepvries 0': 4,
-                            'afwasmachine 0': 10,
-                            'auto_groen 0': 16,
-                            'droogkast 0': 17,
-                            'licht 0': 21,
-                            'ventilator 0': 22,
-                            'fornuis 0': 24,
-                            'wasmachine 0': 26}
+    appliance_dictionary = {'Koelkast': 2,          # ok
+                            'Diepvries': 4,         # ok
+                            'Afwasmachine': 10,     # ok
+                            'Auto': 16,             # ok
+                            'Droogkast': 17,        # ok
+                            'licht': 21,            #
+                            'ventilator': 22,       #
+                            'fornuis': 24,          #
+                            'Wasmachine': 26}       # ok
+    house_dictionary = {'Huisje 1': 0,
+                        'Huisje 1 zonder vraagzijdesturing': 1,
+                        'Huisje 2': 0,
+                        'Huisje 2 zonder vraagzijdesturing': 0}
     list_to_send = []
     for onoff in onoffinfo:
+        print onoff
         if onoff.house.neighborhood_name == scenario.current_neighborhood:
             # TODO: huis naam moet 1 of 0 zijn
             house = onoff.house.house_name
-            status = onoff.info
-            appliance_name = onoff.appliance_name
+            if onoff.inf > 0:
+                status = 1
+            else:
+                status = 0
+            appliance_name = onoff.appliance_name[0:-2]
             appliance_id = appliance_dictionary[appliance_name]
-            list_to_send += [[0, status, appliance_id]]
+            house_id = house_dictionary[house]
+            list_to_send += [[house_id, status, appliance_id]]
 
     verstuur(list_to_send)
 
@@ -181,6 +191,9 @@ def trigger_gams():
             job.run(gams_options=opt, databases=db)
             print 'job run'
             print 'test'
+
+            # delete all previous entries
+
 
             # CalculatedConsumption
             for x in job.out_db.get_variable('total_load'):
