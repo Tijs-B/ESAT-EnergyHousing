@@ -140,7 +140,10 @@ class OnOffInfo(models.Model):
             return self.onoffprofile.shiftingloadcycle.room.house
         elif self.onoffprofile.heatloadinvariablepower is not None:
             return self.onoffprofile.heatloadinvariablepower.room.house
+        elif self.onoffprofile.car is not None:
+            return self.onoffprofile.car.house
 
+    @property
     def appliance_name(self):
         if self.onoffprofile.heatloadvariablepower is not None:
             return self.onoffprofile.heatloadvariablepower.appliance_name
@@ -148,6 +151,8 @@ class OnOffInfo(models.Model):
             return self.onoffprofile.shiftingloadcycle.appliance_name
         elif self.onoffprofile.heatloadinvariablepower is not None:
             return self.onoffprofile.heatloadinvariablepower.appliance_name
+        elif self.onoffprofile.car is not None:
+            return self.onoffprofile.car_name
 
 
 class Sensor(models.Model):

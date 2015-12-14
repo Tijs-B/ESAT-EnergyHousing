@@ -3,6 +3,8 @@ k__author__ = 'Bert'
 import socket
 import sys
 from thread import *
+from communication_protocol import *
+from ontvang_CCU import *
 
 HOST = ''
 PORT = 7000
@@ -16,7 +18,7 @@ class Server():
             self.s.bind((HOST, PORT))
         except socket.error , msg:
             print 'Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
-            # sys.exit()
+            sys.exit()
 
         print "Socket bind succesfull!"
 
@@ -49,10 +51,9 @@ class Server():
             #Receiving from client
             data = conn.recv(1024)
             if data == 'STOP':
-                conn.send('Connection stopped!')
-                print addr[0] + str(addr[1]) + " disconnected from the server."
                 break
-            print data
+            print receive(data)
+            ontvang_CCU(receive(data))
 
             reply = 'OK!'
             #conn.sendall(reply)
@@ -60,6 +61,9 @@ class Server():
         #came out of loop
         conn.close()
     def send(self, msg):
-        self.connections[msg[2:4]].send(msg)
+        house_address = self.connections[msg[0:2]]
+        data = message(msg)
+        data = data.send()
+        house_address.send(data)
 
-#S=Server()
+S=Server()
