@@ -22,7 +22,7 @@ from demo2 import *
 
 # GAMS
 # import sqlite3 as sq
-import gams
+# import gams
 
 
 # import os
