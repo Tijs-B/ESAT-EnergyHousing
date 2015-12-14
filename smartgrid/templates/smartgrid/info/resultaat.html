@@ -1,17 +1,284 @@
 {% extends "smartgrid/base.html" %}
+{% load staticfiles %}
 
 {% block nav %}
-<ul class="nav">
-    <li><a href="{% url 'smartgrid:prehomepage' %}">Start</a></li>
-    <li><a href="{% url 'smartgrid:vraagzijdesturing' %}">Vraagzijdesturing</a></li>
-    <li><a href="{% url 'smartgrid:info_apparaten' %}">Apparaten</a></li>
-    <li><a href="{% url 'smartgrid:projectverdeling' %}">Projectverdeling</a></li>
-    <li><a class="active" href="{% url 'smartgrid:resultaat' %}">Resultaat</a></li>
-    <li><a href="{% url 'smartgrid:login' %}">Log in</a></li>
-</ul>
+    <ul class="nav">
+        <li><a href="{% url 'smartgrid:prehomepage' %}">Start</a></li>
+        <li><a href="{% url 'smartgrid:vraagzijdesturing' %}">Vraagzijdesturing</a></li>
+        <li><a href="{% url 'smartgrid:info_apparaten' %}">Apparaten</a></li>
+        <li><a href="{% url 'smartgrid:projectverdeling' %}">Projectverdeling</a></li>
+        <li><a class="active" href="{% url 'smartgrid:resultaat' %}">Resultaat</a></li>
+        <li><a href="{% url 'smartgrid:login' %}">Log in</a></li>
+    </ul>
 {% endblock nav %}
 
 {% block content %}
-<h1>Onder constructie...</h1>
-<p>Deze pagina is nog onder constructie.</p>
+    <h1>Resultaat</h1>
+    <p>Onderstaande grafieken laten toe enkele conclusies te trekken.</p>
+    <ul>
+        <li>
+            Met vraagzijdesturing is er een hoger verbruik wanneer er veel hernieuwbare energie beschikbaar is.<br>
+            Zo wordt bijvoorbeeld de autobatterij opgeladen, en springen de koelkast en diepvries aan.
+        </li>
+        <li>
+            Er zijn echter nog steeds grote pieklasten in de ochtend en de avond. Dit is te wijten aan het feit dat
+            bewoners juist op die momenten veel stroom verbruiken. Zo staat de verwarming vaak aan 's morgens, en wordt
+            er 's avonds veel stroom verbruikt bij het koken.
+        </li>
+        <li>Het totaalverbruik bij vraagsturing is soms hoger, maar dit is niet noodzakelijk een probleem voor de
+            kostprijs. Het verhoogd verbruik valt dan op momenten waarbij er veel gratis zonne- of windenergie
+            beschikbaar is, of wanneer de energieprijzen laag liggen.
+        </li>
+    </ul>
+    <div class="graph" id="price_available_1"></div>
+    <div class="graph" id="consumption_chart_1"></div>
+    <div class="graph" id="consumption_chart_2"></div>
+
 {% endblock content %}
+
+{% block script %}
+    <script src="{% static 'smartgrid/js/highcharts.js' %}"></script>
+    <script>
+        $(function () {
+            $("#price_available_1").highcharts({
+                title: {
+                    text: "Energieprijs en beschikbare energie"
+                },
+                xAxis: {
+                    title: {
+                        enabled: true,
+                        text: 'Tijd'
+                    },
+                    labels: {
+                        format: '{value} u'
+                    }
+                },
+                yAxis: [{
+                    title: {
+                        enabled: true,
+                        text: 'Energieprijs',
+                        style: {
+                            color: '#8DC53E'
+                        }
+                    },
+                    labels: {
+                        format: '{value} EUR/kW',
+                        style: {
+                            color: '#8DC53E'
+                        }
+                    }
+                }, {
+                    title: {
+                        enabled: true,
+                        text: 'Beschikbare energie',
+                        style: {
+                            color: '#9E3D2E'
+                        }
+                    },
+                    labels: {
+                        format: '{value} kW',
+                        style: {
+                            color: '#9E3D2E '
+                        }
+                    },
+                    opposite: true
+                }],
+                plotOptions: {
+                    line: {
+                        marker: {
+                            enabled: false
+                        }
+                    }
+                },
+                series: [{
+                    name: "Energieprijs",
+                    data: {{ energy_price_data_1 }},
+                    tooltip: {
+                        valueSuffix: ' EUR/kW'
+                    }
+                },
+                    {% for energy in available_energy_list_1 %}
+                        {
+                            name: "{{ energy.name }}",
+                            data: {{ energy.data }},
+                            color: "{{ energy.color }}",
+                            yAxis: 1,
+                            tooltip: {
+                                valueSuffix: ' kW'
+                            }
+                        },
+                    {% endfor %}]
+            });
+            $("#consumption_chart_1").highcharts({
+
+                title: {
+                    text: 'Verbruik bij een efficiente buurt'
+                },
+                xAxis: {
+                    title: {
+                        enabled: true,
+                        text: 'Tijd'
+                    },
+                    labels: {
+                        formatter: function () {
+                            return this.value + " u"
+                        }
+                    },
+                    {#                    tickPositions: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]#}
+                },
+                yAxis: {
+                    title: {
+                        enabled: true,
+                        text: 'Verbruik'
+                    },
+                    labels: {
+                        formatter: function () {
+                            return this.value + " kW"
+                        }
+                    }
+                },
+                plotOptions: {
+                    line: {
+                        marker: {
+                            enabled: false
+                        }
+                    }
+                },
+                tooltip: {
+                    valueSuffix: ' kW'
+                },
+                series: [
+                    {% for consumption in consumption_list_1 %}
+                        {
+                            name: "{{ consumption.name }}",
+                            data: {{ consumption.data }},
+                            {% if consumption.linewidth %}
+                                lineWidth: {{ consumption.linewidth }}
+                            {% endif %}
+                        },
+                    {% endfor %}
+                ]
+            });
+            $("#price_available_2").highcharts({
+                title: {
+                    text: "Energieprijs en beschikbare energie bij een efficiente buurt"
+                },
+                xAxis: {
+                    title: {
+                        enabled: true,
+                        text: 'Tijd'
+                    },
+                    labels: {
+                        format: '{value} u'
+                    }
+                },
+                yAxis: [{
+                    title: {
+                        enabled: true,
+                        text: 'Energieprijs',
+                        style: {
+                            color: '#8DC53E'
+                        }
+                    },
+                    labels: {
+                        format: '{value} EUR/kW',
+                        style: {
+                            color: '#8DC53E'
+                        }
+                    }
+                }, {
+                    title: {
+                        enabled: true,
+                        text: 'Beschikbare energie',
+                        style: {
+                            color: '#9E3D2E'
+                        }
+                    },
+                    labels: {
+                        format: '{value} kW',
+                        style: {
+                            color: '#9E3D2E '
+                        }
+                    },
+                    opposite: true
+                }],
+                plotOptions: {
+                    line: {
+                        marker: {
+                            enabled: false
+                        }
+                    }
+                },
+                series: [{
+                    name: "Energieprijs",
+                    data: {{ energy_price_data_2 }},
+                    tooltip: {
+                        valueSuffix: ' EUR/kW'
+                    }
+                },
+                    {% for energy in available_energy_list_2 %}
+                        {
+                            name: "{{ energy.name }}",
+                            data: {{ energy.data }},
+                            color: "{{ energy.color }}",
+                            yAxis: 1,
+                            tooltip: {
+                                valueSuffix: ' kW'
+                            }
+                        },
+                    {% endfor %}]
+            });
+            $("#consumption_chart_2").highcharts({
+
+                title: {
+                    text: 'Verbruik bij een inefficiente buurt'
+                },
+                xAxis: {
+                    title: {
+                        enabled: true,
+                        text: 'Tijd'
+                    },
+                    labels: {
+                        formatter: function () {
+                            return this.value + " u"
+                        }
+                    },
+                    {#                    tickPositions: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]#}
+                },
+                yAxis: {
+                    title: {
+                        enabled: true,
+                        text: 'Verbruik'
+                    },
+                    labels: {
+                        formatter: function () {
+                            return this.value + " kW"
+                        }
+                    }
+                },
+                plotOptions: {
+                    line: {
+                        marker: {
+                            enabled: false
+                        }
+                    }
+                },
+                tooltip: {
+                    valueSuffix: ' kW'
+                },
+                series: [
+                    {% for consumption in consumption_list_2 %}
+                        {
+                            name: "{{ consumption.name }}",
+                            data: {{ consumption.data }},
+                            {% if consumption.linewidth %}
+                                lineWidth: {{ consumption.linewidth }}
+                            {% endif %}
+                        },
+                    {% endfor %}
+                ]
+            });
+        })
+    </script>
+    <script src="{% static 'smartgrid/js/highcharts_theme.js' %}"></script>
+{% endblock script %}
