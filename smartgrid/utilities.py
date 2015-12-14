@@ -2,8 +2,7 @@ import gams
 import os, glob
 import csv
 from models import *
-
-# from communicatie.planning_verstuurder import *
+from communicatie.planning_verstuurder import *
 
 
 def send_to_pi(time):
