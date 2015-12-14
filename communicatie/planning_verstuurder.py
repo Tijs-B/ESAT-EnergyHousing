@@ -56,8 +56,8 @@ def verstuur(planning):
     for i in range(0,len(planning)):
 
         ontvanger = planning[i][0]
-        toestel = planning[i][1]
-        waarde = planning[i][2]
+        toestel = planning[i][2]
+        waarde = planning[i][1]
 
         #Als de waarde een 0 een 1 of een 2 is, moet er enkel iets af of aan gezet worden
 
