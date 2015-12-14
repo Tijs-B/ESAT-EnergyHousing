@@ -376,11 +376,13 @@ def scenario(request):
 
     wrong_neighborhood_list = Neighborhood.objects.all()
     store = wrong_neighborhood_list.filter(neighborhood_name='Store')[0]
-    een_zonder = wrong_neighborhood_list.filter(neighborhood_name='Buurt 1 zonder vraagsturing')
-    twee_zonder = wrong_neighborhood_list.filter(neighborhood_name='Buurt 2 zonder vraagsturing')
+    een_zonder = wrong_neighborhood_list.filter(neighborhood_name='Buurt 1 zonder vraagzijdesturing')[0]
+    twee_zonder = wrong_neighborhood_list.filter(neighborhood_name='Buurt 2 zonder vraagzijdesturing')[0]
     neighborhood_list = []
     for x in wrong_neighborhood_list:
-        if x.neighborhood_name != store.neighborhood_name:
+        if x.neighborhood_name != store.neighborhood_name \
+                and x.neighborhood_name != een_zonder.neighborhood_name \
+                and x.neighborhood_name != twee_zonder.neighborhood_name:
             neighborhood_list += [x]
     print neighborhood_list
 
