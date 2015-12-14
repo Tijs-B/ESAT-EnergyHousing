@@ -21,12 +21,13 @@ def send_to_pi(time):
                         'Huisje 1 zonder vraagzijdesturing': 1,
                         'Huisje 2': 0,
                         'Huisje 2 zonder vraagzijdesturing': 1}
+    list_to_send = []
     for i in range(0, 2):
         if i == 0:
             scenario = Scenario.objects.all()[0].current_neighborhood
         else:
             scenario = str(Scenario.objects.all()[0].current_neighborhood) + " zonder vraagzijdesturing"
-        list_to_send = []
+
         for onoff in onoffinfo:
             if onoff.house.neighborhood.neighborhood_name == scenario:
                 house = onoff.house.house_name
@@ -43,7 +44,8 @@ def send_to_pi(time):
 
                     list_to_send += [[house_id, status, appliance_id]]
 
-        verstuur(list_to_send)
+    print list_to_send
+    verstuur(list_to_send)
 
 '''
 def trigger_gams():
