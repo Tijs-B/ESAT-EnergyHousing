@@ -152,7 +152,7 @@ class OnOffInfo(models.Model):
         elif self.onoffprofile.heatloadinvariablepower is not None:
             return self.onoffprofile.heatloadinvariablepower.appliance_name
         elif self.onoffprofile.car is not None:
-            return self.onoffprofile.car_name
+            return self.onoffprofile.car.car_name
 
 
 class Sensor(models.Model):

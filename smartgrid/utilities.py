@@ -6,7 +6,6 @@ from communicatie.planning_verstuurder import *
 
 
 def send_to_pi(time):
-    scenario = Scenario.objects.all()[0]
     onoffinfo = OnOffInfo.objects.filter(time=time)
     # om vaste id's te geven: bv: {diepvries_huis_A: 1, diepvries_huis_B: 2,...}
     appliance_dictionary = {'Koelkast': 2,          # ok
@@ -21,25 +20,32 @@ def send_to_pi(time):
     house_dictionary = {'Huisje 1': 0,
                         'Huisje 1 zonder vraagzijdesturing': 1,
                         'Huisje 2': 0,
-                        'Huisje 2 zonder vraagzijdesturing': 0}
-    list_to_send = []
-    for onoff in onoffinfo:
-        print onoff
-        if onoff.house.neighborhood_name == scenario.current_neighborhood:
-            # TODO: huis naam moet 1 of 0 zijn
-            house = onoff.house.house_name
-            if onoff.inf > 0:
-                status = 1
-            else:
-                status = 0
-            appliance_name = onoff.appliance_name[0:-2]
-            appliance_id = appliance_dictionary[appliance_name]
-            house_id = house_dictionary[house]
-            list_to_send += [[house_id, status, appliance_id]]
+                        'Huisje 2 zonder vraagzijdesturing': 1}
+    for i in range(0, 2):
+        if i == 0:
+            scenario = Scenario.objects.all()[0].current_neighborhood
+        else:
+            scenario = str(Scenario.objects.all()[0].current_neighborhood) + " zonder vraagzijdesturing"
+        list_to_send = []
+        for onoff in onoffinfo:
+            if onoff.house.neighborhood.neighborhood_name == scenario:
+                house = onoff.house.house_name
+                house_id = house_dictionary[house]
 
-    verstuur(list_to_send)
+                if onoff.info > 0:
+                    status = 1
+                else:
+                    status = 0
 
+                appliance_name = onoff.appliance_name[0:-2]
+                if appliance_name in appliance_dictionary:
+                    appliance_id = appliance_dictionary[appliance_name]
 
+                    list_to_send += [[house_id, status, appliance_id]]
+
+        verstuur(list_to_send)
+
+'''
 def trigger_gams():
     scenario = Scenario.objects.all()[0]
     house_all = House.objects.all()
@@ -245,6 +251,8 @@ def trigger_gams():
                 if str(f) != '_gams_py_gdb1.gdx':
                     os.remove(f)
             print "all done"
+'''
+
 
 def get_consumption(house=None, neighborhood=None):
     """
