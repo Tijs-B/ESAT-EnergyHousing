@@ -66,7 +66,7 @@
                         }
                     },
                     labels: {
-                        format: '{value} EUR/kW',
+                        format: '{value} EUR/kWh',
                         style: {
                             color: '#8DC53E'
                         }
@@ -80,7 +80,7 @@
                         }
                     },
                     labels: {
-                        format: '{value} kW',
+                        format: '{value} kWh',
                         style: {
                             color: '#9E3D2E '
                         }
@@ -98,7 +98,7 @@
                     name: "Energieprijs",
                     data: {{ energy_price_data_1 }},
                     tooltip: {
-                        valueSuffix: ' EUR/kW'
+                        valueSuffix: ' EUR/kWh'
                     }
                 },
                     {% for energy in available_energy_list_1 %}
@@ -108,7 +108,7 @@
                             color: "{{ energy.color }}",
                             yAxis: 1,
                             tooltip: {
-                                valueSuffix: ' kW'
+                                valueSuffix: ' kWh'
                             }
                         },
                     {% endfor %}]
@@ -137,7 +137,7 @@
                     },
                     labels: {
                         formatter: function () {
-                            return this.value + " kW"
+                            return this.value + " kWh"
                         }
                     }
                 },
@@ -149,7 +149,7 @@
                     }
                 },
                 tooltip: {
-                    valueSuffix: ' kW'
+                    valueSuffix: ' kWh'
                 },
                 series: [
                     {% for consumption in consumption_list_1 %}
@@ -185,7 +185,7 @@
                         }
                     },
                     labels: {
-                        format: '{value} EUR/kW',
+                        format: '{value} EUR/kWh',
                         style: {
                             color: '#8DC53E'
                         }
@@ -199,7 +199,7 @@
                         }
                     },
                     labels: {
-                        format: '{value} kW',
+                        format: '{value} kWh',
                         style: {
                             color: '#9E3D2E '
                         }
@@ -217,7 +217,7 @@
                     name: "Energieprijs",
                     data: {{ energy_price_data_2 }},
                     tooltip: {
-                        valueSuffix: ' EUR/kW'
+                        valueSuffix: ' EUR/kWh'
                     }
                 },
                     {% for energy in available_energy_list_2 %}
@@ -227,7 +227,7 @@
                             color: "{{ energy.color }}",
                             yAxis: 1,
                             tooltip: {
-                                valueSuffix: ' kW'
+                                valueSuffix: ' kWh'
                             }
                         },
                     {% endfor %}]
@@ -256,7 +256,7 @@
                     },
                     labels: {
                         formatter: function () {
-                            return this.value + " kW"
+                            return this.value + " kWh"
                         }
                     }
                 },
@@ -268,7 +268,7 @@
                     }
                 },
                 tooltip: {
-                    valueSuffix: ' kW'
+                    valueSuffix: ' kWh'
                 },
                 series: [
                     {% for consumption in consumption_list_2 %}
